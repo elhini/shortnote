@@ -1,0 +1,12 @@
+#Form .fieldBlock {
+  margin-bottom: 10px;
+}
+
+#Form .fieldBlock label {
+  display: block;
+}
+
+#Form .fieldBlock input,
+#Form .fieldBlock textarea {
+  width: 100%;
+}
