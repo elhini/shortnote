@@ -8,3 +8,7 @@
   font-size: 14px;
   font-family: Arial, sans-serif;
 }
+
+#App #openNew {
+  margin-bottom: 10px;
+}

@@ -12,3 +12,13 @@
   background: #eee;
   cursor: pointer;
 }
+
+#List li.opened {
+  background: #ddd;
+  cursor: default;
+}
+
+#List li .delete {
+  float: right;
+  margin: 0 0 10px 10px;
+}
