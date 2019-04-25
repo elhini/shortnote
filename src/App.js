@@ -8,8 +8,11 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     var items = ls.get();
+    items = items.filter(i => i.id);
+    var openedItem = this.findOpenedItem(items);
     var emptyItem = this.buildEmptyItem();
     items.unshift(emptyItem);
+    items.forEach(i => i.opened = openedItem ? i.id === openedItem.id : !i.id);
     this.state = {
       items: items
     };
@@ -19,12 +22,16 @@ export default class App extends React.Component {
     this.onDeleteItem = this.onDeleteItem.bind(this);
   }
 
+  findOpenedItem(items = this.state.items){
+    return items.find(i => i.opened);
+  }
+
   findEmptyItem(){
-    return this.state.items.find(i => i.id === 0);
+    return this.state.items.find(i => !i.id);
   }
 
   buildEmptyItem(){
-    return {id: 0, title: '', text: '', opened: true};
+    return {id: 0, title: '', text: ''};
   }
 
   onOpenNew(){
@@ -34,37 +41,51 @@ export default class App extends React.Component {
       emptyItem = this.buildEmptyItem();
       items.unshift(emptyItem);
     }
-    items.forEach(i => i.opened = i.id === 0);
-    this.setState({items: items});
+    items.forEach(i => i.opened = !i.id);
+    this.setItems(items);
   }
 
   onSubmit(e){
+    e.preventDefault();
     var form = e.target;
-    var idFromForm = parseInt(form.id.value);
-    var id = idFromForm || Date.now();
-    var itemFromForm = {id: id, title: form.title.value, text: form.text.value, opened: true};
+    if (!form.title.value && !form.text.value){
+      return;
+    }
+    var id = parseInt(form.id.value);
     var items = this.state.items;
-    if (idFromForm){
-      items = items.filter(i => i.id !== idFromForm);
+    var item = id ?
+      items.find(i => i.id === id) : 
+      this.buildEmptyItem();
+    if (!id){
+      item.id = Date.now();
+      item.dateOfCreate = new Date();
     }
-    else {
-      this.findEmptyItem().opened = false;
+    item.dateOfUpdate = new Date();
+    item.title = form.title.value;
+    item.text = form.text.value;
+    item.opened = true;
+    if (id){
+      items = items.filter(i => i.id !== id);
     }
-    items.push(itemFromForm);
+    items.forEach(i => i.opened = false);
+    items.push(item);
     items.sort((a, b) => a.id - b.id);
+    this.setItems(items);
+  }
+
+  setItems(items){
     this.saveToStore(items);
     this.setState({items: items});
-    e.preventDefault();
   }
 
   saveToStore(items){
-    ls.set(items.filter(i => i.id > 0));
+    ls.set(items.filter(i => i.id));
   }
 
   onOpenItem(item){
     var items = this.state.items;
     items.forEach(i => i.opened = i.id === item.id);
-    this.setState({items: items});
+    this.setItems(items);
   }
 
   onDeleteItem(item){
@@ -73,12 +94,11 @@ export default class App extends React.Component {
       this.findEmptyItem().opened = true;
     }
     items = items.filter(i => i.id !== item.id);
-    this.saveToStore(items);
-    this.setState({items: items});
+    this.setItems(items);
   }
 
   render(){
-    var openedItem = this.state.items.find(i => i.opened);
+    var openedItem = this.findOpenedItem();
     return (
       <div id="App">
         <h1>ShortNote</h1>

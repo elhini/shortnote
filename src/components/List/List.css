@@ -6,6 +6,7 @@
 
 #List li {
   margin-bottom: 10px;
+  min-height: 32px;
 }
 
 #List li:hover {
@@ -18,7 +19,26 @@
   cursor: default;
 }
 
-#List li .delete {
+#List li .title {
+  min-height: 16px;
+}
+
+#List li .text {
+  white-space: pre-line;
+}
+
+#List li .aside {
   float: right;
-  margin: 0 0 10px 10px;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+#List li .delete {
+  margin-left: 10px;
+}
+
+#List li .dateOfCreate,
+#List li .dateOfUpdate {
+  margin-left: 10px;
+  color: #999;
 }
