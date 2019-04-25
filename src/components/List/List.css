@@ -5,26 +5,32 @@
 }
 
 #List li {
+  border: 1px solid transparent;
   margin-bottom: 10px;
   min-height: 32px;
+  padding: 5px;
+  max-height: 200px;
+  overflow: hidden;
 }
 
 #List li:hover {
-  background: #eee;
+  border-color: #ddd;
   cursor: pointer;
 }
 
 #List li.opened {
-  background: #ddd;
+  border-color: #bbb;
   cursor: default;
 }
 
 #List li .title {
   min-height: 16px;
+  margin-bottom: 16px;
 }
 
 #List li .text {
   white-space: pre-line;
+  color: #666;
 }
 
 #List li .aside {

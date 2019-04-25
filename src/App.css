@@ -1,7 +1,7 @@
 #App {
   text-align: left;
-  width: 600px;
   margin: 0 auto;
+  padding: 5px;
 }
 
 #App * {
@@ -11,4 +11,23 @@
 
 #App #openNew {
   margin-bottom: 10px;
+}
+
+#App #body {
+  overflow: hidden;
+}
+
+#App #listCont,
+#App #formCont {
+  float: left;
+  box-sizing: border-box;
+}
+
+#App #listCont {
+  width: 33%;
+}
+
+#App #formCont {
+  width: 66%;
+  margin-left: 1%;
 }

@@ -9,4 +9,9 @@
 #Form .fieldBlock input,
 #Form .fieldBlock textarea {
   width: 100%;
+  box-sizing: border-box;
+}
+
+#Form .fieldBlock textarea {
+  height: 350px;
 }

@@ -101,11 +101,18 @@ export default class App extends React.Component {
     var openedItem = this.findOpenedItem();
     return (
       <div id="App">
-        <h1>ShortNote</h1>
-        <button id="openNew" onClick={this.onOpenNew}>Open new</button>
-        <Form item={openedItem} onSubmit={this.onSubmit}></Form>
-        <h2>List</h2>
-        <List items={this.state.items} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
+        <div id="head">
+          <h1>ShortNote</h1>
+          <button id="openNew" onClick={this.onOpenNew}>Open new</button>
+        </div>
+        <div id="body">
+          <div id="listCont">
+            <List items={this.state.items} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
+          </div>
+          <div id="formCont">
+            <Form item={openedItem} onSubmit={this.onSubmit}></Form>
+          </div>
+        </div>
       </div>
     );
   }
