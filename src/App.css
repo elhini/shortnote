@@ -17,6 +17,15 @@
   overflow: hidden;
 }
 
+#App #filtersCont,
+#App #sortCont {
+  display: inline-block;
+}
+
+#App #sortCont {
+  margin-left: 10px;
+}
+
 #App #listCont,
 #App #formCont {
   float: left;

@@ -3,6 +3,7 @@ import './App.css';
 import ls from './utils/LocalStorage';
 import StringUtils from './utils/StringUtils';
 import Filters from './components/Filters/Filters';
+import Sort from './components/Sort/Sort';
 import Form from './components/Form/Form';
 import List from './components/List/List';
 
@@ -17,13 +18,15 @@ export default class App extends React.Component {
     items.forEach(i => i.opened = openedItem ? i.id === openedItem.id : !i.id);
     this.state = {
       items: items,
-      filters: {}
+      filters: {},
+      sort: {field: 'dateOfUpdate'}
     };
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onOpenItem = this.onOpenItem.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
     this.onFiltersChange = this.onFiltersChange.bind(this);
+    this.onSortChange = this.onSortChange.bind(this);
   }
 
   findOpenedItem(items = this.state.items){
@@ -105,11 +108,21 @@ export default class App extends React.Component {
     this.setState({filters: filters});
   }
 
+  onSortChange(sort){
+    console.log('on change', sort);
+    this.setState({sort: sort});
+  }
+
   render(){
     var items = this.state.items.filter(i => {
       var text = this.state.filters.text;
       return text ? (!i.id || StringUtils.isContains(i.text, text) || StringUtils.isContains(i.title, text)) : true;
     });
+    console.log('on render', this.state.sort);
+    items = items.sort((i1, i2) => {
+      var field = this.state.sort.field;
+      return i1[field] > i2[field] ? 1 : (i1[field] < i2[field] ? -1 : 0);
+    })
     var openedItem = this.findOpenedItem();
     return (
       <div id="App">
@@ -118,8 +131,13 @@ export default class App extends React.Component {
           <button id="openNew" onClick={this.onOpenNew}>Open new</button>
         </div>
         <div id="body">
-          <div id="filtersCont">
-            <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange}></Filters>
+          <div id="filtersAndSortCont">
+            <div id="filtersCont">
+              <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange}></Filters>
+            </div>
+            <div id="sortCont">
+            <Sort sort={this.state.sort} onSortChange={this.onSortChange}></Sort>
+            </div>
           </div>
           <div id="listCont">
             <List items={items} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
