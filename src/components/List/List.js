@@ -17,7 +17,7 @@ export default class List extends React.Component {
       var aside = (<div className="aside">
         <span className="dateOfCreate">{DateUtils.toStr(item.dateOfCreate)}</span>
         <span className="dateOfUpdate">{DateUtils.toStr(item.dateOfUpdate)}</span>
-        <button className="delete" onClick={(e) => this.onDelete(e, item)}>X</button>
+        <button className="delete" onClick={(e) => window.confirm('Delete this item?') && this.onDelete(e, item)}>X</button>
       </div>);
       return (
         <li key={item.id} data-id={item.id} className={opened} onClick={() => this.props.onOpenItem(item)}>
