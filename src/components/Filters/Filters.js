@@ -16,7 +16,7 @@ export default class Filters extends React.Component {
   render(){
     return (
       <form id="Filters">
-        <label>Filters</label>:{' '}
+        <label>Filter</label>:{' '}
         <span className="fieldInline">
           <label>by title & text</label>{' '}
           <input type="text" id="textFilter" value={this.state.text} onInput={(e) => this.onFiltersChange({text: e.target.value})} />

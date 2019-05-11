@@ -14,19 +14,29 @@ export default class Sort extends React.Component {
   }
 
   render(){
-    var options = [
+    var fields = [
       {id: 'dateOfUpdate', name: 'date of update'}, 
       {id: 'dateOfCreate', name: 'date of create'}
     ];
-    var optionNodes = options.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
+    var fieldOptions = fields.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
+    var directions = [ 
+      {id: 'desc', name: 'descending'},
+      {id: 'asc', name: 'ascending'}
+    ];
+    var directionOptions = directions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     return (
       <form id="Sort">
         <label>Sort</label>:{' '}
         <span className="fieldInline">
-          <label>by field</label>{' '}
+          <label>by</label>{' '}
           <select id="sortField" value={this.state.field} onChange={(e) => this.onSortChange({field: e.target.value})}>
-            {optionNodes}
-          </select>
+            {fieldOptions}
+          </select>{' '}
+          <label>in</label>{' '}
+          <select id="sortDirection" value={this.state.direction} onChange={(e) => this.onSortChange({direction: e.target.value})}>
+            {directionOptions}
+          </select>{' '}
+          <label>order</label>
         </span>
       </form>
     );

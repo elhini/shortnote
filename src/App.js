@@ -19,7 +19,7 @@ export default class App extends React.Component {
     this.state = {
       items: items,
       filters: {},
-      sort: {field: 'dateOfUpdate'}
+      sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -109,7 +109,7 @@ export default class App extends React.Component {
   }
 
   onSortChange(sort){
-    console.log('on change', sort);
+    sort = Object.assign({}, this.state.sort, sort);
     this.setState({sort: sort});
   }
 
@@ -118,10 +118,11 @@ export default class App extends React.Component {
       var text = this.state.filters.text;
       return text ? (!i.id || StringUtils.isContains(i.text, text) || StringUtils.isContains(i.title, text)) : true;
     });
-    console.log('on render', this.state.sort);
+    var field = this.state.sort.field;
+    var sign = this.state.sort.direction === 'asc' ? 1 : -1;
+    console.log(this.state.sort);
     items = items.sort((i1, i2) => {
-      var field = this.state.sort.field;
-      return i1[field] > i2[field] ? 1 : (i1[field] < i2[field] ? -1 : 0);
+      return i1[field] > i2[field] ? sign : (i1[field] < i2[field] ? -sign : 0);
     })
     var openedItem = this.findOpenedItem();
     return (
