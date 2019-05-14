@@ -113,17 +113,26 @@ export default class App extends React.Component {
     this.setState({sort: sort});
   }
 
-  render(){
-    var items = this.state.items.filter(i => {
+  filter(items){
+    return items.filter(i => {
       var text = this.state.filters.text;
-      return text ? (!i.id || StringUtils.isContains(i.text, text) || StringUtils.isContains(i.title, text)) : true;
+      var matchByTitle = text && StringUtils.isContains(i.title, text);
+      var matchByText = text && StringUtils.isContains(i.text, text);
+      return text ? (!i.id || matchByTitle || matchByText) : true;
     });
+  }
+
+  sort(items){
     var field = this.state.sort.field;
     var sign = this.state.sort.direction === 'asc' ? 1 : -1;
-    console.log(this.state.sort);
-    items = items.sort((i1, i2) => {
+    return items.sort((i1, i2) => {
       return i1[field] > i2[field] ? sign : (i1[field] < i2[field] ? -sign : 0);
     })
+  }
+
+  render(){
+    var filteredItems = this.filter(this.state.items);
+    var sortedItems = this.sort(filteredItems);
     var openedItem = this.findOpenedItem();
     return (
       <div id="App">
@@ -141,7 +150,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <div id="listCont">
-            <List items={items} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
+            <List items={sortedItems} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
           </div>
           <div id="formCont">
             <Form item={openedItem} onSubmit={this.onSubmit}></Form>
