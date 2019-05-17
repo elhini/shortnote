@@ -1,6 +1,6 @@
 export default class AsyncUtils {
     static sendJSON(url, method, params, callback) {
-        var body = JSON.stringify(params);
+        var body = params ? JSON.stringify(params) : null;
         fetch(url, {
             method: method,
             headers: {

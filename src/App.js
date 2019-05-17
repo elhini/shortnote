@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import ls from './utils/LocalStorage';
 import NotesApiClient from './api-clients/notes';
 import StringUtils from './utils/StringUtils';
 import Filters from './components/Filters/Filters';
@@ -11,14 +10,10 @@ import List from './components/List/List';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    var items = ls.get();
-    items = items.filter(i => i.id);
-    var openedItem = this.findOpenedItem(items);
     var emptyItem = this.buildEmptyItem();
-    items.unshift(emptyItem);
-    items.forEach(i => i.opened = openedItem ? i.id === openedItem.id : !i.id);
+    emptyItem.opened = true;
     this.state = {
-      items: items,
+      items: [emptyItem],
       filters: {},
       sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
@@ -29,6 +24,17 @@ export default class App extends React.Component {
     this.onFiltersChange = this.onFiltersChange.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
     this.onItemAddedOrUpdated = this.onItemAddedOrUpdated.bind(this);
+  }
+
+  componentDidMount() {
+    NotesApiClient.getAll(items => {
+      items = items.filter(i => i.id);
+      var openedItem = this.findOpenedItem(items);
+      var emptyItem = this.buildEmptyItem();
+      items.unshift(emptyItem);
+      items.forEach(i => i.opened = openedItem ? i.id === openedItem.id : !i.id);
+      this.setState({items: items});
+    });
   }
 
   findOpenedItem(items = this.state.items){
@@ -99,12 +105,7 @@ export default class App extends React.Component {
   }
 
   setItems(items){
-    this.saveToStore(items);
     this.setState({items: items});
-  }
-
-  saveToStore(items){
-    ls.set(items.filter(i => i.id));
   }
 
   onOpenItem(item){

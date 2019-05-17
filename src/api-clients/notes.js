@@ -6,8 +6,23 @@ export default class NotesApiClient {
             cb(res);
         });
     }
+    static getAll(cb) {
+        AsyncUtils.sendJSON('/api/notes', 'GET', null, (res) => {
+            cb(res);
+        });
+    }
+    static get(id, cb) {
+        AsyncUtils.sendJSON('/api/notes/'+id, 'GET', null, (res) => {
+            cb(res);
+        });
+    }
     static update(note, cb) {
         AsyncUtils.sendJSON('/api/notes/'+note._id, 'PUT', note, (res) => {
+            cb(res);
+        });
+    }
+    static remove(id, cb) {
+        AsyncUtils.sendJSON('/api/notes/'+id, 'DELETE', null, (res) => {
             cb(res);
         });
     }
