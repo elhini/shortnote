@@ -120,7 +120,9 @@ export default class App extends React.Component {
       this.findEmptyItem().opened = true;
     }
     items = items.filter(i => i.id !== item.id);
-    this.setItems(items);
+    NotesApiClient.remove(item, res => {
+      this.setItems(items);
+    });
   }
 
   onFiltersChange(filters){

@@ -17,7 +17,6 @@ module.exports = function(app, db) {
             if (err) {
                 res.send({ 'error': err });
             } else {
-                console.log(result);
                 res.send(result);
             }
         });
@@ -47,11 +46,12 @@ module.exports = function(app, db) {
     });
     app.delete(url+'/:id', (req, res) => {
         const query = { '_id': new ObjectID(req.params.id) };
-        db.collection('notes').remove(query, (err, result) => {
+        db.collection('notes').deleteOne(query, (err, result) => {
+            console.log(err);
             if (err) {
                 res.send({ 'error': err });
             } else {
-                res.send('Note ' + req.params.id + ' deleted!');
+                res.send({ 'deleted': true });
             }
         });
     });

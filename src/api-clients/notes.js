@@ -21,8 +21,8 @@ export default class NotesApiClient {
             cb(res);
         });
     }
-    static remove(id, cb) {
-        AsyncUtils.sendJSON('/api/notes/'+id, 'DELETE', null, (res) => {
+    static remove(item, cb) {
+        AsyncUtils.sendJSON('/api/notes/'+item._id, 'DELETE', null, (res) => {
             cb(res);
         });
     }
