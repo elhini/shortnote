@@ -1,0 +1,57 @@
+var ObjectID = require('mongodb').ObjectID;
+var url = '/api/notes';
+module.exports = function(app, db) {
+    app.post(url, (req, res) => {
+        console.log(req.body);
+        const note = { title: req.body.title, text: req.body.text };
+        db.collection('notes').insertOne(note, (err, result) => {
+            if (err) { 
+                res.send({ 'error': err }); 
+            } else {
+                res.send(result.ops[0]);
+            }
+        });
+    });
+    app.get(url, (req, res) => {
+        const query = {}; // all
+        db.collection('notes').find(query).toArray((err, result) => {
+            if (err) {
+                res.send({ 'error': err });
+            } else {
+                console.log(result);
+                res.send(result);
+            }
+        });
+    });
+    app.get(url+'/:id', (req, res) => {
+        const query = { '_id': new ObjectID(req.params.id) };
+        db.collection('notes').findOne(query, (err, result) => {
+            if (err) {
+                res.send({ 'error': err });
+            } else {
+                res.send(result);
+            }
+        });
+    });
+    app.put (url+'/:id', (req, res) => {
+        const query = { '_id': new ObjectID(req.params.id) };
+        const note = { title: req.body.title, text: req.body.text };
+        db.collection('notes').update(query, note, (err, result) => {
+            if (err) {
+                res.send({ 'error': err });
+            } else {
+                res.send(note);
+            }
+        });
+    });
+    app.delete(url+'/:id', (req, res) => {
+        const query = { '_id': new ObjectID(req.params.id) };
+        db.collection('notes').remove(query, (err, result) => {
+            if (err) {
+                res.send({ 'error': err });
+            } else {
+                res.send('Note ' + req.params.id + ' deleted!');
+            }
+        });
+    });
+};

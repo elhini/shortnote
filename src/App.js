@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import ls from './utils/LocalStorage';
+import AsyncUtils from './utils/AsyncUtils';
 import StringUtils from './utils/StringUtils';
 import Filters from './components/Filters/Filters';
 import Sort from './components/Sort/Sort';
@@ -76,8 +77,15 @@ export default class App extends React.Component {
     }
     items.forEach(i => i.opened = false);
     items.push(item);
+    this.addItem(item);
     items.sort((a, b) => a.id - b.id);
     this.setItems(items);
+  }
+
+  addItem(item){
+    AsyncUtils.sendJSON('/api/notes', 'POST', item, (res) => {
+      console.log(res);
+    });
   }
 
   setItems(items){
