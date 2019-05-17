@@ -4,7 +4,7 @@ const bodyParser     = require('body-parser');
 const dbConfig       = require('./config/db');
 const app            = express();
 const port           = 8000;
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 MongoClient.connect(dbConfig.url, { useNewUrlParser: true }, (err, client) => {
     if (err) return console.log(err);
     var db = client.db('shortnote');

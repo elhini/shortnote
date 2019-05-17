@@ -2,8 +2,7 @@ var ObjectID = require('mongodb').ObjectID;
 var url = '/api/notes';
 module.exports = function(app, db) {
     app.post(url, (req, res) => {
-        console.log(req.body);
-        const note = { title: req.body.title, text: req.body.text };
+        const note = req.body;
         db.collection('notes').insertOne(note, (err, result) => {
             if (err) { 
                 res.send({ 'error': err }); 
@@ -33,9 +32,9 @@ module.exports = function(app, db) {
             }
         });
     });
-    app.put (url+'/:id', (req, res) => {
+    app.put(url+'/:id', (req, res) => {
         const query = { '_id': new ObjectID(req.params.id) };
-        const note = { title: req.body.title, text: req.body.text };
+        const note = req.body;
         db.collection('notes').update(query, note, (err, result) => {
             if (err) {
                 res.send({ 'error': err });
