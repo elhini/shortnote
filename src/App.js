@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import ls from './utils/LocalStorage';
-import AsyncUtils from './utils/AsyncUtils';
+import NotesApiClient from './api-clients/notes';
 import StringUtils from './utils/StringUtils';
 import Filters from './components/Filters/Filters';
 import Sort from './components/Sort/Sort';
@@ -28,6 +28,7 @@ export default class App extends React.Component {
     this.onDeleteItem = this.onDeleteItem.bind(this);
     this.onFiltersChange = this.onFiltersChange.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
+    this.onItemAddedOrUpdated = this.onItemAddedOrUpdated.bind(this);
   }
 
   findOpenedItem(items = this.state.items){
@@ -72,20 +73,29 @@ export default class App extends React.Component {
     item.title = form.title.value;
     item.text = form.text.value;
     item.opened = true;
+    items.forEach(i => i.opened = i.id === id);
     if (id){
-      items = items.filter(i => i.id !== id);
+      this.updateItem(item, this.onItemAddedOrUpdated);
     }
-    items.forEach(i => i.opened = false);
-    items.push(item);
-    this.addItem(item);
-    items.sort((a, b) => a.id - b.id);
-    this.setItems(items);
+    else {
+      this.createItem(item, this.onItemAddedOrUpdated);
+    }
   }
 
-  addItem(item){
-    AsyncUtils.sendJSON('/api/notes', 'POST', item, (res) => {
-      console.log(res);
-    });
+  createItem(item, cb){
+    NotesApiClient.create(item, cb);
+  }
+
+  updateItem(item, cb){
+    NotesApiClient.update(item, cb);
+  }
+
+  onItemAddedOrUpdated(item){
+    var items = this.state.items;
+    items = items.filter(i => i.id !== item.id);
+    items.push(item);
+    items.sort((a, b) => a.id - b.id);
+    this.setItems(items);
   }
 
   setItems(items){

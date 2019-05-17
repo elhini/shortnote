@@ -35,7 +35,9 @@ module.exports = function(app, db) {
     app.put(url+'/:id', (req, res) => {
         const query = { '_id': new ObjectID(req.params.id) };
         const note = req.body;
-        db.collection('notes').update(query, note, (err, result) => {
+        _note = Object.assign({}, note);
+        delete _note._id;
+        db.collection('notes').updateOne(query, { $set: _note }, (err, result) => {
             if (err) {
                 res.send({ 'error': err });
             } else {
