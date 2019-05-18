@@ -2,6 +2,8 @@ Lite and simple app for short notes
 
 ## Features:
 
+- cloud DB storage
+
 ### Fields:
 - title
 - text
@@ -9,8 +11,6 @@ Lite and simple app for short notes
 - update date
 
 ### Functions:
-- saving in localStorage
-- keeping last opened item
 - filtering
 - sorting
 
@@ -24,7 +24,6 @@ Lite and simple app for short notes
 
 ### Functions:
 - routing (link to note)
-- saving to remote DB (on server/in cloud)
 - auth (by login/password)
 - admin panel
 - multiple accounts (users)
