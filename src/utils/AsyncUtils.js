@@ -9,7 +9,13 @@ export default class AsyncUtils {
             },
             body: body
         })
-        .then(res => res.json())
+        .then(res => {
+            var errorStr = 
+                'status: ' + res.status + ', ' + 
+                'statusText: ' + res.statusText + ', ' + 
+                'url: ' + res.url;
+            return res.status === 200 ? res.json() : {error: errorStr};
+        })
         .then(res => callback(res))
         .catch(error => console.error('Error:', error));
     }
