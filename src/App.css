@@ -14,7 +14,8 @@
 }
 
 #App #body {
-  overflow: hidden;
+  display: flex;
+  flex-direction: row;
 }
 
 #App #filtersCont,
@@ -28,15 +29,14 @@
 
 #App #listCont,
 #App #formCont {
-  float: left;
   box-sizing: border-box;
 }
 
-#App #listCont {
-  width: 33%;
+#App #aside {
+  flex: 1;
 }
 
 #App #formCont {
-  width: 66%;
+  flex: 2;
   margin-left: 1%;
 }

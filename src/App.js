@@ -60,7 +60,7 @@ export default class App extends React.Component {
     this.setItems(items);
   }
 
-  onSubmit(e){
+  onSubmit(e, formCmp){
     e.preventDefault();
     var form = e.target;
     if (!form.title.value && !form.text.value){
@@ -78,6 +78,7 @@ export default class App extends React.Component {
     item.dateOfUpdate = new Date();
     item.title = form.title.value;
     item.text = form.text.value;
+    item.tags = formCmp.tagsSelect.state.value;
     item.opened = true;
     items.forEach(i => i.opened = i.id === id);
     if (id){
@@ -151,6 +152,13 @@ export default class App extends React.Component {
     })
   }
 
+  // TODO: load from DB
+  tags = [
+    { value: 'private', label: 'Личное' },
+    { value: 'work', label: 'Работа' },
+    { value: 'family', label: 'Семья' }
+  ];
+
   render(){
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
@@ -162,19 +170,21 @@ export default class App extends React.Component {
           <button id="openNew" onClick={this.onOpenNew}>Open new</button>
         </div>
         <div id="body">
-          <div id="filtersAndSortCont">
-            <div id="filtersCont">
-              <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange}></Filters>
+          <div id="aside">
+            <div id="filtersAndSortCont">
+              <div id="filtersCont">
+                <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange}></Filters>
+              </div>
+              <div id="sortCont">
+              <Sort sort={this.state.sort} onSortChange={this.onSortChange}></Sort>
+              </div>
             </div>
-            <div id="sortCont">
-            <Sort sort={this.state.sort} onSortChange={this.onSortChange}></Sort>
+            <div id="listCont">
+              <List items={sortedItems} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
             </div>
-          </div>
-          <div id="listCont">
-            <List items={sortedItems} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
           </div>
           <div id="formCont">
-            <Form item={openedItem} onSubmit={this.onSubmit}></Form>
+            <Form item={openedItem} onSubmit={this.onSubmit} tags={this.tags}></Form>
           </div>
         </div>
       </div>
