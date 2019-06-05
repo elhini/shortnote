@@ -9,11 +9,11 @@ export default class List extends React.Component {
   }
 
   buildNodes(){
-    var nodes = this.props.items.map(function(item){
+    var nodes = this.props.items.map(item => {
       if (!item.id && this.props.items.length > 1){
         return null;
       }
-      var opened = item.opened ? 'opened' : '';
+      var opened = item.id === this.props.item.id ? 'opened' : '';
       var aside = (<div className="aside">
         <span className="dateOfCreate">{DateUtils.toStr(item.dateOfCreate)}</span>
         <span className="dateOfUpdate">{DateUtils.toStr(item.dateOfUpdate)}</span>
@@ -26,7 +26,7 @@ export default class List extends React.Component {
           <div className="text">{item.text}</div>
         </li>
       );
-    }, this);
+    });
     return nodes;
   }
 

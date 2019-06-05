@@ -11,7 +11,6 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     var emptyItem = this.buildEmptyItem();
-    emptyItem.opened = true;
     this.state = {
       item: emptyItem,
       items: [emptyItem],
@@ -33,20 +32,21 @@ export default class App extends React.Component {
   componentDidMount() {
     NotesApiClient.getAll(items => {
       items = items.filter(i => i.id);
-      var openedItem = this.findOpenedItem(items);
+      var openedItem = items.reduce((last, item) => {
+        return (!last || item.dateOfUpdate > last.dateOfUpdate) ? item : last;
+      }, null);
       var emptyItem = this.buildEmptyItem();
       items.unshift(emptyItem);
-      items.forEach(i => i.opened = openedItem ? i.id === openedItem.id : !i.id);
       this.setState({items: items, item: openedItem || emptyItem});
     });
   }
 
   findOpenedItem(items = this.state.items){
-    return items.find(i => i.opened);
+    return items.find(i => i.id === this.state.item.id);
   }
 
-  findEmptyItem(){
-    return this.state.items.find(i => !i.id);
+  findEmptyItem(items = this.state.items){
+    return items.find(i => !i.id);
   }
 
   buildEmptyItem(){
@@ -60,7 +60,6 @@ export default class App extends React.Component {
       emptyItem = this.buildEmptyItem();
       items.unshift(emptyItem);
     }
-    items.forEach(i => i.opened = !i.id);
     this.setState({items: items, item: emptyItem});
   }
 
@@ -83,8 +82,6 @@ export default class App extends React.Component {
     item.title = form.title.value;
     item.text = form.text.value;
     item.tags = formCmp.state.tags;
-    item.opened = true;
-    items.forEach(i => i.opened = i.id === id);
     if (id){
       this.updateItem(item, this.onItemAddedOrUpdated);
     }
@@ -111,19 +108,16 @@ export default class App extends React.Component {
 
   onOpenItem(item){
     var items = this.state.items;
-    items.forEach(i => i.opened = i.id === item.id);
     this.setState({items: items, item: item});
   }
 
   onDeleteItem(item){
     var items = this.state.items;
     var emptyItem = this.findEmptyItem();
-    if (item.opened){
-      emptyItem.opened = true;
-    }
     items = items.filter(i => i.id !== item.id);
     NotesApiClient.remove(item, res => {
-      this.setState({items: items, item: item.opened ? emptyItem : this.item});
+      var openedItem = item.id === this.state.item.id ? emptyItem : this.state.item;
+      this.setState({items: items, item: openedItem});
     });
   }
 
@@ -159,7 +153,8 @@ export default class App extends React.Component {
   }
 
   onCreateTag(tagName) {
-    var newID = Math.max.apply(Math, this.tags.map(t => t.value)) + 1
+    var maxID = Math.max.apply(Math, this.tags.map(t => t.value));
+    var newID = maxID < 0 ? 1 : maxID + 1;
     var tag = { value: newID, label: tagName };
     this.tags.push(tag);
     var item = this.state.item;
@@ -197,7 +192,7 @@ export default class App extends React.Component {
               </div>
             </div>
             <div id="listCont">
-              <List items={sortedItems} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
+              <List items={sortedItems} item={this.state.item} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
             </div>
           </div>
           <div id="formCont">
