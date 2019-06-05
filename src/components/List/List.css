@@ -48,3 +48,13 @@
   margin-left: 10px;
   color: #999;
 }
+
+#List li .tags {
+  margin-top: 10px;
+}  
+#List li .tag {
+  padding: 2px 4px;
+  color: #888;
+  background: #eee;
+  margin-left: 5px;
+}

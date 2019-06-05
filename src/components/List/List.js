@@ -14,10 +14,12 @@ export default class List extends React.Component {
         return null;
       }
       var opened = item.id === this.props.item.id ? 'opened' : '';
+      var tags = item.tags.map(tag => <span className="tag" data-id="{tag.value}" key={tag.value}>{tag.label}</span>);
       var aside = (<div className="aside">
         <span className="dateOfCreate">{DateUtils.toStr(item.dateOfCreate)}</span>
         <span className="dateOfUpdate">{DateUtils.toStr(item.dateOfUpdate)}</span>
         <button className="delete" onClick={(e) => window.confirm('Delete this item?') && this.onDelete(e, item)}>X</button>
+        <div className="tags">{tags}</div>
       </div>);
       return (
         <li key={item.id} data-id={item.id} className={opened} onClick={() => this.props.onOpenItem(item)}>
