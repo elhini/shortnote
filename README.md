@@ -9,6 +9,7 @@ Lite and simple app for short notes
 - text
 - create date
 - update date
+- tags
 
 ### Functions:
 - filtering
@@ -16,10 +17,9 @@ Lite and simple app for short notes
 
 ## Plans:
 
-- design (bootstrap/materialUI)
+- design (bootstrap/material-UI)
 
 ### Fields:
-- label/tag
 - group/category (with hierarchy)
 
 ### Functions:
