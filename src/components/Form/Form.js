@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-select';
+import Creatable from 'react-select/creatable';
 import './Form.css';
 
 export default class Form extends React.Component {
@@ -8,7 +8,6 @@ export default class Form extends React.Component {
     this.state = props.item;
     this.onTitleChange = this.onTitleChange.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
-    this.onTagsChange = this.onTagsChange.bind(this);
   }
   
   onTitleChange(e) {
@@ -19,12 +18,8 @@ export default class Form extends React.Component {
     this.setState({text: e.target.value});
   }
 
-  onTagsChange(selectedTags) {
-    this.setState({tags: selectedTags});
-  }
-
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.item.id !== prevState.id) {
+    if (nextProps.item.id !== prevState.id || nextProps.item.tags !== prevState.tags) {
       return nextProps.item; // <- this is setState equivalent
     }
     return null;
@@ -47,7 +42,8 @@ export default class Form extends React.Component {
           <textarea id="text" value={this.state.text} onChange={this.onTextChange}></textarea>
         </div>
         <div className="fieldBlock">
-          <Select id="tags" isMulti options={this.props.tags} value={this.state.tags} onChange={this.onTagsChange} ref={c => this.tagsSelect = c}></Select>
+          <Creatable id="tags" isMulti options={this.props.tags} value={this.state.tags} onChange={this.props.onTagsChange} ref={c => this.tagsSelect = c}
+                     onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
         <div className="fieldBlock">
           <button id="submit">Submit</button>

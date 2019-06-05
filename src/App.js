@@ -13,10 +13,12 @@ export default class App extends React.Component {
     var emptyItem = this.buildEmptyItem();
     emptyItem.opened = true;
     this.state = {
+      item: emptyItem,
       items: [emptyItem],
       filters: {},
       sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
+    this.tags = [];
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onOpenItem = this.onOpenItem.bind(this);
@@ -24,6 +26,8 @@ export default class App extends React.Component {
     this.onFiltersChange = this.onFiltersChange.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
     this.onItemAddedOrUpdated = this.onItemAddedOrUpdated.bind(this);
+    this.onCreateTag = this.onCreateTag.bind(this);
+    this.onTagsChange = this.onTagsChange.bind(this);
   }
 
   componentDidMount() {
@@ -33,7 +37,7 @@ export default class App extends React.Component {
       var emptyItem = this.buildEmptyItem();
       items.unshift(emptyItem);
       items.forEach(i => i.opened = openedItem ? i.id === openedItem.id : !i.id);
-      this.setState({items: items});
+      this.setState({items: items, item: openedItem || emptyItem});
     });
   }
 
@@ -46,7 +50,7 @@ export default class App extends React.Component {
   }
 
   buildEmptyItem(){
-    return {id: 0, title: '', text: ''};
+    return {id: 0, title: '', text: '', tags: []};
   }
 
   onOpenNew(){
@@ -57,7 +61,7 @@ export default class App extends React.Component {
       items.unshift(emptyItem);
     }
     items.forEach(i => i.opened = !i.id);
-    this.setItems(items);
+    this.setState({items: items, item: emptyItem});
   }
 
   onSubmit(e, formCmp){
@@ -78,7 +82,7 @@ export default class App extends React.Component {
     item.dateOfUpdate = new Date();
     item.title = form.title.value;
     item.text = form.text.value;
-    item.tags = formCmp.tagsSelect.state.value;
+    item.tags = formCmp.state.tags;
     item.opened = true;
     items.forEach(i => i.opened = i.id === id);
     if (id){
@@ -102,27 +106,24 @@ export default class App extends React.Component {
     items = items.filter(i => i.id !== item.id);
     items.push(item);
     items.sort((a, b) => a.id - b.id);
-    this.setItems(items);
-  }
-
-  setItems(items){
-    this.setState({items: items});
+    this.setState({items: items, item: item});
   }
 
   onOpenItem(item){
     var items = this.state.items;
     items.forEach(i => i.opened = i.id === item.id);
-    this.setItems(items);
+    this.setState({items: items, item: item});
   }
 
   onDeleteItem(item){
     var items = this.state.items;
+    var emptyItem = this.findEmptyItem();
     if (item.opened){
-      this.findEmptyItem().opened = true;
+      emptyItem.opened = true;
     }
     items = items.filter(i => i.id !== item.id);
     NotesApiClient.remove(item, res => {
-      this.setItems(items);
+      this.setState({items: items, item: item.opened ? emptyItem : this.item});
     });
   }
 
@@ -153,16 +154,32 @@ export default class App extends React.Component {
   }
 
   // TODO: load from DB
-  tags = [
-    { value: 'private', label: 'Личное' },
-    { value: 'work', label: 'Работа' },
-    { value: 'family', label: 'Семья' }
-  ];
+  buildTagList(){
+    this.tags = this.state.items.reduce((tags, item) => tags.concat(item.tags || []), []);
+  }
+
+  onCreateTag(tagName) {
+    var newID = Math.max.apply(Math, this.tags.map(t => t.value)) + 1
+    var tag = { value: newID, label: tagName };
+    this.tags.push(tag);
+    var item = this.state.item;
+    if (!item.tags){
+      item.tags = [];
+    }
+    item.tags.push(tag);
+    this.onItemAddedOrUpdated(item);
+  }
+
+  onTagsChange(tags) {
+    var item = this.state.item;
+    item.tags = tags;
+    this.onItemAddedOrUpdated(item);
+  }
 
   render(){
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
-    var openedItem = this.findOpenedItem();
+    this.buildTagList();
     return (
       <div id="App">
         <div id="head">
@@ -184,7 +201,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <div id="formCont">
-            <Form item={openedItem} onSubmit={this.onSubmit} tags={this.tags}></Form>
+            <Form item={this.state.item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onTagsChange={this.onTagsChange}></Form>
           </div>
         </div>
       </div>
