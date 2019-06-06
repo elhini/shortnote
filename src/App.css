@@ -11,20 +11,12 @@
 
 #App #openNew {
   margin-bottom: 10px;
+  margin-left: 10px;
 }
 
 #App #body {
   display: flex;
   flex-direction: row;
-}
-
-#App #filtersCont,
-#App #sortCont {
-  display: inline-block;
-}
-
-#App #sortCont {
-  margin-left: 10px;
 }
 
 #App #listCont,

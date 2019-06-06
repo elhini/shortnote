@@ -135,7 +135,15 @@ export default class App extends React.Component {
       var text = this.state.filters.text;
       var matchByTitle = text && StringUtils.isContains(i.title, text);
       var matchByText = text && StringUtils.isContains(i.text, text);
-      return text ? (!i.id || matchByTitle || matchByText) : true;
+      var tags = this.state.filters.tags;
+      var filterTagIDs = tags && tags.map(t => t.value);
+      console.log('filterTagIDs', filterTagIDs);
+      var itemTagIDs = i.tags && i.tags.map(t => t.value);
+      console.log('itemTagIDs', itemTagIDs);
+      var matchByTags = (filterTagIDs || []).filter(filterTagID => itemTagIDs.includes(filterTagID)).length;
+      console.log('matchByTags', matchByTags);
+      var useFilters = text || (tags && tags.length);
+      return useFilters ? (!i.id || matchByTitle || matchByText || matchByTags) : true;
     });
   }
 
@@ -178,14 +186,16 @@ export default class App extends React.Component {
     return (
       <div id="App">
         <div id="head">
-          <h1>ShortNote</h1>
-          <button id="openNew" onClick={this.onOpenNew}>Open new</button>
+          <h1>
+            ShortNote
+            <button id="openNew" onClick={this.onOpenNew}>Open new</button>
+          </h1>
         </div>
         <div id="body">
           <div id="aside">
             <div id="filtersAndSortCont">
               <div id="filtersCont">
-                <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange}></Filters>
+                <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange} tags={this.tags}></Filters>
               </div>
               <div id="sortCont">
               <Sort sort={this.state.sort} onSortChange={this.onSortChange}></Sort>
