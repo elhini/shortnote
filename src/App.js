@@ -26,7 +26,7 @@ export default class App extends React.Component {
     this.onSortChange = this.onSortChange.bind(this);
     this.onItemAddedOrUpdated = this.onItemAddedOrUpdated.bind(this);
     this.onCreateTag = this.onCreateTag.bind(this);
-    this.onTagsChange = this.onTagsChange.bind(this);
+    this.onItemChange = this.onItemChange.bind(this);
   }
 
   componentDidMount() {
@@ -165,9 +165,9 @@ export default class App extends React.Component {
     this.onItemAddedOrUpdated(item);
   }
 
-  onTagsChange(tags) {
+  onItemChange(field, value) {
     var item = this.state.item;
-    item.tags = tags;
+    item[field] = value;
     this.onItemAddedOrUpdated(item);
   }
 
@@ -196,7 +196,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <div id="formCont">
-            <Form item={this.state.item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onTagsChange={this.onTagsChange}></Form>
+            <Form item={this.state.item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange}></Form>
           </div>
         </div>
       </div>
