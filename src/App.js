@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import './App.css';
 import NotesApiClient from './api-clients/notes';
 import StringUtils from './utils/StringUtils';
@@ -173,22 +173,21 @@ export default class App extends React.Component {
     this.onItemAddedOrUpdated(item);
   }
 
-  onItemChange(field, value) {
-    var item = this.state.item;
-    item[field] = value;
+  onItemChange(item) {
+    // TODO: refactor this
     this.onItemAddedOrUpdated(item);
   }
 
   render(){
     return (
       <div id="App">
-        <div id="head">
-          <h1>
-            ShortNote
-            <button id="openNew" onClick={this.onOpenNew}>Open new</button>
-          </h1>
-        </div>
         <Router>
+          <div id="head">
+            <h1>
+              ShortNote
+              <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
+            </h1>
+          </div>
           <Route path={`/note/:id`} render={m => this.renderBody(m)} />
           <Route path={`/`}   exact render={m => this.renderBody(m)} />
         </Router>
@@ -197,7 +196,8 @@ export default class App extends React.Component {
   }
 
   renderBody({ match }){
-    var item = this.state.items.find(i => i._id === match.params.id);
+    var id = match.params.id === 'new' ? '' : match.params.id;
+    var item = match.params.id ? this.state.items.find(i => i._id === id) : null;
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
     this.buildTagList();
