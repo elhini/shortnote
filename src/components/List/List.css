@@ -23,6 +23,11 @@
   cursor: default;
 }
 
+#List li a {
+  text-decoration: none;
+  display: block;
+}
+
 #List li .title {
   min-height: 16px;
   margin-bottom: 16px;

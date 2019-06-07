@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import './App.css';
 import NotesApiClient from './api-clients/notes';
 import StringUtils from './utils/StringUtils';
@@ -20,7 +21,6 @@ export default class App extends React.Component {
     this.tags = [];
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onOpenItem = this.onOpenItem.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
     this.onFiltersChange = this.onFiltersChange.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
@@ -106,11 +106,6 @@ export default class App extends React.Component {
     this.setState({items: items, item: item});
   }
 
-  onOpenItem(item){
-    var items = this.state.items;
-    this.setState({items: items, item: item});
-  }
-
   onDeleteItem(item){
     var items = this.state.items;
     var emptyItem = this.findEmptyItem();
@@ -187,9 +182,6 @@ export default class App extends React.Component {
   }
 
   render(){
-    var filteredItems = this.filter(this.state.items);
-    var sortedItems = this.sort(filteredItems);
-    this.buildTagList();
     return (
       <div id="App">
         <div id="head">
@@ -198,23 +190,39 @@ export default class App extends React.Component {
             <button id="openNew" onClick={this.onOpenNew}>Open new</button>
           </h1>
         </div>
-        <div id="body">
-          <div id="aside">
-            <div id="filtersAndSortCont">
-              <div id="filtersCont">
-                <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange} tags={this.tags}></Filters>
-              </div>
-              <div id="sortCont">
+        <Router>
+          <Route path={`/note/:id`} component={this.renderBody.bind(this)} />
+          <Route path={`/`}   exact component={this.renderBody.bind(this)} />
+        </Router>
+      </div>
+    );
+  }
+
+  renderBody({ match }){
+    var item = this.state.items.find(i => i.id === parseInt(match.params.id));
+    var filteredItems = this.filter(this.state.items);
+    var sortedItems = this.sort(filteredItems);
+    this.buildTagList();
+    var form = item ? 
+      <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange}></Form> : 
+      null;
+    return (
+      <div id="body">
+        <div id="aside">
+          <div id="filtersAndSortCont">
+            <div id="filtersCont">
+              <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange} tags={this.tags}></Filters>
+            </div>
+            <div id="sortCont">
               <Sort sort={this.state.sort} onSortChange={this.onSortChange}></Sort>
-              </div>
-            </div>
-            <div id="listCont">
-              <List items={sortedItems} item={this.state.item} onOpenItem={this.onOpenItem} onDeleteItem={this.onDeleteItem}></List>
             </div>
           </div>
-          <div id="formCont">
-            <Form item={this.state.item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange}></Form>
+          <div id="listCont">
+            <List items={sortedItems} item={item} onDeleteItem={this.onDeleteItem}></List>
           </div>
+        </div>
+        <div id="formCont">
+          {form}
         </div>
       </div>
     );
