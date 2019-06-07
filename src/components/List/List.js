@@ -11,11 +11,11 @@ export default class List extends React.Component {
 
   buildNodes(){
     var nodes = this.props.items.map(item => {
-      if (!item.id && this.props.items.length > 1){
+      if (!item._id && this.props.items.length > 1){
         return null;
       }
-      var opened = this.props.item && this.props.item.id === item.id ? 'opened' : '';
-      var tags = item.tags.map(tag => <span className="tag" data-id="{tag.value}" key={tag.value}>{tag.label}</span>);
+      var opened = this.props.item && this.props.item._id === item._id ? 'opened' : '';
+      var tags = item.tags.map(tag => <span className="tag" data-id={tag.value} key={tag.value}>{tag.label}</span>);
       var aside = (<div className="aside">
         <span className="dateOfCreate">{DateUtils.toStr(item.dateOfCreate)}</span>
         <span className="dateOfUpdate">{DateUtils.toStr(item.dateOfUpdate)}</span>
@@ -23,10 +23,10 @@ export default class List extends React.Component {
         <div className="tags">{tags}</div>
       </div>);
       return (
-        <li key={item.id} data-id={item.id} className={opened}>
-          <Link to={'/note/' + item.id}>
-            {item.id ? aside : null}
-            <div className="title">{item.id ? item.title : 'No items found'}</div>
+        <li key={item._id} className={opened}>
+          <Link to={'/note/' + item._id}>
+            {item._id ? aside : null}
+            <div className="title">{item._id ? item.title : 'No items found'}</div>
             <div className="text">{item.text}</div>
           </Link>
         </li>

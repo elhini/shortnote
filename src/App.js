@@ -31,7 +31,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     NotesApiClient.getAll(items => {
-      items = items.filter(i => i.id);
+      items = items.filter(i => i._id);
       var openedItem = items.reduce((last, item) => {
         return (!last || item.dateOfUpdate > last.dateOfUpdate) ? item : last;
       }, null);
@@ -42,15 +42,15 @@ export default class App extends React.Component {
   }
 
   findOpenedItem(items = this.state.items){
-    return items.find(i => i.id === this.state.item.id);
+    return items.find(i => i._id === this.state.item._id);
   }
 
   findEmptyItem(items = this.state.items){
-    return items.find(i => !i.id);
+    return items.find(i => !i._id);
   }
 
   buildEmptyItem(){
-    return {id: 0, title: '', text: '', tags: []};
+    return {_id: '', title: '', text: '', tags: []};
   }
 
   onOpenNew(){
@@ -69,13 +69,12 @@ export default class App extends React.Component {
     if (!form.title.value && !form.text.value){
       return;
     }
-    var id = parseInt(form.id.value);
+    var id = form.id.value;
     var items = this.state.items;
     var item = id ?
-      items.find(i => i.id === id) : 
+      items.find(i => i._id === id) : 
       this.buildEmptyItem();
     if (!id){
-      item.id = Date.now();
       item.dateOfCreate = new Date();
     }
     item.dateOfUpdate = new Date();
@@ -100,18 +99,17 @@ export default class App extends React.Component {
 
   onItemAddedOrUpdated(item){
     var items = this.state.items;
-    items = items.filter(i => i.id !== item.id);
+    items = items.filter(i => i._id !== item._id);
     items.push(item);
-    items.sort((a, b) => a.id - b.id);
     this.setState({items: items, item: item});
   }
 
   onDeleteItem(item){
     var items = this.state.items;
     var emptyItem = this.findEmptyItem();
-    items = items.filter(i => i.id !== item.id);
+    items = items.filter(i => i._id !== item._id);
     NotesApiClient.remove(item, res => {
-      var openedItem = item.id === this.state.item.id ? emptyItem : this.state.item;
+      var openedItem = item._id === this.state.item._id ? emptyItem : this.state.item;
       this.setState({items: items, item: openedItem});
     });
   }
@@ -140,7 +138,7 @@ export default class App extends React.Component {
       var matchByTags = useTagsFilter ? itemTagIDs.some(itemTagID => filterTagIDs.includes(itemTagID)) : true;
       // match
       var useFilters = useTextFilter || useTagsFilter;
-      return useFilters && i.id 
+      return useFilters && i._id 
         ? (
           (useTextFilter ? matchByText : true) && 
           (useTagsFilter ? matchByTags : true)
@@ -199,7 +197,7 @@ export default class App extends React.Component {
   }
 
   renderBody({ match }){
-    var item = this.state.items.find(i => i.id === parseInt(match.params.id));
+    var item = this.state.items.find(i => i._id === match.params.id);
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
     this.buildTagList();
