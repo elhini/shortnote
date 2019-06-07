@@ -122,6 +122,7 @@ export default class App extends React.Component {
   }
 
   onFiltersChange(filters){
+    filters = Object.assign({}, this.state.filters, filters);
     this.setState({filters: filters});
   }
 
@@ -132,18 +133,24 @@ export default class App extends React.Component {
 
   filter(items){
     return items.filter(i => {
+      // text
       var text = this.state.filters.text;
-      var matchByTitle = text && StringUtils.isContains(i.title, text);
-      var matchByText = text && StringUtils.isContains(i.text, text);
+      var useTextFilter = !!text;
+      var matchByText = useTextFilter ? StringUtils.isContains(i.text, text) || StringUtils.isContains(i.title, text) : true;
+      // tags
       var tags = this.state.filters.tags;
-      var filterTagIDs = tags && tags.map(t => t.value);
-      console.log('filterTagIDs', filterTagIDs);
-      var itemTagIDs = i.tags && i.tags.map(t => t.value);
-      console.log('itemTagIDs', itemTagIDs);
-      var matchByTags = (filterTagIDs || []).filter(filterTagID => itemTagIDs.includes(filterTagID)).length;
-      console.log('matchByTags', matchByTags);
-      var useFilters = text || (tags && tags.length);
-      return useFilters ? (!i.id || matchByTitle || matchByText || matchByTags) : true;
+      var filterTagIDs = tags ? tags.map(t => t.value) : [];
+      var itemTagIDs = i.tags ? i.tags.map(t => t.value) : [];
+      var useTagsFilter = tags && !!tags.length;
+      var matchByTags = useTagsFilter ? itemTagIDs.some(itemTagID => filterTagIDs.includes(itemTagID)) : true;
+      // match
+      var useFilters = useTextFilter || useTagsFilter;
+      return useFilters && i.id 
+        ? (
+          (useTextFilter ? matchByText : true) && 
+          (useTagsFilter ? matchByTags : true)
+        )
+        : true;
     });
   }
 
