@@ -189,8 +189,8 @@ export default class App extends React.Component {
           </h1>
         </div>
         <Router>
-          <Route path={`/note/:id`} component={this.renderBody.bind(this)} />
-          <Route path={`/`}   exact component={this.renderBody.bind(this)} />
+          <Route path={`/note/:id`} render={m => this.renderBody(m)} />
+          <Route path={`/`}   exact render={m => this.renderBody(m)} />
         </Router>
       </div>
     );

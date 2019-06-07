@@ -14,11 +14,11 @@ export default class Filters extends React.Component {
         <label>Filter</label>:{' '}
         <span className="fieldInline">
           <label>by title & text</label>{' '}
-          <input type="text" id="textFilter" value={this.state.text} onChange={e => this.props.onFiltersChange({text: e.target.value})} />
+          <input type="text" id="textFilter" value={this.state.text} onChange={e => this.props.onFiltersChange({text: e.target.value})} key="textFilter" />
         </span>
         <span className="fieldInline">
           <label>by tags</label>{' '}
-          <Select id="tagsFilter" isMulti options={this.props.tags} onChange={v => this.props.onFiltersChange({tags: v})}></Select>
+          <Select id="tagsFilter" value={this.state.tags} isMulti options={this.props.tags} onChange={v => this.props.onFiltersChange({tags: v})}></Select>
         </span>
       </form>
     );

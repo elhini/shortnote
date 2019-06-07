@@ -15,19 +15,12 @@ export default class Form extends React.Component {
     return null;
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.title !== this.state.title || !this.state.title){
-      this.titleInput.focus();
-    }
-  }
-
   render(){
     return (
       <form id="Form" onSubmit={e => this.props.onSubmit(e, this)}>
         <input type="hidden" id="id" value={this.state._id} readOnly />
         <div className="fieldBlock">
-          <input type="text" id="title" value={this.state.title} onChange={e => this.props.onItemChange('title', e.target.value)} autoFocus={true} 
-            ref={c => this.titleInput = c} />
+          <input type="text" id="title" value={this.state.title} onChange={e => this.props.onItemChange('title', e.target.value)} key="title" />
         </div>
         <div className="fieldBlock">
           <textarea id="text" value={this.state.text} onChange={e => this.props.onItemChange('text', e.target.value)}></textarea>
