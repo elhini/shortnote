@@ -19,6 +19,7 @@ export default class App extends React.Component {
       sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
     this.tags = [];
+    this.history = null;
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
@@ -82,10 +83,10 @@ export default class App extends React.Component {
     item.text = form.text.value;
     item.tags = formCmp.state.tags;
     if (id){
-      this.updateItem(item, this.onItemAddedOrUpdated);
+      this.updateItem(item, i => this.onItemAddedOrUpdated(i, false));
     }
     else {
-      this.createItem(item, this.onItemAddedOrUpdated);
+      this.createItem(item, i => this.onItemAddedOrUpdated(i, true));
     }
   }
 
@@ -97,11 +98,12 @@ export default class App extends React.Component {
     NotesApiClient.update(item, cb);
   }
 
-  onItemAddedOrUpdated(item){
+  onItemAddedOrUpdated(item, isNew){
     var items = this.state.items;
     items = items.filter(i => i._id !== item._id);
     items.push(item);
     this.setState({items: items, item: item});
+    isNew && this.history.push('/note/' + item._id);
   }
 
   onDeleteItem(item){
@@ -110,7 +112,7 @@ export default class App extends React.Component {
     items = items.filter(i => i._id !== item._id);
     NotesApiClient.remove(item, res => {
       var openedItem = item._id === this.state.item._id ? emptyItem : this.state.item;
-      this.setState({items: items, item: openedItem});
+      this.setState({items: items, item: openedItem}); // TODO: redirect to /
     });
   }
 
@@ -195,7 +197,8 @@ export default class App extends React.Component {
     );
   }
 
-  renderBody({ match }){
+  renderBody({ match, history }){
+    this.history = history;
     var id = match.params.id === 'new' ? '' : match.params.id;
     var item = match.params.id ? this.state.items.find(i => i._id === id) : null;
     var filteredItems = this.filter(this.state.items);
