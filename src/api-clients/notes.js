@@ -2,7 +2,7 @@ import AsyncUtils from '../utils/AsyncUtils';
 
 function handleRes(cb, res){
     if (res.error){
-        alert(res.error); // TODO: show error without blocking UI
+        alert(JSON.stringify(res.error)); // TODO: show error without blocking UI
         return;
     }
     cb(res);
