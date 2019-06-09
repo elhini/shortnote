@@ -11,8 +11,16 @@
 }
 
 #App #openNew {
-  margin-bottom: 10px;
+  display: inline-block;
   margin-left: 10px;
+  border: #ccc 1px solid;
+  border-radius: 4px;
+  padding: 10px 8px;
+  text-decoration: none;
+  font-weight: normal;
+}
+#App #openNew:hover {
+  background: #eee;
 }
 
 #App #body {
