@@ -3,6 +3,7 @@ var url = '/api/notes';
 module.exports = function(app, db) {
     app.post(url, (req, res) => {
         const note = req.body;
+        delete note._id;
         db.collection('notes').insertOne(note, (err, result) => {
             if (err) { 
                 res.send({ 'error': err }); 
