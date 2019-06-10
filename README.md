@@ -1,29 +1,29 @@
 Lite and simple app for short notes
 
-## Features:
+## Current features:
 
 - cloud DB storage
 
-### Fields:
+#### Fields:
 - title
 - text
 - create date
 - update date
 - tags
 
-### Functions:
+#### Functions:
 - filtering
 - sorting
+- routing (link to note)
 
-## Plans:
+## Planned features:
 
 - design (bootstrap/material-UI)
 
-### Fields:
+#### Fields:
 - group/category (with hierarchy)
 
-### Functions:
-- routing (link to note)
+#### Functions:
 - auth (by login/password)
 - admin panel
 - multiple accounts (users)
