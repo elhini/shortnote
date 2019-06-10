@@ -16,7 +16,7 @@ export default class List extends React.Component {
         return null;
       }
       var opened = this.props.item && this.props.item._id === item._id ? 'opened' : '';
-      var tags = item.tags.map(tag => <span className="tag" data-id={tag.value} key={tag.value}>{tag.label}</span>);
+      var tags = (item.tags || []).map(tag => <span className="tag" data-id={tag.value} key={tag.value}>{tag.label}</span>);
       var aside = (<div className="aside">
         <span className="dateOfCreate">{DateUtils.toStr(item.dateOfCreate)}</span>
         <span className="dateOfUpdate">{DateUtils.toStr(item.dateOfUpdate)}</span>
