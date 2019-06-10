@@ -112,7 +112,8 @@ export default class App extends React.Component {
     items = items.filter(i => i._id !== item._id);
     NotesApiClient.remove(item, res => {
       var openedItem = item._id === this.state.item._id ? emptyItem : this.state.item;
-      this.setState({items: items, item: openedItem}); // TODO: redirect to /
+      this.setState({items: items, item: openedItem});
+      this.history.push('/');
     });
   }
 

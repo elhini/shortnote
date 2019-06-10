@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 export default class List extends React.Component {
   onDelete(e, item){
     e.stopPropagation(); 
+    e.preventDefault();
     this.props.onDeleteItem(item);
   }
 
