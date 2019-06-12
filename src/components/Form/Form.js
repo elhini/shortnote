@@ -36,7 +36,7 @@ export default class Form extends React.Component {
             onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
         <div className="fieldBlock">
-          <button id="submit">Submit</button>
+          <button id="submit" disabled={this.props.sending}>{this.props.sending ? 'Sending...' : 'Submit'}</button>
         </div>
       </form>
     );

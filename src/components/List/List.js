@@ -39,7 +39,7 @@ export default class List extends React.Component {
   render(){
     return (
       <ul id="List">
-        {this.buildNodes()}
+        {this.props.loading ? <li>Loading...</li> : this.buildNodes()}
       </ul>
     );
   }

@@ -31,6 +31,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({loadingList: true});
     NotesApiClient.getAll(items => {
       items = items.filter(i => i._id);
       var openedItem = items.reduce((last, item) => {
@@ -38,7 +39,7 @@ export default class App extends React.Component {
       }, null);
       var emptyItem = this.buildEmptyItem();
       items.unshift(emptyItem);
-      this.setState({items: items, item: openedItem || emptyItem});
+      this.setState({items: items, item: openedItem || emptyItem, loadingList: false});
     });
   }
 
@@ -82,6 +83,7 @@ export default class App extends React.Component {
     item.title = form.title.value;
     item.text = form.text.value;
     item.tags = formCmp.state.tags;
+    this.setState({sendingForm: true});
     if (id){
       this.updateItem(item, i => this.onItemAddedOrUpdated(i, false));
     }
@@ -102,7 +104,7 @@ export default class App extends React.Component {
     var items = this.state.items;
     items = items.filter(i => i._id !== item._id);
     items.push(item);
-    this.setState({items: items, item: item});
+    this.setState({items: items, item: item, sendingForm: false});
     isNew && this.history.push('/note/' + item._id);
   }
 
@@ -206,7 +208,8 @@ export default class App extends React.Component {
     var sortedItems = this.sort(filteredItems);
     this.buildTagList();
     var form = item ? 
-      <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange}></Form> : 
+      <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
+        sending={this.state.sendingForm}></Form> : 
       null;
     return (
       <div id="body">
@@ -220,7 +223,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <div id="listCont">
-            <List items={sortedItems} item={item} onDeleteItem={this.onDeleteItem}></List>
+            <List items={sortedItems} item={item} onDeleteItem={this.onDeleteItem} loading={this.state.loadingList}></List>
           </div>
         </div>
         <div id="formCont">
