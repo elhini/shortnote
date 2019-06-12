@@ -11,10 +11,9 @@ import List from './components/List/List';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    var emptyItem = this.buildEmptyItem();
     this.state = {
-      item: emptyItem,
-      items: [emptyItem],
+      item: null,
+      items: [],
       filters: {},
       sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
@@ -33,22 +32,8 @@ export default class App extends React.Component {
   componentDidMount() {
     this.setState({loadingList: true});
     NotesApiClient.getAll(items => {
-      items = items.filter(i => i._id);
-      var openedItem = items.reduce((last, item) => {
-        return (!last || item.dateOfUpdate > last.dateOfUpdate) ? item : last;
-      }, null);
-      var emptyItem = this.buildEmptyItem();
-      items.unshift(emptyItem);
-      this.setState({items: items, item: openedItem || emptyItem, loadingList: false});
+      this.setState({items: items, loadingList: false});
     });
-  }
-
-  findOpenedItem(items = this.state.items){
-    return items.find(i => i._id === this.state.item._id);
-  }
-
-  findEmptyItem(items = this.state.items){
-    return items.find(i => !i._id);
   }
 
   buildEmptyItem(){
@@ -56,13 +41,8 @@ export default class App extends React.Component {
   }
 
   onOpenNew(){
-    var items = this.state.items;
-    var emptyItem = this.findEmptyItem();
-    if (!emptyItem){
-      emptyItem = this.buildEmptyItem();
-      items.unshift(emptyItem);
-    }
-    this.setState({items: items, item: emptyItem});
+    var emptyItem = this.buildEmptyItem();
+    this.setState({item: emptyItem});
   }
 
   onSubmit(e, formCmp){
@@ -72,10 +52,7 @@ export default class App extends React.Component {
       return;
     }
     var id = form.id.value;
-    var items = this.state.items;
-    var item = id ?
-      items.find(i => i._id === id) : 
-      this.buildEmptyItem();
+    var item = this.state.item;
     if (!id){
       item.dateOfCreate = new Date();
     }
@@ -102,7 +79,9 @@ export default class App extends React.Component {
 
   onItemAddedOrUpdated(item, isNew){
     var items = this.state.items;
-    items = items.filter(i => i._id !== item._id);
+    if (!isNew){
+      items = items.filter(i => i._id !== item._id); // remove old version
+    }
     items.push(item);
     this.setState({items: items, item: item, sendingForm: false});
     isNew && this.history.push('/note/' + item._id);
@@ -110,10 +89,9 @@ export default class App extends React.Component {
 
   onDeleteItem(item){
     var items = this.state.items;
-    var emptyItem = this.findEmptyItem();
     items = items.filter(i => i._id !== item._id);
     NotesApiClient.remove(item, res => {
-      var openedItem = item._id === this.state.item._id ? emptyItem : this.state.item;
+      var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
       this.setState({items: items, item: openedItem});
       this.history.push('/');
     });
@@ -170,7 +148,7 @@ export default class App extends React.Component {
     var newID = maxID < 0 ? 1 : maxID + 1;
     var tag = { value: newID, label: tagName };
     this.tags.push(tag);
-    var item = this.state.item;
+    var item = this.state.item || this.buildEmptyItem();
     if (!item.tags){
       item.tags = [];
     }
@@ -202,8 +180,8 @@ export default class App extends React.Component {
 
   renderBody({ match, history }){
     this.history = history;
-    var id = match.params.id === 'new' ? '' : match.params.id;
-    var item = match.params.id ? this.state.items.find(i => i._id === id) : null;
+    var id = match.params.id;
+    var item = id ? (id === 'new' ? (this.state.item || this.buildEmptyItem()) : this.state.items.find(i => i._id === id)) : null;
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
     this.buildTagList();
