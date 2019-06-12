@@ -4,6 +4,11 @@ import DateUtils from '../../utils/DateUtils';
 import { Link } from "react-router-dom";
 
 export default class List extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onDelete = this.onDelete.bind(this);
+  }
+
   onDelete(e, item){
     e.stopPropagation(); 
     e.preventDefault();
