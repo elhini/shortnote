@@ -24,7 +24,6 @@ export default class App extends React.Component {
     this.onDeleteItem = this.onDeleteItem.bind(this);
     this.onFiltersChange = this.onFiltersChange.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
-    this.onItemAddedOrUpdated = this.onItemAddedOrUpdated.bind(this);
     this.onCreateTag = this.onCreateTag.bind(this);
     this.onItemChange = this.onItemChange.bind(this);
   }
@@ -62,10 +61,10 @@ export default class App extends React.Component {
     item.tags = formCmp.state.tags;
     this.setState({sendingForm: true});
     if (id){
-      this.updateItem(item, i => this.onItemAddedOrUpdated(i, false));
+      this.updateItem(item, i => this.onItemChange(i, false));
     }
     else {
-      this.createItem(item, i => this.onItemAddedOrUpdated(i, true));
+      this.createItem(item, i => this.onItemChange(i, true));
     }
   }
 
@@ -77,7 +76,7 @@ export default class App extends React.Component {
     NotesApiClient.update(item, cb);
   }
 
-  onItemAddedOrUpdated(item, isNew){
+  onItemChange(item, isNew){
     var items = this.state.items;
     if (!isNew){
       items = items.filter(i => i._id !== item._id); // remove old version
@@ -140,7 +139,7 @@ export default class App extends React.Component {
 
   // TODO: load from DB
   buildTagList(){
-    this.tags = this.state.items.reduce((tags, item) => tags.concat(item.tags || []), []);
+    return this.state.items.reduce((tags, item) => tags.concat(item.tags || []), []);
   }
 
   onCreateTag(tagName) {
@@ -153,12 +152,7 @@ export default class App extends React.Component {
       item.tags = [];
     }
     item.tags.push(tag);
-    this.onItemAddedOrUpdated(item);
-  }
-
-  onItemChange(item) {
-    // TODO: refactor this
-    this.onItemAddedOrUpdated(item);
+    this.onItemChange(item);
   }
 
   render(){
@@ -182,7 +176,7 @@ export default class App extends React.Component {
     this.history = history;
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
-    this.buildTagList();
+    this.tags = this.buildTagList();
     var id = match.params.id;
 
     var form = null;
