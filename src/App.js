@@ -180,15 +180,24 @@ export default class App extends React.Component {
 
   renderBody({ match, history }){
     this.history = history;
-    var id = match.params.id;
-    var item = id ? (id === 'new' ? (this.state.item || this.buildEmptyItem()) : this.state.items.find(i => i._id === id)) : null;
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
     this.buildTagList();
-    var form = item ? 
-      <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
-        sending={this.state.sendingForm}></Form> : 
-      null;
+    var id = match.params.id;
+
+    var form = null;
+    var item = id && this.state.item && this.state.item._id === id ? this.state.item : null;
+    if (item){
+      form = <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
+        sending={this.state.sendingForm}></Form>;
+    }
+    else {
+      item = id ? (id === 'new' ? this.buildEmptyItem() : this.state.items.find(i => i._id === id)) : null;
+      setTimeout(() => {
+        this.setState({item: item}); // TODO: refactor this
+      }, 100);
+    }
+
     return (
       <div id="body">
         <div id="aside">
