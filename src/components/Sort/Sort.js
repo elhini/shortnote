@@ -2,18 +2,8 @@ import React from 'react';
 import './Sort.css';
 
 export default class Sort extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = props.sort;
-    this.onSortChange = this.onSortChange.bind(this);
-  }
-
-  onSortChange(state) {
-    this.setState(state);
-    this.props.onSortChange(state);
-  }
-
   render(){
+    var sort = this.props.sort;
     var fields = [
       {id: 'dateOfUpdate', name: 'date of update'}, 
       {id: 'dateOfCreate', name: 'date of create'}
@@ -29,11 +19,11 @@ export default class Sort extends React.Component {
         <label>Sort</label>:{' '}
         <span className="fieldInline">
           <label>by</label>{' '}
-          <select id="sortField" value={this.state.field} onChange={(e) => this.onSortChange({field: e.target.value})}>
+          <select id="sortField" value={sort.field} onChange={(e) => this.props.onSortChange({field: e.target.value})}>
             {fieldOptions}
           </select>{' '}
           <label>in</label>{' '}
-          <select id="sortDirection" value={this.state.direction} onChange={(e) => this.onSortChange({direction: e.target.value})}>
+          <select id="sortDirection" value={sort.direction} onChange={(e) => this.props.onSortChange({direction: e.target.value})}>
             {directionOptions}
           </select>{' '}
           <label>order</label>
