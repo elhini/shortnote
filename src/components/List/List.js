@@ -17,7 +17,7 @@ export default class List extends React.Component {
 
   buildNodes(){
     var nodes = this.props.items.map(item => {
-      if (!item._id && this.props.items.length > 1){
+      if (!item._id){
         return null;
       }
       var opened = this.props.item && this.props.item._id === item._id ? 'opened' : '';
@@ -31,14 +31,14 @@ export default class List extends React.Component {
       return (
         <li key={item._id} className={opened}>
           <Link to={'/note/' + item._id}>
-            {item._id ? aside : null}
-            <div className="title">{item._id ? item.title : 'No items found'}</div>
+            {aside}
+            <div className="title">{item.title}</div>
             <div className="text">{item.text}</div>
           </Link>
         </li>
       );
     });
-    return nodes;
+    return nodes.length ? nodes : <li>No items found</li>;
   }
 
   render(){
