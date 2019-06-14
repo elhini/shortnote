@@ -73,9 +73,6 @@ export default class App extends React.Component {
       item.dateOfCreate = new Date();
     }
     item.dateOfUpdate = new Date();
-    item.title = form.title.value;
-    item.text = form.text.value;
-    item.tags = formCmp.state.tags;
     this.setState({sendingForm: true});
     if (id){
       this.updateItem(item, i => this.onItemChange(i, false));
@@ -94,6 +91,7 @@ export default class App extends React.Component {
   }
 
   onItemChange(item, isNew){
+    item = Object.assign({}, this.state.item, item);
     var items = this.state.items;
     if (!isNew){
       items = items.filter(i => i._id !== item._id); // remove old version
