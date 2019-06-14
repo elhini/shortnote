@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import './App.css';
 import NotesApiClient from './api-clients/notes';
 import StringUtils from './utils/StringUtils';
@@ -11,14 +11,20 @@ import List from './components/List/List';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    var id = props.match.params.id;
+    var item = id === 'new' ? this.buildEmptyItem() : null;
     this.state = {
-      item: null,
+      item: item,
       items: [],
       filters: {},
       sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
     this.tags = [];
-    this.history = null;
+    this.history = props.history;
+    this.stopListeningHistory = this.history.listen(location => {
+      var item = this.getItemByLocation();
+      this.setState({item: item});
+    });
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
@@ -28,11 +34,22 @@ export default class App extends React.Component {
     this.onItemChange = this.onItemChange.bind(this);
   }
 
+  getItemByLocation(items = this.state.items){
+    var id = window.location.pathname.split('note/')[1];
+    var item = id === 'new' ? this.buildEmptyItem() : items.find(i => i._id === id);
+    return item;
+  }
+
   componentDidMount() {
     this.setState({loadingList: true});
     NotesApiClient.getAll(items => {
-      this.setState({items: items, loadingList: false});
+      var item = this.getItemByLocation(items);
+      this.setState({items: items, loadingList: false, item: item});
     });
+  }
+
+  componentWillUnmount() {
+    this.stopListeningHistory();
   }
 
   buildEmptyItem(){
@@ -158,38 +175,27 @@ export default class App extends React.Component {
   render(){
     return (
       <div id="App">
-        <Router>
-          <div id="head">
-            <h1>
-              ShortNote
-              <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
-            </h1>
-          </div>
-          <Route path={`/note/:id`} render={m => this.renderBody(m)} />
-          <Route path={`/`}   exact render={m => this.renderBody(m)} />
-        </Router>
+        <div id="head">
+          <h1>
+            ShortNote
+            <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
+          </h1>
+        </div>
+        {this.renderBody()}
       </div>
     );
   }
 
-  renderBody({ match, history }){
-    this.history = history;
+  renderBody(){
     var filteredItems = this.filter(this.state.items);
     var sortedItems = this.sort(filteredItems);
     this.tags = this.buildTagList();
-    var id = match.params.id;
 
     var form = null;
-    var item = id && this.state.item && this.state.item._id === id ? this.state.item : null;
+    var item = this.state.item;
     if (item){
       form = <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
         sending={this.state.sendingForm}></Form>;
-    }
-    else {
-      item = id ? (id === 'new' ? this.buildEmptyItem() : this.state.items.find(i => i._id === id)) : null;
-      setTimeout(() => {
-        this.setState({item: item}); // TODO: refactor this
-      }, 100);
     }
 
     return (
