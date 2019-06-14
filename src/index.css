@@ -21,3 +21,6 @@ select {
   background: #fff;
   padding: 10px 8px;
 }
+select {
+  height: 38px;
+}
