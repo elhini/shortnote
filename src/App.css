@@ -4,10 +4,19 @@
   padding: 5px;
 }
 
-#App * {
+#App div,
+#App span,
+#App input,
+#App textarea,
+#App select,
+#App button {
   font-size: 14px;
   font-family: Arial, sans-serif;
   color: #333;
+}
+
+#App a span {
+  color: inherit;
 }
 
 #App #openNew {
@@ -18,6 +27,9 @@
   padding: 10px 8px;
   text-decoration: none;
   font-weight: normal;
+  font-size: 14px;
+  color: #333;
+  vertical-align: middle;
 }
 #App #openNew:hover {
   background: #eee;

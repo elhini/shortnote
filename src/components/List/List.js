@@ -15,6 +15,11 @@ export default class List extends React.Component {
     this.props.onDeleteItem(item);
   }
 
+  strip(html){
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  }
+
   buildNodes(){
     var nodes = this.props.items.map(item => {
       if (!item._id){
@@ -33,7 +38,7 @@ export default class List extends React.Component {
           <Link to={'/note/' + item._id}>
             {aside}
             <div className="title">{item.title}</div>
-            <div className="text">{item.text}</div>
+            <div className="text">{this.strip(item.text)}</div>
           </Link>
         </li>
       );

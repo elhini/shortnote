@@ -1,4 +1,5 @@
 import React from 'react';
+import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
 import './Form.css';
 
@@ -12,7 +13,7 @@ export default class Form extends React.Component {
           <input type="text" id="title" value={item.title} onChange={e => this.props.onItemChange({title: e.target.value})} />
         </div>
         <div className="fieldBlock">
-          <textarea id="text" value={item.text} onChange={e => this.props.onItemChange({text: e.target.value})}></textarea>
+          <TextEditor value={item.text} onChange={value => this.props.onItemChange({text: value})} key={item._id} />
         </div>
         <div className="fieldBlock">
           <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={value => this.props.onItemChange({tags: value})}

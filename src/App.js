@@ -64,7 +64,7 @@ export default class App extends React.Component {
   onSubmit(e, formCmp){
     e.preventDefault();
     var form = e.target;
-    if (!form.title.value && !form.text.value){
+    if (!form.title.value){
       return;
     }
     var id = form.id.value;
