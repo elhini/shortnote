@@ -6,26 +6,29 @@ Lite and simple app for short notes
 
 #### Fields:
 - title
-- text
+- text (styled)
 - create date
 - update date
-- tags
+- tags (creatable)
 
 #### Functions:
-- filtering
-- sorting
-- routing (link to note)
+- filtering (by title, text or tags)
+- sorting (by date of create or update)
+- link to note (private)
+- autosave (after 1 second)
 
 ## Planned features:
 
-- design (bootstrap/material-UI)
+- design (bootstrap / material-UI)
 
 #### Fields:
 - group/category (with hierarchy)
 
 #### Functions:
-- auth (by login/password)
-- admin panel
-- multiple accounts (users)
+- auth (by login & password)
+- admin panel (users list)
+- registration
 - invitations
-- public access
+- public sharing (read access)
+- collaboration (write access)
+- TODO-lists (with checkboxes)
