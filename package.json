@@ -15,7 +15,7 @@
   },
   "main": "src/server.js",
   "scripts": {
-    "client": "react-scripts start",
+    "client": "HOST=localhost react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
