@@ -27,7 +27,7 @@ export default class Form extends React.Component {
         { /* <div className="fieldBlock">
           <button id="submit" disabled={this.props.sending}>{this.props.sending ? 'Sending...' : 'Submit'}</button>
         </div> */ }
-        <span id="formState">{this.props.sending ? 'Saving...' : (this.props.changed ? 'Changed' : 'Saved')}</span>
+        <span id="formState">{this.props.sending ? 'Saving...' : (this.props.changed ? 'Changed' : (item._id ? 'Saved' : ''))}</span>
       </form>
     );
   }

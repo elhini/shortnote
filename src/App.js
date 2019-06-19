@@ -64,7 +64,7 @@ export default class App extends React.Component {
 
   onSubmit(e, item = this.state.item){
     e && e.preventDefault();
-    if (!item.title || !item.text){
+    if (!item.title && !item.text){
       return;
     }
     if (!item._id){
