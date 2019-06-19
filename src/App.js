@@ -7,6 +7,7 @@ import Filters from './components/Filters/Filters';
 import Sort from './components/Sort/Sort';
 import Form from './components/Form/Form';
 import List from './components/List/List';
+import DateUtils from './utils/DateUtils';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -61,7 +62,7 @@ export default class App extends React.Component {
     this.setState({item: emptyItem});
   }
 
-  onSubmit(e, formCmp){
+  onSubmit(e){
     e.preventDefault();
     var form = e.target;
     if (!form.title.value){
@@ -97,6 +98,7 @@ export default class App extends React.Component {
       items = items.filter(i => i._id !== item._id); // remove old version
     }
     items.push(item);
+    items = this.filterAndSortItems(items);
     this.setState({items: items, item: item, sendingForm: false});
     isNew && this.history.push('/note/' + item._id);
   }
@@ -148,7 +150,13 @@ export default class App extends React.Component {
     var field = this.state.sort.field;
     var sign = this.state.sort.direction === 'asc' ? 1 : -1;
     return items.sort((i1, i2) => {
-      return i1[field] > i2[field] ? sign : (i1[field] < i2[field] ? -sign : 0);
+      var v1 = i1[field];
+      var v2 = i2[field];
+      if (field.includes('date')){
+        v1 = DateUtils.toStr(v1);
+        v2 = DateUtils.toStr(v2);
+      }
+      return v1 > v2 ? sign : (v1 < v2 ? -sign : 0);
     })
   }
 
@@ -184,9 +192,14 @@ export default class App extends React.Component {
     );
   }
 
-  renderBody(){
-    var filteredItems = this.filter(this.state.items);
+  filterAndSortItems(items){
+    var filteredItems = this.filter(items);
     var sortedItems = this.sort(filteredItems);
+    return sortedItems;
+  }
+
+  renderBody(){
+    var items = this.filterAndSortItems(this.state.items);
     this.tags = this.buildTagList();
 
     var form = null;
@@ -208,7 +221,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <div id="listCont">
-            <List items={sortedItems} item={item} onDeleteItem={this.onDeleteItem} loading={this.state.loadingList}></List>
+            <List items={items} item={item} onDeleteItem={this.onDeleteItem} loading={this.state.loadingList}></List>
           </div>
         </div>
         <div id="formCont">
