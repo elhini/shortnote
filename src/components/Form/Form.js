@@ -11,7 +11,7 @@ export default class Form extends React.Component {
   render(){
     var item = this.props.item;
     return (
-      <form id="Form" onSubmit={this.props.onSubmit} key={item._id}>
+      <form id="Form" /* onSubmit={this.props.onSubmit} */ key={item._id}>
         <input type="hidden" id="id" value={item._id} readOnly />
         <div className="fieldBlock">
           <input type="text" id="title" value={item.title} onChange={e => this.props.onItemChange({title: e.target.value})} autoFocus
@@ -24,9 +24,10 @@ export default class Form extends React.Component {
           <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={value => this.props.onItemChange({tags: value})}
             onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
-        <div className="fieldBlock">
+        { /* <div className="fieldBlock">
           <button id="submit" disabled={this.props.sending}>{this.props.sending ? 'Sending...' : 'Submit'}</button>
-        </div>
+        </div> */ }
+        <span id="formState">{this.props.sending ? 'Saving...' : (this.props.changed ? 'Changed' : 'Saved')}</span>
       </form>
     );
   }

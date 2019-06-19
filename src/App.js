@@ -62,20 +62,17 @@ export default class App extends React.Component {
     this.setState({item: emptyItem});
   }
 
-  onSubmit(e){
-    e.preventDefault();
-    var form = e.target;
-    if (!form.title.value){
+  onSubmit(e, item = this.state.item){
+    e && e.preventDefault();
+    if (!item.title || !item.text){
       return;
     }
-    var id = form.id.value;
-    var item = this.state.item;
-    if (!id){
+    if (!item._id){
       item.dateOfCreate = new Date();
     }
     item.dateOfUpdate = new Date();
     this.setState({sendingForm: true});
-    if (id){
+    if (item._id){
       this.updateItem(item, i => this.onItemChange(i, false));
     }
     else {
@@ -91,16 +88,33 @@ export default class App extends React.Component {
     NotesApiClient.update(item, cb);
   }
 
+  // TODO: move to Utils
+  isObjectsEqual(obj1, obj2){
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }
+
+  isItemsDiffer(item1, item2){
+    return item1.title !== item2.title || 
+           item1.text !== item2.text || 
+           !this.isObjectsEqual(item1.tags, item2.tags);
+  }
+
   onItemChange(item, isNew){
     item = Object.assign({}, this.state.item, item);
+    var isChanged = this.isItemsDiffer(item, this.state.item);
     var items = this.state.items;
     if (!isNew){
       items = items.filter(i => i._id !== item._id); // remove old version
     }
     items.push(item);
-    items = this.filterAndSortItems(items);
-    this.setState({items: items, item: item, sendingForm: false});
+    this.setState({items: items, item: item, sendingForm: false, formChanged: isChanged});
     isNew && this.history.push('/note/' + item._id);
+    if (isChanged && !this.state.sendingForm){
+      clearTimeout(this.autosaveInterval);
+      this.autosaveInterval = setTimeout(() => {
+        this.onSubmit(null, item);
+      }, 1000);
+    }
   }
 
   onDeleteItem(item){
@@ -170,10 +184,8 @@ export default class App extends React.Component {
     var newID = maxID < 0 ? 1 : maxID + 1;
     var tag = { value: newID, label: tagName };
     this.tags.push(tag);
-    var item = this.state.item || this.buildEmptyItem();
-    if (!item.tags){
-      item.tags = [];
-    }
+    var item = {};
+    item.tags = this.state.item ? this.state.item.tags.slice() : [];
     item.tags.push(tag);
     this.onItemChange(item);
   }
@@ -206,7 +218,7 @@ export default class App extends React.Component {
     var item = this.state.item;
     if (item){
       form = <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
-        sending={this.state.sendingForm}></Form>;
+        sending={this.state.sendingForm} changed={this.state.formChanged}></Form>;
     }
 
     return (

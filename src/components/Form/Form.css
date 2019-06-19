@@ -15,3 +15,7 @@
 #Form .fieldBlock textarea {
   height: 250px;
 }
+
+#Form #formState {
+  color: #999;
+}
