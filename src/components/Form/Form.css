@@ -1,21 +1,3 @@
-#Form .fieldBlock {
-  margin-bottom: 10px;
-}
-
-#Form .fieldBlock label {
-  display: block;
-}
-
-#Form .fieldBlock input,
-#Form .fieldBlock textarea {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-#Form .fieldBlock textarea {
-  height: 250px;
-}
-
 #Form #formState {
   color: #999;
 }

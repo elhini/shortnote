@@ -24,3 +24,24 @@ select {
 select {
   height: 38px;
 }
+
+.fieldBlock {
+  margin-bottom: 10px;
+}
+
+.fieldBlock label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.fieldBlock input,
+.fieldBlock textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fieldBlock textarea {
+  height: 250px;
+}
+
+
