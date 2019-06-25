@@ -15,8 +15,17 @@ class UsersApi extends BaseApi {
                 if (err) { 
                     res.send({ 'error': err }); 
                 } else {
-                    // TODO: add new session for user._id and return session._id
-                    // res.send(session._id);
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    let session = {userID: user._id, active: true, expireDate: tomorrow};
+                    db.collection('sessions').insertOne(session, (err, result) => {
+                        if (err) { 
+                            res.send({ 'error': err }); 
+                        } else {
+                            session = result.ops[0]
+                            res.send(session);
+                        }
+                    });
                 }
             });
         });

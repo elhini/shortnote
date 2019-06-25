@@ -8,7 +8,6 @@ export default class UsersApiClient extends BaseApiClient {
 
     login(login, password, cb) {
         var ticket = {login, password};
-        // TODO: implement api handler
         AsyncUtils.sendJSON(this.url + '/session', 'POST', ticket, (res) => {
             this.handleRes(cb, res);
         });
