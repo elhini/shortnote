@@ -1,4 +1,5 @@
-const notesAPI = require('./notes');
+const NotesAPI = require('./notes');
+
 module.exports = function(app, db) {
-    notesAPI(app, db);
+    (new NotesAPI()).connect(app, db);
 };
