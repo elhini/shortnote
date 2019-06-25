@@ -1,4 +1,5 @@
 import BaseApiClient from './base';
+import AsyncUtils from '../utils/AsyncUtils';
 
 export default class UsersApiClient extends BaseApiClient {
     constructor() {
