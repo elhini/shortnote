@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import './App.css';
-import NotesApiClient from './api-clients/notes';
-import StringUtils from './utils/StringUtils';
-import Filters from './components/Filters/Filters';
-import Sort from './components/Sort/Sort';
-import Form from './components/Form/Form';
-import List from './components/List/List';
-import DateUtils from './utils/DateUtils';
+import NotesApiClient from '../../api-clients/notes';
+import StringUtils from '../../utils/StringUtils';
+import Filters from '../../components/Filters/Filters';
+import Sort from '../../components/Sort/Sort';
+import Form from '../../components/Form/Form';
+import List from '../../components/List/List';
+import DateUtils from '../../utils/DateUtils';
 
 export default class App extends React.Component {
   constructor(props) {
