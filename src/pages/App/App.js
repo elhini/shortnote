@@ -26,6 +26,7 @@ export default class App extends React.Component {
       var item = this.getItemByLocation();
       this.setState({item: item});
     });
+    this.notesAPIClient = new NotesApiClient();
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
@@ -43,7 +44,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.setState({loadingList: true});
-    NotesApiClient.getAll(items => {
+    this.notesAPIClient.getAll(items => {
       var item = this.getItemByLocation(items);
       this.setState({items: items, loadingList: false, item: item});
     });
@@ -81,11 +82,11 @@ export default class App extends React.Component {
   }
 
   createItem(item, cb){
-    NotesApiClient.create(item, cb);
+    this.notesAPIClient.create(item, cb);
   }
 
   updateItem(item, cb){
-    NotesApiClient.update(item, cb);
+    this.notesAPIClient.update(item, cb);
   }
 
   // TODO: move to Utils
@@ -120,7 +121,7 @@ export default class App extends React.Component {
   onDeleteItem(item){
     var items = this.state.items;
     items = items.filter(i => i._id !== item._id);
-    NotesApiClient.remove(item, res => {
+    this.notesAPIClient.remove(item, res => {
       var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
       this.setState({items: items, item: openedItem});
       this.history.push('/');
