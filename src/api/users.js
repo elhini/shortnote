@@ -8,13 +8,14 @@ class UsersApi extends BaseApi {
 
     connect(app, db) {
         super.connect(app, db);
+            
+        // TODO: create user (register)
+        // CryptUtils.cryptPassword(ticket.password, (err, hash) => console.log(err, hash));
 
         app.post(this.url + '/login', (req, res) => {
             const ticket = req.body;
             const query = {login: ticket.login};
-            
-            // CryptUtils.cryptPassword(ticket.password, (err, hash) => console.log(err, hash));
-
+            const wrongCredentialsMsg = 'wrong login or password';
             db.collection(this.collection).findOne(query, (err, user) => {
                 if (err) { 
                     res.send({ 'error': err });
@@ -35,11 +36,11 @@ class UsersApi extends BaseApi {
                                 }
                             });
                         } else {
-                            res.send({ 'error': 'wrong password' });
+                            res.send({ 'error': wrongCredentialsMsg });
                         }
                     });
                 } else {
-                    res.send({ 'error': 'wrong login' });
+                    res.send({ 'error': wrongCredentialsMsg });
                 }
             });
         });
