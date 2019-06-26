@@ -34,6 +34,12 @@ select {
   padding: 5px;
   border-right: 1px solid #999;
 }
+#loggedAs {
+  font-weight: bold;
+}
+#logout {
+  margin-left: 10px;
+}
 #state, 
 #nav {
   display: inline-block;
@@ -51,6 +57,9 @@ select {
 }
 #nav li a:hover {
   background: #ddd;
+}
+#page {
+  padding: 5px;
 }
 
 .fieldBlock {

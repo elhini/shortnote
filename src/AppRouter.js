@@ -29,10 +29,12 @@ export default class AppRouter extends React.Component {
                         <li><NavLink to="/login">Login</NavLink></li>
                     </ul>
                 </div>
-                <Route path={`/`} exact component={Landing} />
-                <Route path={`/login`}  component={Login} />
-                <PrivateRoute path="/note" exact component={App} />
-                <PrivateRoute path="/note/:id" component={App} />
+                <div id="page">
+                  <Route path={`/`} exact component={Landing} />
+                  <Route path={`/login`}  component={Login} />
+                  <PrivateRoute path="/note" exact component={App} />
+                  <PrivateRoute path="/note/:id" component={App} />
+                </div>
             </Router>
         );
     }
@@ -47,12 +49,12 @@ const AuthState = withRouter(
     ({ history }) =>
         AuthUtils.isLoggedIn() ? (
             <span id="state" className="logged-in">
-                Logged in as {AuthUtils.getSession().loggedAs}{' '}
-                <a href="/logout" onClick={e => logout(e, history)}>Log out</a>
+                Logged in as <span id="loggedAs">{AuthUtils.getSession().loggedAs}</span>
+                <a href="/logout" id="logout" onClick={e => logout(e, history)}>Log out</a>
             </span>
         ) : (
             <span id="state" className="logged-out">
-                You are not logged in
+                Logged out
             </span>
         )
 );
