@@ -5,6 +5,10 @@ class BaseApi {
         this.collection = collection;
         this.url = '/api/' + collection;
     }
+    
+    createObjectID(id){
+        return new ObjectID(id);
+    }
 
     connect(app, db) {
         app.post(this.url, (req, res) => {

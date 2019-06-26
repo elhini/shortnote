@@ -43,6 +43,17 @@ class UsersApi extends BaseApi {
                 }
             });
         });
+
+        app.post(this.url + '/logout', (req, res) => {
+            const query = { '_id': this.createObjectID(req.headers.sessionID) };
+            db.collection('sessions').deleteOne(query, (err, result) => {
+                if (err) { 
+                    res.send({ 'error': err }); 
+                } else {
+                    res.send({ 'loggedOut': true });
+                }
+            });
+        });
     }
 }
 

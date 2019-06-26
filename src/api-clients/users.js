@@ -13,5 +13,9 @@ export default class UsersApiClient extends BaseApiClient {
         });
     }
 
-    // TODO: logout
+    logout(cb) {
+        AsyncUtils.sendJSON(this.url + '/logout', 'POST', null, (res) => {
+            this.handleRes(cb, res);
+        });
+    }
 } 
