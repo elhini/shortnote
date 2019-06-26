@@ -12,6 +12,7 @@ export default class AuthUtils {
 
     static login(login, password, cb) {
         (new UsersApiClient()).login(login, password, (session) => {
+            session.loggedAs = login;
             this.setSession(session);
             cb(session);
         });
