@@ -8,8 +8,10 @@ export default class UsersApiClient extends BaseApiClient {
 
     login(login, password, cb) {
         var ticket = {login, password};
-        AsyncUtils.sendJSON(this.url + '/session', 'POST', ticket, (res) => {
+        AsyncUtils.sendJSON(this.url + '/login', 'POST', ticket, (res) => {
             this.handleRes(cb, res);
         });
     }
+
+    // TODO: logout
 } 
