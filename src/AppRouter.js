@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Redirect, NavLink, withRouter } from "react-router-dom";
+import UsersApiClient from './api-clients/users';
 import AuthUtils from './utils/AuthUtils';
 import Landing from './pages/Landing/Landing';
 import Login from './pages/Login/Login';
@@ -42,7 +43,10 @@ export default class AppRouter extends React.Component {
 
 function logout(e, history){
     e.preventDefault(); 
-    AuthUtils.logout(() => history.push("/"));
+    (new UsersApiClient()).logout(() => {
+        AuthUtils.setSession(null);
+        history.push("/");
+    });
 }
 
 const AuthState = withRouter(
