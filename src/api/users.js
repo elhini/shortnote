@@ -47,8 +47,9 @@ class UsersApi extends BaseApi {
 
         app.post(this.url + '/logout', (req, res) => {
             const sessionID = req.headers.sessionid; // lowercase!
+            const query = { '_id': null };
             try {
-                const query = { '_id': this.createObjectID(sessionID) };
+                query._id = this.createObjectID(sessionID);
             }
             catch (e) {
                 res.send({ 'error': 'invalid session id' });
