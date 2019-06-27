@@ -194,12 +194,7 @@ export default class App extends React.Component {
   render(){
     return (
       <div id="App">
-        <div id="head">
-          <h1>
-            ShortNote
-            <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
-          </h1>
-        </div>
+        <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
         {this.renderBody()}
       </div>
     );
@@ -223,7 +218,7 @@ export default class App extends React.Component {
     }
 
     return (
-      <div id="body">
+      <div id="wrap">
         <div id="aside">
           <div id="filtersAndSortCont">
             <div id="filtersCont">

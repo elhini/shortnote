@@ -6,6 +6,10 @@
     margin-right: 10px;
 }
 
+#Filters #textFilter {
+    width: 155px;
+}
+
 #Filters #tagsFilter {
     display: inline-block;
     width: 250px;

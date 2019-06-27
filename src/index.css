@@ -1,6 +1,15 @@
 body {
   margin: 0;
   padding: 0;
+}
+
+body,
+input,
+textarea,
+select,
+button {
+  font-size: 14px;
+  color: #333;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
@@ -26,39 +35,62 @@ select {
   height: 38px;
 }
 
-#header {
-  margin-bottom: 10px;
+#head {
+  margin-bottom: 5px;
   background: #eee;
+  display: flex;
+  flex-direction: row;
 }
-#state {
-  padding: 5px;
-  border-right: 1px solid #999;
+#head-inner-left {
+  flex: 1 1;
 }
-#loggedAs {
-  font-weight: bold;
+#head-inner-right {
+  flex: 2 1;
+  margin-left: 1%;
 }
-#logout {
-  margin-left: 10px;
-}
-#state, 
-#nav {
-  display: inline-block;
-}
-#nav {
+#head h1 {
   margin: 0;
+  padding: 5px;
+}
+#head-inner-left>* {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 32px;
+}
+
+#nav {
+  margin: 0 0 0 20px;
   padding: 0;
 }
 #nav li {
   display: inline-block;
 }
-#nav li a {
+
+#nav a,
+#authState a {
   display: inline-block;
   padding: 5px;
 }
-#nav li a:hover {
+#nav a:hover,
+#authState a:hover {
   background: #ddd;
 }
-#page {
+/* #nav a.active,
+#authState a.active {
+  background: #ccc;
+} */
+
+#authState {
+  float: right;
+}
+#loggedAs {
+  font-weight: bold;
+}
+#logout {
+  margin-left: 5px;
+}
+
+#body {
   padding: 5px;
 }
 

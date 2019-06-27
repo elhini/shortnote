@@ -22,15 +22,18 @@ export default class AppRouter extends React.Component {
     render(){
         return (
             <Router>
-                <div id="header">
-                    <AuthState />
-                    <ul id="nav">
-                        <li><NavLink to="/">Landing</NavLink></li>
-                        <li><NavLink to="/note">App</NavLink></li>
-                        <li><NavLink to="/login">Login</NavLink></li>
-                    </ul>
+                <div id="head">
+                    <div id="head-inner-left">
+                        <h1>ShortNote</h1>
+                        <ul id="nav">
+                            <li><NavLink to="/">Landing</NavLink></li>
+                            <AppLink />
+                        </ul>
+                        <AuthState />
+                    </div>
+                    <div id="head-inner-right"></div>
                 </div>
-                <div id="page">
+                <div id="body">
                   <Route path={`/`} exact component={Landing} />
                   <Route path={`/login`}  component={Login} />
                   <PrivateRoute path="/note" exact component={App} />
@@ -45,20 +48,21 @@ function logout(e, history){
     e.preventDefault(); 
     (new UsersApiClient()).logout(() => {
         AuthUtils.setSession(null);
-        history.push("/");
+        history.push("/login");
     });
 }
 
-const AuthState = withRouter(
-    ({ history }) =>
-        AuthUtils.isLoggedIn() ? (
-            <span id="state" className="logged-in">
-                Logged in as <span id="loggedAs">{AuthUtils.getSession().loggedAs}</span>
-                <a href="/logout" id="logout" onClick={e => logout(e, history)}>Log out</a>
-            </span>
-        ) : (
-            <span id="state" className="logged-out">
-                Logged out
-            </span>
-        )
-);
+const AppLink = withRouter(({ history }) => {
+    return AuthUtils.isLoggedIn() && <li><NavLink to="/note">App</NavLink></li>;
+})
+
+const AuthState = withRouter(({ history }) => {
+    var isLoggedIn = AuthUtils.isLoggedIn();
+    var loggedAs = <span key="loggedAs">
+        Logged in as <span id="loggedAs">{isLoggedIn && AuthUtils.getSession().loggedAs}</span>
+    </span>;
+    var logoutLink = <a href="/logout" id="logout" key="logout" onClick={e => logout(e, history)}>Log out</a>;
+    return <div id="authState">
+        {isLoggedIn ? [loggedAs, logoutLink] : <NavLink to="/login">Log in</NavLink>}
+    </div>;
+})
