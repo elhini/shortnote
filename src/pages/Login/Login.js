@@ -2,14 +2,17 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import './Login.css';
 import AuthUtils from '../../utils/AuthUtils';
+import UsersApiClient from '../../api-clients/users';
 
 export default class Login extends React.Component {
-    state = { redirectToReferrer: false, login: '', password: ''};
+    state = { redirectToReferrer: false, login: '', password: '', error: ''};
   
     login = (e) => {
       e.preventDefault();
-      AuthUtils.login(this.state.login, this.state.password, (res) => {
-        this.setState({ redirectToReferrer: true });
+      (new UsersApiClient(this)).login(this.state.login, this.state.password, (session) => {
+          session.loggedAs = this.state.login;
+          AuthUtils.setSession(session);
+          this.setState({ redirectToReferrer: true });
       });
     };
 
@@ -42,6 +45,7 @@ export default class Login extends React.Component {
                 <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
               </div>
               <button id="submitLoginForm" onClick={e => this.login(e)}>Log in</button>
+              {this.state.error && <div className="alert error" id="loginError">{this.state.error}</div>}
             </form>
           </div>
         )

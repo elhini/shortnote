@@ -1,3 +1,7 @@
 #loginForm {
-    width: 200px;
+    width: 210px;
+}
+
+#loginError {
+    margin-top: 10px;
 }

@@ -1,14 +1,17 @@
 import AsyncUtils from '../utils/AsyncUtils';
 
 export default class BaseApiClient {
-    constructor(collection) {
+    constructor(collection, component) {
         this.collection = collection;
         this.url = '/api/' + collection;
+        this.component = component;
     }
 
     handleRes(cb, res){
         if (res.error){
-            alert(JSON.stringify(res.error)); // TODO: show error without blocking UI
+            this.component ? 
+                this.component.setState({ error: res.error }) : 
+                alert(JSON.stringify(res.error));
             return;
         }
         cb(res);

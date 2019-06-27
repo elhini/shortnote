@@ -10,14 +10,6 @@ export default class AuthUtils {
         return this.session || JSON.parse(LocalStorage.get('session'));
     }
 
-    static login(login, password, cb) {
-        (new UsersApiClient()).login(login, password, (session) => {
-            session.loggedAs = login;
-            this.setSession(session);
-            cb(session);
-        });
-    }
-
     static logout(cb) {
         (new UsersApiClient()).logout(() => {
             this.setSession(null);
