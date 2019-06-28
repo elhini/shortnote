@@ -44,8 +44,14 @@
   margin-bottom: 10px;
 }
 
+#List li .aside-inner,
 #List li .delete {
-  margin-left: 10px;
+  display: inline-block;
+}
+
+#List li .delete {
+  margin-left: 5px;
+  vertical-align: top;
 }
 
 #List li .dateOfCreate,
