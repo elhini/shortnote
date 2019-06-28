@@ -21,7 +21,7 @@ export default class Login extends React.Component {
     }
   
     render() {
-      let { from } = this.props.location.state || { from: { pathname: "/" } };
+      let { from } = this.props.location.state || { from: { pathname: "/note" } };
       let { redirectToReferrer } = this.state;
   
       if (redirectToReferrer) return <Redirect to={from} />;
@@ -36,6 +36,7 @@ export default class Login extends React.Component {
           <div>
             {isLoginPage ? '' : <p>You must log in to view the page at {from.pathname}</p>}
             <form id="loginForm">
+              <h2>Log in to an existing account</h2>
               <div className="fieldBlock">
                 <label>Login:</label>
                 <input type="text" name="login" value={this.state.login} onChange={e => this.onInputChange('login', e)} />

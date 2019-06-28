@@ -3,7 +3,7 @@ import React from "react";
 export default class Landing extends React.Component {
     render() {
         return (
-            'Landing'
+            <h2>Lite and simple app</h2>
         )
     }
 }
