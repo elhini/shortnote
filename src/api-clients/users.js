@@ -6,6 +6,13 @@ export default class UsersApiClient extends BaseApiClient {
         super('users', component);
     }
 
+    register(login, password, cb) {
+        var ticket = {login, password};
+        AsyncUtils.sendJSON(this.url + '/register', 'POST', ticket, (res) => {
+            this.handleRes(cb, res);
+        });
+    }
+
     login(login, password, cb) {
         var ticket = {login, password};
         AsyncUtils.sendJSON(this.url + '/login', 'POST', ticket, (res) => {
