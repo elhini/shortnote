@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Redirect, NavLink, withRouter } from "r
 import UsersApiClient from './api-clients/users';
 import AuthUtils from './utils/AuthUtils';
 import Landing from './pages/Landing/Landing';
+import Registration from './pages/Registration/Registration';
 import Login from './pages/Login/Login';
 import App from './pages/App/App';
 
@@ -26,7 +27,8 @@ export default class AppRouter extends React.Component {
                     <div id="head-inner-left">
                         <h1>ShortNote</h1>
                         <ul id="nav">
-                            <li><NavLink to="/">Landing</NavLink></li>
+                            <li><NavLink to="/">Home</NavLink></li>
+                            <li><NavLink to="/register">Register</NavLink></li>
                             <AppLink />
                         </ul>
                         <AuthState />
@@ -35,7 +37,8 @@ export default class AppRouter extends React.Component {
                 </div>
                 <div id="body">
                   <Route path={`/`} exact component={Landing} />
-                  <Route path={`/login`}  component={Login} />
+                  <Route path={`/register`} component={Registration} />
+                  <Route path={`/login`} component={Login} />
                   <PrivateRoute path="/note" exact component={App} />
                   <PrivateRoute path="/note/:id" component={App} />
                 </div>
