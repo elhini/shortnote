@@ -7,10 +7,36 @@ class UsersApi extends BaseApi {
     }
 
     connect(app, db) {
-        super.connect(app, db);
+        // don't call super.connect for security reasons
             
-        // TODO: create user (register)
-        // CryptUtils.cryptPassword(ticket.password, (err, hash) => console.log(err, hash));
+        app.post(this.url + '/register', (req, res) => {
+            const ticket = req.body;
+            const query = {login: ticket.login};
+            db.collection(this.collection).findOne(query, (err, user) => {
+                if (err) { 
+                    res.send({ 'error': err });
+                } else if (user) {
+                    res.send({ 'error': 'login already in use' });
+                } else {
+                    CryptUtils.cryptPassword(ticket.password, (err, hash) => {
+                        if (err) { 
+                            res.send({ 'error': err });
+                        } else {
+                            let user = {login: ticket.login, password: hash, registrationDate: new Date()};
+                            db.collection(this.collection).insertOne(user, (err, result) => {
+                                if (err) { 
+                                    res.send({ 'error': err }); 
+                                } else {
+                                    user = result.ops[0];
+                                    delete user.password;
+                                    res.send(user);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
 
         app.post(this.url + '/login', (req, res) => {
             const ticket = req.body;
