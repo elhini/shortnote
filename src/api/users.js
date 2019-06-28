@@ -5,6 +5,40 @@ class UsersApi extends BaseApi {
     constructor() {
         super('users');
     }
+    
+    // TODO: move to api/session.js
+    createSession(db, res, user){
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        let session = {userID: user._id, active: true, expireDate: tomorrow};
+        db.collection('sessions').insertOne(session, (err, result) => {
+            if (err) { 
+                res.send({ 'error': err }); 
+            } else {
+                session = result.ops[0];
+                res.send(session);
+            }
+        });
+    }
+
+    // TODO: move to api/session.js
+    deactivateSession(db, res, sessionID){
+        const query = { '_id': null };
+        try {
+            query._id = this.createObjectID(sessionID);
+        }
+        catch (e) {
+            res.send({ 'error': 'invalid session id' });
+            return;
+        }
+        db.collection('sessions').updateOne(query, { $set: {active: false} }, (err, result) => {
+            if (err) { 
+                res.send({ 'error': err }); 
+            } else {
+                res.send({ 'loggedOut': true });
+            }
+        });
+    }
 
     connect(app, db) {
         // don't call super.connect for security reasons
@@ -28,8 +62,7 @@ class UsersApi extends BaseApi {
                                     res.send({ 'error': err }); 
                                 } else {
                                     user = result.ops[0];
-                                    delete user.password;
-                                    res.send(user);
+                                    this.createSession(db, res, user);
                                 }
                             });
                         }
@@ -50,17 +83,7 @@ class UsersApi extends BaseApi {
                         if (err) { 
                             res.send({ 'error': err }); 
                         } else if (isPasswordMatch) {
-                            let tomorrow = new Date();
-                            tomorrow.setDate(tomorrow.getDate() + 1);
-                            let session = {userID: user._id, active: true, expireDate: tomorrow};
-                            db.collection('sessions').insertOne(session, (err, result) => {
-                                if (err) { 
-                                    res.send({ 'error': err }); 
-                                } else {
-                                    session = result.ops[0];
-                                    res.send(session);
-                                }
-                            });
+                            this.createSession(db, res, user);
                         } else {
                             res.send({ 'error': wrongCredentialsMsg });
                         }
@@ -72,22 +95,9 @@ class UsersApi extends BaseApi {
         });
 
         app.post(this.url + '/logout', (req, res) => {
+            // TODO: get from cookies
             const sessionID = req.headers.sessionid; // lowercase!
-            const query = { '_id': null };
-            try {
-                query._id = this.createObjectID(sessionID);
-            }
-            catch (e) {
-                res.send({ 'error': 'invalid session id' });
-                return;
-            }
-            db.collection('sessions').updateOne(query, { $set: {active: false} }, (err, result) => {
-                if (err) { 
-                    res.send({ 'error': err }); 
-                } else {
-                    res.send({ 'loggedOut': true });
-                }
-            });
+            this.deactivateSession(db, res, sessionID);
         });
     }
 }
