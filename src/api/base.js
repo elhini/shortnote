@@ -94,7 +94,7 @@ class BaseApi {
                             this._sessionsApi.updateSession(db, req, null, {active: false});
                         } else {
                             handler(req, res, session.userID.toString());
-                            // TODO: prolong session
+                            this._sessionsApi.updateSession(db, req, null, {expireDate: this._sessionsApi.getNewExpireDate()});
                         }
                     });
                 }
