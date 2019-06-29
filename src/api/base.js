@@ -1,24 +1,15 @@
 var ObjectID = require('mongodb').ObjectID;
+var _SessionsApi = require('./_sessions');
 
 class BaseApi {
     constructor(collection) {
         this.collection = collection;
         this.url = '/api/' + collection;
+        this._sessionsApi = new _SessionsApi();
     }
     
     createObjectID(id){
         return new ObjectID(id);
-    }
-
-    getSessionObjectID(req){
-        // TODO: get from cookies
-        const sessionID = req.headers.sessionid; // lowercase!
-        try {
-            return this.createObjectID(sessionID);
-        }
-        catch (e) {
-            res.send({ 'error': 'invalid session id' });
-        }
     }
 
     init(db) {
@@ -46,7 +37,7 @@ class BaseApi {
                 });
             },
             'get /:id': (req, res, userID) => {
-                const query = { '_id': new ObjectID(req.params.id), userID };
+                const query = { '_id': this.createObjectID(req.params.id), userID };
                 db.collection(this.collection).findOne(query, (err, result) => {
                     if (err) {
                         res.send({ 'error': err });
@@ -56,7 +47,7 @@ class BaseApi {
                 });
             },
             'put /:id': (req, res, userID) => {
-                const query = { '_id': new ObjectID(req.params.id), userID };
+                const query = { '_id': this.createObjectID(req.params.id), userID };
                 const item = req.body;
                 let _item = Object.assign({}, item);
                 delete _item._id;
@@ -69,7 +60,7 @@ class BaseApi {
                 });
             },
             'delete /:id': (req, res, userID) => {
-                const query = { '_id': new ObjectID(req.params.id), userID };
+                const query = { '_id': this.createObjectID(req.params.id), userID };
                 db.collection(this.collection).deleteOne(query, (err, result) => {
                     if (err) {
                         res.send({ 'error': err });
@@ -93,19 +84,17 @@ class BaseApi {
                     handler(req, res);
                 }
                 else {
-                    const query = { '_id': this.getSessionObjectID(req) };
-                    db.collection('sessions').findOne(query, (err, session) => {
-                        if (err) {
-                            res.send({ 'error': err });
-                        } else if (!session) {
+                    this._sessionsApi.findSession(db, req, res, (session) => {
+                        if (!session) {
                             res.send({ 'error': 'session not found' });
                         } else if (!session.active) {
                             res.send({ 'error': 'session is not active' });
                         } else if (session.expireDate < new Date()) {
-                            // TODO: deactivate session
                             res.send({ 'error': 'session is expired' });
+                            // TODO: deactivate session
                         } else {
                             handler(req, res, session.userID.toString());
+                            // TODO: prolong session
                         }
                     });
                 }

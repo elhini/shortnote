@@ -1,37 +1,12 @@
 var BaseApi = require('./base');
+var _SessionsApi = require('./_sessions');
 var CryptUtils = require('../utils/CryptUtils');
 
 class UsersApi extends BaseApi {
     constructor() {
         super('users');
         this.dontCheckSession = true;
-    }
-    
-    // TODO: move to api/session.js
-    createSession(db, res, user){
-        let tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        let session = {userID: user._id, active: true, expireDate: tomorrow};
-        db.collection('sessions').insertOne(session, (err, result) => {
-            if (err) { 
-                res.send({ 'error': err }); 
-            } else {
-                session = result.ops[0];
-                res.send(session);
-            }
-        });
-    }
-
-    // TODO: move to api/session.js
-    deactivateSession(db, req, res){
-        const query = { '_id': this.getSessionObjectID(req) };
-        db.collection('sessions').updateOne(query, { $set: {active: false} }, (err, result) => {
-            if (err) { 
-                res.send({ 'error': err }); 
-            } else {
-                res.send({ 'loggedOut': true });
-            }
-        });
+        this._sessionsApi = new _SessionsApi();
     }
 
     init(db) {
@@ -57,7 +32,7 @@ class UsersApi extends BaseApi {
                                         res.send({ 'error': err }); 
                                     } else {
                                         user = result.ops[0];
-                                        this.createSession(db, res, user);
+                                        this._sessionsApi.createSession(db, res, user);
                                     }
                                 });
                             }
@@ -77,7 +52,7 @@ class UsersApi extends BaseApi {
                             if (err) { 
                                 res.send({ 'error': err }); 
                             } else if (isPasswordMatch) {
-                                this.createSession(db, res, user);
+                                this._sessionsApi.createSession(db, res, user);
                             } else {
                                 res.send({ 'error': wrongCredentialsMsg });
                             }
@@ -88,7 +63,7 @@ class UsersApi extends BaseApi {
                 });
             },
             'post /logout': (req, res) => {
-                this.deactivateSession(db, req, res);
+                this._sessionsApi.updateSession(db, req, res, {active: false});
             }
         };
     }
