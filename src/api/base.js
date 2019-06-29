@@ -91,7 +91,7 @@ class BaseApi {
                             res.send({ 'error': 'session is not active' });
                         } else if (session.expireDate < new Date()) {
                             res.send({ 'error': 'session is expired' });
-                            // TODO: deactivate session
+                            this._sessionsApi.updateSession(db, req, null, {active: false});
                         } else {
                             handler(req, res, session.userID.toString());
                             // TODO: prolong session
