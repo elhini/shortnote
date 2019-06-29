@@ -16,6 +16,7 @@ Lite and simple app for short notes
 - sorting (by date of create or update)
 - link to note (private)
 - autosave (after 1 second)
+- registration & auth (by login & password)
 
 ## Planned features:
 
@@ -25,10 +26,8 @@ Lite and simple app for short notes
 - group/category (with hierarchy)
 
 #### Functions:
-- auth (by login & password)
 - admin panel (users list)
-- registration
-- invitations
+- invitations (by link)
 - public sharing (read access)
 - collaboration (write access)
 - TODO-lists (with checkboxes)
