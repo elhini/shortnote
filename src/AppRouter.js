@@ -27,7 +27,7 @@ export default class AppRouter extends React.Component {
                     <div id="head-inner-left">
                         <h1>ShortNote</h1>
                         <ul id="nav">
-                            <li><NavLink to="/">Home</NavLink></li>
+                            <li><NavLink to="/" exact>Home</NavLink></li>
                             <li><NavLink to="/register">Register</NavLink></li>
                             <AppLink />
                         </ul>

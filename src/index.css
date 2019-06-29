@@ -70,16 +70,16 @@ select {
 #nav a,
 #authState a {
   display: inline-block;
-  padding: 5px;
+  padding: 5px 15px;
 }
 #nav a:hover,
 #authState a:hover {
   background: #ddd;
 }
-/* #nav a.active,
+#nav a.active,
 #authState a.active {
   background: #ccc;
-} */
+}
 
 #authState {
   float: right;
