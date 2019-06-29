@@ -4,6 +4,7 @@ var CryptUtils = require('../utils/CryptUtils');
 class UsersApi extends BaseApi {
     constructor() {
         super('users');
+        this.dontCheckSession = true;
     }
     
     // TODO: move to api/session.js
@@ -22,15 +23,8 @@ class UsersApi extends BaseApi {
     }
 
     // TODO: move to api/session.js
-    deactivateSession(db, res, sessionID){
-        const query = { '_id': null };
-        try {
-            query._id = this.createObjectID(sessionID);
-        }
-        catch (e) {
-            res.send({ 'error': 'invalid session id' });
-            return;
-        }
+    deactivateSession(db, req, res){
+        const query = { '_id': this.getSessionObjectID(req) };
         db.collection('sessions').updateOne(query, { $set: {active: false} }, (err, result) => {
             if (err) { 
                 res.send({ 'error': err }); 
@@ -40,65 +34,63 @@ class UsersApi extends BaseApi {
         });
     }
 
-    connect(app, db) {
-        // don't call super.connect for security reasons
+    init(db) {
+        // don't call super.init for security reasons
             
-        app.post(this.url + '/register', (req, res) => {
-            const ticket = req.body;
-            const query = {login: ticket.login};
-            db.collection(this.collection).findOne(query, (err, user) => {
-                if (err) { 
-                    res.send({ 'error': err });
-                } else if (user) {
-                    res.send({ 'error': 'login already in use' });
-                } else {
-                    CryptUtils.cryptPassword(ticket.password, (err, hash) => {
-                        if (err) { 
-                            res.send({ 'error': err });
-                        } else {
-                            let user = {login: ticket.login, password: hash, registrationDate: new Date()};
-                            db.collection(this.collection).insertOne(user, (err, result) => {
-                                if (err) { 
-                                    res.send({ 'error': err }); 
-                                } else {
-                                    user = result.ops[0];
-                                    this.createSession(db, res, user);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        });
-
-        app.post(this.url + '/login', (req, res) => {
-            const ticket = req.body;
-            const query = {login: ticket.login};
-            const wrongCredentialsMsg = 'wrong login or password';
-            db.collection(this.collection).findOne(query, (err, user) => {
-                if (err) { 
-                    res.send({ 'error': err });
-                } else if (user) {
-                    CryptUtils.comparePassword(ticket.password, user.password, (err, isPasswordMatch) => {
-                        if (err) { 
-                            res.send({ 'error': err }); 
-                        } else if (isPasswordMatch) {
-                            this.createSession(db, res, user);
-                        } else {
-                            res.send({ 'error': wrongCredentialsMsg });
-                        }
-                    });
-                } else {
-                    res.send({ 'error': wrongCredentialsMsg });
-                }
-            });
-        });
-
-        app.post(this.url + '/logout', (req, res) => {
-            // TODO: get from cookies
-            const sessionID = req.headers.sessionid; // lowercase!
-            this.deactivateSession(db, res, sessionID);
-        });
+        this.methods = {
+            'post /register': (req, res) => {
+                const ticket = req.body;
+                const query = {login: ticket.login};
+                db.collection(this.collection).findOne(query, (err, user) => {
+                    if (err) { 
+                        res.send({ 'error': err });
+                    } else if (user) {
+                        res.send({ 'error': 'login already in use' });
+                    } else {
+                        CryptUtils.cryptPassword(ticket.password, (err, hash) => {
+                            if (err) { 
+                                res.send({ 'error': err });
+                            } else {
+                                let user = {login: ticket.login, password: hash, registrationDate: new Date()};
+                                db.collection(this.collection).insertOne(user, (err, result) => {
+                                    if (err) { 
+                                        res.send({ 'error': err }); 
+                                    } else {
+                                        user = result.ops[0];
+                                        this.createSession(db, res, user);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            'post /login': (req, res) => {
+                const ticket = req.body;
+                const query = {login: ticket.login};
+                const wrongCredentialsMsg = 'wrong login or password';
+                db.collection(this.collection).findOne(query, (err, user) => {
+                    if (err) { 
+                        res.send({ 'error': err });
+                    } else if (user) {
+                        CryptUtils.comparePassword(ticket.password, user.password, (err, isPasswordMatch) => {
+                            if (err) { 
+                                res.send({ 'error': err }); 
+                            } else if (isPasswordMatch) {
+                                this.createSession(db, res, user);
+                            } else {
+                                res.send({ 'error': wrongCredentialsMsg });
+                            }
+                        });
+                    } else {
+                        res.send({ 'error': wrongCredentialsMsg });
+                    }
+                });
+            },
+            'post /logout': (req, res) => {
+                this.deactivateSession(db, req, res);
+            }
+        };
     }
 }
 
