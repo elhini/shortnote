@@ -1,10 +1,12 @@
 const express        = require('express');
 const MongoClient    = require('mongodb').MongoClient;
 const bodyParser     = require('body-parser');
+const cookieParser   = require("cookie-parser");
 const dbConfig       = require('./config/db');
 const app            = express();
 const port           = 8000;
 app.use(bodyParser.json());
+app.use(cookieParser());
 MongoClient.connect(dbConfig.url, { useNewUrlParser: true }, (err, client) => {
     if (err) return console.log(err);
     var db = client.db('shortnote');
