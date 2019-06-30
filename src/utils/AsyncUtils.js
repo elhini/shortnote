@@ -1,16 +1,13 @@
-import AuthUtils from './AuthUtils';
-
 export default class AsyncUtils {
     static sendJSON(url, method, params, callback) {
         var body = params ? JSON.stringify(params) : null;
-        var sessionID = AuthUtils.isLoggedIn() ? AuthUtils.getSession()._id : null;
         fetch(url, {
             method: method,
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'sessionID': sessionID
+                'Content-Type': 'application/json'
             },
+            credentials: "same-origin", // to enable cookies: stackoverflow.com/questions/34558264
             body: body
         })
         .then(res => {
