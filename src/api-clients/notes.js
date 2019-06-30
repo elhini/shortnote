@@ -1,7 +1,7 @@
 import BaseApiClient from './base';
 
 export default class NotesApiClient extends BaseApiClient {
-    constructor() {
-        super('notes');
+    constructor(component) {
+        super('notes', component);
     }
 } 

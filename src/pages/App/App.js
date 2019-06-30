@@ -26,7 +26,7 @@ export default class App extends React.Component {
       var item = this.getItemByLocation();
       this.setState({item: item});
     });
-    this.notesAPIClient = new NotesApiClient();
+    this.notesAPIClient = new NotesApiClient(this);
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
@@ -194,7 +194,10 @@ export default class App extends React.Component {
   render(){
     return (
       <div id="App">
-        <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
+        <div>
+          <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
+          {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}
+        </div>
         {this.renderBody()}
       </div>
     );
