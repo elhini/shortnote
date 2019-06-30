@@ -63,6 +63,7 @@ class UsersApi extends BaseApi {
                 });
             },
             'post /logout': (req, res) => {
+                res.cookie('sessionID', null, {expires: new Date()});
                 this._sessionsApi.updateSession(db, req, res, {active: false});
             }
         };

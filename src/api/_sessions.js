@@ -10,19 +10,21 @@ class _SessionsApi {
     }
 
     getSessionObjectID(req){
-        // TODO: get from cookies
-        const sessionID = req.headers.sessionid; // lowercase!
         try {
-            return this.createObjectID(sessionID);
+            return this.createObjectID(req.cookies.sessionID);
         }
         catch (e) {
             res.send({ 'error': 'invalid session id' });
         }
     }
 
+    getLifeTime(){
+        return 24 * 60 * 60 * 1000; // 1 day
+    }
+
     getNewExpireDate(){
         let now = new Date();
-        return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 day     
+        return new Date(now.getTime() + this.getLifeTime());
     }
     
     createSession(db, res, user){
@@ -32,6 +34,7 @@ class _SessionsApi {
                 res.send({ 'error': err });
             } else {
                 session = result.ops[0];
+                res.cookie('sessionID', session._id.toString(), { maxAge: this.getLifeTime(), httpOnly: true });
                 res.send(session);
             }
         });
