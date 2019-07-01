@@ -14,7 +14,7 @@ export default class BaseApiClient {
                 alert(JSON.stringify(res.error));
             return;
         }
-        this.component && this.component.setState({ error: res.error });
+        this.component && this.component.setState({ error: '' });
         cb(res);
     }
     
