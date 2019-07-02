@@ -39,6 +39,9 @@ export default class App extends React.Component {
   getItemByLocation(items = this.state.items){
     var id = window.location.pathname.split('note/')[1];
     var item = id === 'new' ? this.buildEmptyItem() : items.find(i => i._id === id);
+    if (id && id !== 'new' && !item){
+      this.setState({error: 'note with specified id not found'});
+    }
     return item;
   }
 
