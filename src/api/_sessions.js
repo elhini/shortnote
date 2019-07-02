@@ -9,7 +9,7 @@ class _SessionsApi {
         return new ObjectID(id);
     }
 
-    getSessionObjectID(req){
+    getSessionObjectID(req, res){
         try {
             return this.createObjectID(req.cookies.sessionID);
         }
@@ -41,7 +41,10 @@ class _SessionsApi {
     }
 
     findSession(db, req, res, cb){
-        const query = { '_id': this.getSessionObjectID(req) };
+        const query = { '_id': this.getSessionObjectID(req, res) };
+        if (!query._id){
+            return;
+        }
         db.collection(this.collection).findOne(query, (err, session) => {
             if (err) { 
                 res.send({ 'error': err });
@@ -52,7 +55,10 @@ class _SessionsApi {
     }
 
     updateSession(db, req, res, set){
-        const query = { '_id': this.getSessionObjectID(req) };
+        const query = { '_id': this.getSessionObjectID(req, res) };
+        if (!query._id){
+            return;
+        }
         db.collection(this.collection).updateOne(query, { $set: set }, (err, result) => {
             if (err) { 
                 res ? res.send({ 'error': err }) : console.error(res);
