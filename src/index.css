@@ -104,7 +104,8 @@ select {
   margin-bottom: 5px;
 }
 
-.fieldBlock input,
+.fieldBlock input[type="text"],
+.fieldBlock input[type="password"],
 .fieldBlock textarea {
   width: 100%;
   box-sizing: border-box;

@@ -1,3 +1,17 @@
+#Form #title {
+  width: 50%;
+}
+
+#Form label[for="publicAccess"] {
+  display: inline-block;
+  margin: 0 0 0 20px;
+}
+
+#Form #publicAccess {
+  margin: -2px 5px 0 0;
+  vertical-align: middle;
+}
+
 #Form #formState {
   color: #999;
 }

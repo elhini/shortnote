@@ -21,6 +21,7 @@ export default class App extends React.Component {
       sort: {field: 'dateOfUpdate', direction: 'desc'}
     };
     this.tags = [];
+    this.accessLevels = [{id: 1, name: 'viewing'}, {id: 2, name: 'editing'}];
     this.history = props.history;
     this.stopListeningHistory = this.history.listen(location => {
       var item = this.getItemByLocation();
@@ -100,6 +101,8 @@ export default class App extends React.Component {
   isItemsDiffer(item1, item2){
     return item1.title !== item2.title || 
            item1.text !== item2.text || 
+           item1.publicAccess !== item2.publicAccess || 
+           item1.accessLevel !== item2.accessLevel || 
            !this.isObjectsEqual(item1.tags, item2.tags);
   }
 
@@ -219,7 +222,8 @@ export default class App extends React.Component {
     var form = null;
     var item = this.state.item;
     if (item){
-      form = <Form item={item} onSubmit={this.onSubmit} tags={this.tags} onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
+      form = <Form item={item} onSubmit={this.onSubmit} tags={this.tags} accessLevels={this.accessLevels}
+        onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
         sending={this.state.sendingForm} changed={this.state.formChanged}></Form>;
     }
 

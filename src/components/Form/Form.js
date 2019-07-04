@@ -10,12 +10,21 @@ export default class Form extends React.Component {
 
   render(){
     var item = this.props.item;
+    var accessLevelOptions = this.props.accessLevels.map(l => <option key={l.id} value={l.id}>{l.name}</option>);
+    var accessLevelSelect = <select id="accessLevel" value={item.accessLevel} onChange={e => this.props.onItemChange({accessLevel: +e.target.value})}>
+      {accessLevelOptions}
+    </select>
     return (
       <form id="Form" /* onSubmit={this.props.onSubmit} */ key={item._id}>
         <input type="hidden" id="id" value={item._id} readOnly />
         <div className="fieldBlock">
           <input type="text" id="title" value={item.title} onChange={e => this.props.onItemChange({title: e.target.value})} autoFocus
             ref={i => this.titleInput = i} />
+          <label htmlFor="publicAccess">
+            <input type="checkbox" id="publicAccess" checked={item.publicAccess} onChange={e => this.props.onItemChange({publicAccess: e.target.checked})} />
+            Public access {item.publicAccess ? 'for ' : ''}
+          </label>{' '}
+          {item.publicAccess ? accessLevelSelect : null}
         </div>
         <div className="fieldBlock">
           <TextEditor value={item.text} onChange={value => this.props.onItemChange({text: value})} />
