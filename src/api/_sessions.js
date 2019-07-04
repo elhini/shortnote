@@ -28,16 +28,21 @@ class _SessionsApi {
     }
     
     createSession(db, res, user){
-        let session = {userID: user._id, active: true, expireDate: this.getNewExpireDate()};
+        let expireDate = this.getNewExpireDate();
+        let session = {userID: user._id, active: true, expireDate: expireDate };
         db.collection(this.collection).insertOne(session, (err, result) => {
             if (err) { 
                 res.send({ 'error': err });
             } else {
                 session = result.ops[0];
-                res.cookie('sessionID', session._id.toString(), { maxAge: this.getLifeTime(), httpOnly: true });
+                this.prolongSessionCookie(res, session._id, expireDate);
                 res.send(session);
             }
         });
+    }
+
+    prolongSessionCookie(res, sessionID, expireDate){
+        res.cookie('sessionID', sessionID.toString(), { expires: expireDate, httpOnly: true });
     }
 
     findSession(db, req, res, cb){
@@ -63,7 +68,10 @@ class _SessionsApi {
             if (err) { 
                 res ? res.send({ 'error': err }) : console.error(res);
             } else {
-                res && res.send({ 'updated': true, set });
+                if (res) {
+                    set.expireDate && this.prolongSessionCookie(res, query._id, set.expireDate);
+                    res.send({ 'updated': true, set });
+                }
             }
         });
     }
