@@ -3,13 +3,19 @@
 }
 
 #Form label[for="publicAccess"] {
-  display: inline-block;
   margin: 0 0 0 20px;
 }
 
 #Form #publicAccess {
   margin: -2px 5px 0 0;
+}
+
+#Form #title,
+#Form label[for="publicAccess"],
+#Form #publicAccess,
+#Form #accessLevel {
   vertical-align: middle;
+  display: inline-block;
 }
 
 #Form #formState {
