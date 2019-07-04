@@ -7,6 +7,7 @@ import Filters from '../../components/Filters/Filters';
 import Sort from '../../components/Sort/Sort';
 import Form from '../../components/Form/Form';
 import List from '../../components/List/List';
+import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
 
 export default class App extends React.Component {
@@ -24,8 +25,7 @@ export default class App extends React.Component {
     this.accessLevels = [{id: 1, name: 'viewing'}, {id: 2, name: 'editing'}];
     this.history = props.history;
     this.stopListeningHistory = this.history.listen(location => {
-      var item = this.getItemByLocation();
-      this.setState({item: item});
+      this.getItemByLocation(this.state.items);
     });
     this.notesAPIClient = new NotesApiClient(this);
     this.onOpenNew = this.onOpenNew.bind(this);
@@ -36,21 +36,46 @@ export default class App extends React.Component {
     this.onCreateTag = this.onCreateTag.bind(this);
     this.onItemChange = this.onItemChange.bind(this);
   }
+  
+  getItemIDFromLocation(){
+    return window.location.pathname.split('note/')[1];
+  }
+  
+  getPublicItemIDFromLocation(){
+    var id = this.getItemIDFromLocation() || '';
+    return id.split('public/')[1];
+  }
 
-  getItemByLocation(items = this.state.items){
-    var id = window.location.pathname.split('note/')[1];
+  isPublicItemLocation(){
+    return !!this.getPublicItemIDFromLocation();
+  }
+
+  getItemByLocation(items){
+    var cb = item => this.setState({items: items, loadingList: false, item: item});
+    var id = this.getItemIDFromLocation();
     var item = id === 'new' ? this.buildEmptyItem() : items.find(i => i._id === id);
     if (id && id !== 'new' && !item){
-      this.setState({error: 'note with specified id not found'});
+      var publicID = this.getPublicItemIDFromLocation();
+      if (publicID){
+        this.notesAPIClient.getPublic(publicID, item => {
+          cb(item);
+        });
+      }
+      else {
+        this.setState({error: 'note with specified id not found'});
+      }
     }
-    return item;
+    cb(item);
   }
 
   componentDidMount() {
+    if (this.isPublicItemLocation()){
+      this.getItemByLocation([]);
+      return;
+    }
     this.setState({loadingList: true});
     this.notesAPIClient.getAll(items => {
-      var item = this.getItemByLocation(items);
-      this.setState({items: items, loadingList: false, item: item});
+      this.getItemByLocation(items);
     });
   }
 
@@ -198,6 +223,9 @@ export default class App extends React.Component {
   }
 
   render(){
+    if (this.state.item && this.isPublicItemLocation()){
+      return <ReadonlyNote item={this.state.item} />;
+    }
     return (
       <div id="App">
         <div>

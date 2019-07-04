@@ -36,13 +36,14 @@ class BaseApi {
                     }
                 });
             },
-            'get /:id': (req, res, userID) => {
-                const query = { '_id': this.createObjectID(req.params.id), userID };
+            'get /:id': (req, res, userID, cb) => {
+                const query = { '_id': this.createObjectID(req.params.id) };
+                userID && (query.userID = userID);
                 db.collection(this.collection).findOne(query, (err, result) => {
                     if (err) {
                         res.send({ 'error': err });
                     } else {
-                        res.send(result);
+                        cb ? cb(result) : res.send(result);
                     }
                 });
             },
@@ -55,7 +56,7 @@ class BaseApi {
                     if (err) {
                         res.send({ 'error': err });
                     } else {
-                        res.send(item);
+                        res.send(result.matchedCount ? item : { 'error': 'nothing was updated' });
                     }
                 });
             },
@@ -76,11 +77,16 @@ class BaseApi {
         this.init(db);
         Object.keys(this.methods).forEach((methodAndPostfix) => {
             var handler = this.methods[methodAndPostfix];
+            var options = {};
+            if (typeof handler === 'object'){
+                options = Object.assign({}, handler);
+                handler = options.handler;
+            }
             var mpArray = methodAndPostfix.split(' ');
             var method = mpArray[0];
             var postfix = mpArray[1] || '';
             app[method](this.url + postfix, (req, res) => {
-                if (this.dontCheckSession){
+                if (this.dontCheckSession || options.dontCheckSession){
                     handler(req, res);
                 }
                 else {

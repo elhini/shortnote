@@ -36,11 +36,12 @@ export default class AppRouter extends React.Component {
                     <div id="head-inner-right"></div>
                 </div>
                 <div id="body">
-                  <Route path={`/`} exact component={Landing} />
-                  <Route path={`/register`} component={Registration} />
-                  <Route path={`/login`} component={Login} />
+                  <Route path="/" exact component={Landing} />
+                  <Route path="/register" component={Registration} />
+                  <Route path="/login" component={Login} />
+                  <Route path="/note/public/:id" exact component={App} />
                   <PrivateRoute path="/note" exact component={App} />
-                  <PrivateRoute path="/note/:id" component={App} />
+                  <PrivateRoute path="/note/:id" exact component={App} />
                 </div>
             </Router>
         );
