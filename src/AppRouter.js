@@ -40,8 +40,7 @@ export default class AppRouter extends React.Component {
                   <Route path="/register" component={Registration} />
                   <Route path="/login" component={Login} />
                   <Route path="/note/public/:id" exact component={App} />
-                  <PrivateRoute path="/note" exact component={App} />
-                  <PrivateRoute path="/note/:id" exact component={App} />
+                  <PrivateRoute path={["/note", "/note/:id"]} exact component={App} />
                 </div>
             </Router>
         );
