@@ -5,14 +5,15 @@ import AuthUtils from '../../utils/AuthUtils';
 import UsersApiClient from '../../api-clients/users';
 
 export default class Login extends React.Component {
-    state = { redirectToReferrer: false, login: '', password: '', error: ''};
+    state = { redirectToReferrer: false, login: '', password: '', sumbitting: false, error: '' };
   
     login = (e) => {
       e.preventDefault();
+      this.setState({ sumbitting: true });
       (new UsersApiClient(this)).login(this.state.login, this.state.password, (session) => {
           session.loggedAs = this.state.login;
           AuthUtils.setSession(session);
-          this.setState({ redirectToReferrer: true });
+          this.setState({ sumbitting: false, redirectToReferrer: true });
       });
     };
 
@@ -45,7 +46,9 @@ export default class Login extends React.Component {
                 <label>Password:</label>
                 <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
               </div>
-              <button id="submitLoginForm" onClick={e => this.login(e)}>Log in</button>
+              <button id="submitLoginForm" onClick={e => this.login(e)} disabled={this.state.sumbitting}>
+                {this.state.sumbitting ? 'Logging in...' : 'Log in'}
+              </button>
               {this.state.error && <div className="alert error" id="loginError">{this.state.error}</div>}
             </form>
           </div>
