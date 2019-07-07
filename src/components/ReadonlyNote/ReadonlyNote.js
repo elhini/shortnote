@@ -1,4 +1,5 @@
 import React from 'react';
+import './ReadonlyNote.css';
 
 export default class ReadonlyNote extends React.Component {
     render(){
