@@ -68,15 +68,15 @@ class AuthState extends React.Component {
 
     render() {
         var isLoggedIn = AuthUtils.isLoggedIn();
-        var loggedAs = <span key="loggedAs">
+        var loggedAs = <>
             Logged in as <span id="loggedAs">{isLoggedIn && AuthUtils.getSession().loggedAs}</span>
-        </span>;
-        var logoutLink = <a href="/logout" id="logout" key="logout" onClick={e => this.logout(e)}>
+        </>;
+        var logoutLink = <a href="/logout" id="logout" onClick={e => this.logout(e)}>
             {this.state.sumbitting ? 'Logging out...' : 'Log out'}
         </a>;
         var loginLink = <NavLink to="/login">Log in</NavLink>;
         return <div id="authState">
-            {isLoggedIn ? [loggedAs, logoutLink] : loginLink}
+            {isLoggedIn ? <>{loggedAs}{logoutLink}</> : loginLink}
         </div>;
     }
 }
