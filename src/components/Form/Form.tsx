@@ -1,11 +1,14 @@
 import React from 'react';
 import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
+import { FormProps, Tag } from '../../types/index';
 import './Form.css';
 
-export default class Form extends React.Component {
+export default class Form extends React.Component<FormProps, {}> {
+  titleInput!: HTMLInputElement | null;
+
   componentDidMount(){
-    this.titleInput.focus();
+    this.titleInput && this.titleInput.focus();
   }
 
   render(){
@@ -30,10 +33,10 @@ export default class Form extends React.Component {
           {/* item.publicAccess ? accessLevelSelect : null */}
         </div>
         <div className="fieldBlock">
-          <TextEditor value={item.text} onChange={value => this.props.onItemChange({text: value})} />
+          <TextEditor value={item.text} onChange={(value: string) => this.props.onItemChange({text: value})} />
         </div>
         <div className="fieldBlock">
-          <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={value => this.props.onItemChange({tags: value})}
+          <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={(value: Tag[]) => this.props.onItemChange({tags: value})}
             onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
         { /* <div className="fieldBlock">
