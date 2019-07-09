@@ -1,6 +1,7 @@
 import React from 'react';
 import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
+import { ValueType } from "react-select/src/types";
 import { FormProps, Tag } from '../../types/index';
 import './Form.css';
 
@@ -36,7 +37,7 @@ export default class Form extends React.Component<FormProps, {}> {
           <TextEditor value={item.text} onChange={(value: string) => this.props.onItemChange({text: value})} />
         </div>
         <div className="fieldBlock">
-          <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={(value: Tag[]) => this.props.onItemChange({tags: value})}
+          <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={(value: ValueType<Tag>) => this.props.onItemChange({tags: value})}
             onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
         { /* <div className="fieldBlock">

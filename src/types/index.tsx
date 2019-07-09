@@ -1,3 +1,5 @@
+import { ValueType } from "react-select/src/types";
+
 export interface Item {
     _id: string;
     title: string;
@@ -11,7 +13,7 @@ export interface Item {
 export interface ItemDiff {
     title?: string;
     text?: string;
-    tags?: Tag[];
+    tags?: ValueType<Tag>;
     publicAccess?: boolean;
 }
 
