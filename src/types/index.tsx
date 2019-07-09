@@ -30,3 +30,19 @@ export interface FormProps {
     onItemChange: (item: ItemDiff) => void;
     onCreateTag: (tagName: string) => void;
 }
+
+export interface Filters {
+    text: string; 
+    tags: Tag[];
+}
+
+export interface FiltersDiff {
+    text?: string; 
+    tags?: ValueType<Tag>;
+}
+
+export interface FiltersProps {
+    filters: Filters;
+    tags: Tag[];
+    onFiltersChange: (filters: FiltersDiff) => void;
+}
