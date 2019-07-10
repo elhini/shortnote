@@ -50,7 +50,7 @@ class BaseApi {
             'put /:id': (req, res, userID) => {
                 const query = { '_id': this.createObjectID(req.params.id), userID };
                 const item = req.body;
-                let _item = Object.assign({}, item);
+                let _item = {...item};
                 delete _item._id;
                 db.collection(this.collection).updateOne(query, { $set: _item }, (err, result) => {
                     if (err) {
@@ -79,7 +79,7 @@ class BaseApi {
             var handler = this.methods[methodAndPostfix];
             var options = {};
             if (typeof handler === 'object'){
-                options = Object.assign({}, handler);
+                options = {...handler};
                 handler = options.handler;
             }
             var mpArray = methodAndPostfix.split(' ');

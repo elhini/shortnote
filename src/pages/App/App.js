@@ -132,7 +132,7 @@ export default class App extends React.Component {
   }
 
   onItemChange(item, isNew){
-    item = Object.assign({}, this.state.item, item);
+    item = {...this.state.item, ...item};
     var isChanged = this.isItemsDiffer(item, this.state.item);
     var items = this.state.items;
     if (!isNew){
@@ -160,12 +160,12 @@ export default class App extends React.Component {
   }
 
   onFiltersChange(filters){
-    filters = Object.assign({}, this.state.filters, filters);
+    filters = {...this.state.filters, ...filters};
     this.setState({filters: filters});
   }
 
   onSortChange(sort){
-    sort = Object.assign({}, this.state.sort, sort);
+    sort = {...this.state.sort, ...sort};
     this.setState({sort: sort});
   }
 
