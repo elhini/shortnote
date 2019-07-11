@@ -4,20 +4,21 @@ import DateUtils from '../../utils/DateUtils';
 import { Link } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { ListProps, Item } from '../../types/index';
 
-export default class List extends React.Component {
-  constructor(props) {
+export default class List extends React.Component<ListProps, {}> {
+  constructor(props: ListProps) {
     super(props);
     this.onDelete = this.onDelete.bind(this);
   }
 
-  onDelete(e, item){
+  onDelete(e: React.MouseEvent, item: Item){
     e.stopPropagation(); 
     e.preventDefault();
     this.props.onDeleteItem(item);
   }
 
-  strip(html){
+  strip(html: string){
     var doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || "";
   }

@@ -46,3 +46,10 @@ export interface FiltersProps {
     tags: Tag[];
     onFiltersChange: (filters: FiltersDiff) => void;
 }
+
+export interface ListProps {
+    items: Item[];
+    item: Item;
+    loading: boolean;
+    onDeleteItem: (item: Item) => void;
+}
