@@ -31,8 +31,8 @@ export default class List extends React.Component {
       var tags = (item.tags || []).map(tag => <span className="tag" data-id={tag.value} key={tag.value}>{tag.label}</span>);
       var aside = (<div className="aside">
         <div className="aside-inner">
-          <span className="dateOfCreate">{DateUtils.toStr(item.dateOfCreate)}</span>
-          <span className="dateOfUpdate">{DateUtils.toStr(item.dateOfUpdate)}</span>
+          <span className="dateOfCreate" title="Date of create">{DateUtils.toStr(item.dateOfCreate)}</span>
+          <span className="dateOfUpdate" title="Date of update">{DateUtils.toStr(item.dateOfUpdate)}</span>
           <div className="tags">{tags}</div>
         </div>
         <IconButton className="delete" onClick={(e) => window.confirm('Delete this item?') && this.onDelete(e, item)}><DeleteIcon /></IconButton>
