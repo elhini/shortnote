@@ -53,3 +53,7 @@ export interface ListProps {
     loading: boolean;
     onDeleteItem: (item: Item) => void;
 }
+
+export interface ReadonlyNoteProps {
+    item: Item;
+}
