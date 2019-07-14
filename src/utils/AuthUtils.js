@@ -2,7 +2,8 @@ import LocalStorage from "./LocalStorage";
     
 export default class AuthUtils {
     static isLoggedIn() {
-        return !!this.getSession();
+        var session = this.getSession();
+        return session && session.expireDate > new Date().toISOString();
     }
     
     static getSession() {
