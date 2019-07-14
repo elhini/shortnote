@@ -1,7 +1,8 @@
 import React from 'react';
+import { SortProps } from '../../types/index';
 import './Sort.css';
 
-export default class Sort extends React.Component {
+export default class Sort extends React.Component<SortProps, {}> {
   render(){
     var sort = this.props.sort;
     var fields = [

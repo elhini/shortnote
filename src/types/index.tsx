@@ -67,3 +67,18 @@ export interface TextEditorProps {
 export interface TextEditorState {
     value: EditorValue;
 }
+
+export interface Sort {
+    field: string; 
+    direction: string;
+}
+
+export interface SortDiff {
+    field?: string; 
+    direction?: string;
+}
+
+export interface SortProps {
+    sort: Sort;
+    onSortChange: (sort: SortDiff) => void;
+}
