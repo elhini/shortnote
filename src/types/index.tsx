@@ -1,4 +1,5 @@
 import { ValueType } from "react-select/src/types";
+import { EditorValue } from "react-rte";
 
 export interface Item {
     _id: string;
@@ -56,4 +57,13 @@ export interface ListProps {
 
 export interface ReadonlyNoteProps {
     item: Item;
+}
+
+export interface TextEditorProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+
+export interface TextEditorState {
+    value: EditorValue;
 }

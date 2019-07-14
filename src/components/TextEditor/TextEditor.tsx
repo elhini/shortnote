@@ -1,12 +1,14 @@
 import React from 'react';
 import RichTextEditor from 'react-rte';
+import { TextEditorProps, TextEditorState } from '../../types/index';
+import { EditorValue } from "react-rte";
 
-export default class TextEditor extends React.Component {
+export default class TextEditor extends React.Component<TextEditorProps, TextEditorState> {
   state = {
     value: RichTextEditor.createValueFromString(this.props.value, 'html')
   }
 
-  onChange = (value) => {
+  onChange = (value: EditorValue) => {
     this.setState({value});
     // Send the changes up to the parent component as an HTML string.
     // This is here to demonstrate using `.toString()` but in a real app it
