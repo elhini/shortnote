@@ -1,5 +1,5 @@
-import { ValueType } from "react-select/src/types";
 import { EditorValue } from "react-rte";
+import { RouteComponentProps } from "react-router-dom";
 
 export interface Item {
     _id: string;
@@ -12,9 +12,12 @@ export interface Item {
 }
 
 export interface ItemDiff {
+    _id?: string;
     title?: string;
     text?: string;
-    tags?: ValueType<Tag>;
+    tags?: Tag[];
+    dateOfCreate?: Date;
+    dateOfUpdate?: Date;
     publicAccess?: boolean;
 }
 
@@ -32,25 +35,25 @@ export interface FormProps {
     onCreateTag: (tagName: string) => void;
 }
 
-export interface Filters {
+export interface FiltersValue {
     text: string; 
     tags: Tag[];
 }
 
-export interface FiltersDiff {
+export interface FiltersValueDiff {
     text?: string; 
-    tags?: ValueType<Tag>;
+    tags?: Tag[];
 }
 
 export interface FiltersProps {
-    filters: Filters;
+    filters: FiltersValue;
     tags: Tag[];
-    onFiltersChange: (filters: FiltersDiff) => void;
+    onFiltersChange: (filters: FiltersValueDiff) => void;
 }
 
 export interface ListProps {
     items: Item[];
-    item: Item;
+    item: Item | null | undefined;
     loading: boolean;
     onDeleteItem: (item: Item) => void;
 }
@@ -68,17 +71,43 @@ export interface TextEditorState {
     value: EditorValue;
 }
 
-export interface Sort {
-    field: string; 
-    direction: string;
+export type SortField = 'dateOfCreate' | 'dateOfUpdate';
+
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortValue {
+    field: SortField; 
+    direction: SortDirection;
 }
 
-export interface SortDiff {
-    field?: string; 
-    direction?: string;
+export interface SortValueDiff {
+    field?: SortField; 
+    direction?: SortDirection;
 }
 
 export interface SortProps {
-    sort: Sort;
-    onSortChange: (sort: SortDiff) => void;
+    sort: SortValue;
+    onSortChange: (sort: SortValueDiff) => void;
+}
+
+export interface AppProps extends RouteComponentProps {
+    match: {
+        params: {
+            id: string
+        }; 
+        isExact: boolean; 
+        path: string; 
+        url: string;
+    };
+}
+
+export interface AppState {
+    item: Item | null | undefined;
+    items: Item[];
+    filters: FiltersValue;
+    sort: SortValue;
+    loadingList: boolean;
+    formChanged: boolean;
+    sendingForm: boolean;
+    error: string;
 }

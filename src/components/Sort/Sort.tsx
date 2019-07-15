@@ -1,5 +1,5 @@
 import React from 'react';
-import { SortProps } from '../../types/index';
+import { SortProps, SortField, SortDirection } from '../../types/index';
 import './Sort.css';
 
 export default class Sort extends React.Component<SortProps, {}> {
@@ -20,11 +20,11 @@ export default class Sort extends React.Component<SortProps, {}> {
         <label>Sort</label>:{' '}
         <span className="fieldInline">
           <label>by</label>{' '}
-          <select id="sortField" value={sort.field} onChange={(e) => this.props.onSortChange({field: e.target.value})}>
+          <select id="sortField" value={sort.field} onChange={(e) => this.props.onSortChange({field: e.target.value as SortField})}>
             {fieldOptions}
           </select>{' '}
           <label>in</label>{' '}
-          <select id="sortDirection" value={sort.direction} onChange={(e) => this.props.onSortChange({direction: e.target.value})}>
+          <select id="sortDirection" value={sort.direction} onChange={(e) => this.props.onSortChange({direction: e.target.value as SortDirection})}>
             {directionOptions}
           </select>{' '}
           <label>order</label>

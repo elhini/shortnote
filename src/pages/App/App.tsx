@@ -9,17 +9,30 @@ import Form from '../../components/Form/Form';
 import List from '../../components/List/List';
 import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
+import { AppProps, AppState, Item, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
+import { RouteComponentProps } from "react-router-dom";
 
-export default class App extends React.Component {
-  constructor(props) {
+export default class App extends React.Component<AppProps, AppState> {
+  tags: Tag[];
+  accessLevels: {id: number, name: string}[];
+  history: RouteComponentProps['history'];
+  stopListeningHistory: () => void;
+  notesAPIClient: NotesApiClient;
+  autosaveTimeoutID: number;
+
+  constructor(props: AppProps) {
     super(props);
     var id = props.match.params.id;
     var item = id === 'new' ? this.buildEmptyItem() : null;
     this.state = {
       item: item,
       items: [],
-      filters: {},
-      sort: {field: 'dateOfUpdate', direction: 'desc'}
+      filters: {text: '', tags: []},
+      sort: {field: 'dateOfUpdate', direction: 'desc'},
+      loadingList: false,
+      formChanged: false,
+      sendingForm: false,
+      error: ''
     };
     this.tags = [];
     this.accessLevels = [{id: 1, name: 'viewing'}, {id: 2, name: 'editing'}];
@@ -28,6 +41,7 @@ export default class App extends React.Component {
       this.getItemByLocation(this.state.items);
     });
     this.notesAPIClient = new NotesApiClient(this);
+    this.autosaveTimeoutID = 0;
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
@@ -50,14 +64,14 @@ export default class App extends React.Component {
     return !!this.getPublicItemIDFromLocation();
   }
 
-  getItemByLocation(items){
-    var cb = item => this.setState({items: items, loadingList: false, item: item});
+  getItemByLocation(items: Item[]){
+    var cb = (item: Item | undefined) => this.setState({items: items, loadingList: false, item: item});
     var id = this.getItemIDFromLocation();
     var item = id === 'new' ? this.buildEmptyItem() : items.find(i => i._id === id);
     if (id && id !== 'new' && !item){
       var publicID = this.getPublicItemIDFromLocation();
       if (publicID){
-        this.notesAPIClient.getPublic(publicID, item => {
+        this.notesAPIClient.getPublic(publicID, (item: Item) => {
           cb(item);
         });
       }
@@ -74,7 +88,7 @@ export default class App extends React.Component {
       return;
     }
     this.setState({loadingList: true});
-    this.notesAPIClient.getAll(items => {
+    this.notesAPIClient.getAll((items: Item[]) => {
       this.getItemByLocation(items);
     });
   }
@@ -83,8 +97,8 @@ export default class App extends React.Component {
     this.stopListeningHistory();
   }
 
-  buildEmptyItem(){
-    return {_id: '', title: '', text: '', tags: []};
+  buildEmptyItem(): Item {
+    return {_id: '', title: '', text: '', tags: [], dateOfCreate: new Date(), dateOfUpdate: new Date(), publicAccess: false};
   }
 
   onOpenNew(){
@@ -92,9 +106,9 @@ export default class App extends React.Component {
     this.setState({item: emptyItem});
   }
 
-  onSubmit(e, item = this.state.item){
+  onSubmit(e: Event | null, item = this.state.item){
     e && e.preventDefault();
-    if (!item.title && !item.text){
+    if (!item || (!item.title && !item.text)){
       return;
     }
     if (!item._id){
@@ -110,28 +124,31 @@ export default class App extends React.Component {
     }
   }
 
-  createItem(item, cb){
+  createItem(item: Item, cb: (i: Item) => void){
     this.notesAPIClient.create(item, cb);
   }
 
-  updateItem(item, cb){
+  updateItem(item: Item, cb: (i: Item) => void){
     this.notesAPIClient.update(item, cb);
   }
 
   // TODO: move to Utils
-  isObjectsEqual(obj1, obj2){
+  isObjectsEqual(obj1: any, obj2: any){
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 
-  isItemsDiffer(item1, item2){
+  isItemsDiffer(item1: Item, item2: AppState['item']){
+    if (!item2){
+      return true;
+    }
     return item1.title !== item2.title || 
            item1.text !== item2.text || 
            item1.publicAccess !== item2.publicAccess || 
-           item1.accessLevel !== item2.accessLevel || 
+           // item1.accessLevel !== item2.accessLevel || 
            !this.isObjectsEqual(item1.tags, item2.tags);
   }
 
-  onItemChange(item, isNew){
+  onItemChange(item: Item, isNew?: boolean){
     item = {...this.state.item, ...item};
     var isChanged = this.isItemsDiffer(item, this.state.item);
     var items = this.state.items;
@@ -142,34 +159,34 @@ export default class App extends React.Component {
     this.setState({items: items, item: item, sendingForm: false, formChanged: isChanged});
     isNew && this.history.push('/note/' + item._id);
     if (isChanged && !this.state.sendingForm){
-      clearTimeout(this.autosaveInterval);
-      this.autosaveInterval = setTimeout(() => {
+      window.clearTimeout(this.autosaveTimeoutID);
+      this.autosaveTimeoutID = window.setTimeout(() => {
         this.onSubmit(null, item);
       }, 1000);
     }
   }
 
-  onDeleteItem(item){
+  onDeleteItem(item: Item){
     var items = this.state.items;
     items = items.filter(i => i._id !== item._id);
-    this.notesAPIClient.remove(item, res => {
+    this.notesAPIClient.remove(item, () => {
       var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
       this.setState({items: items, item: openedItem});
       this.history.push('/');
     });
   }
 
-  onFiltersChange(filters){
-    filters = {...this.state.filters, ...filters};
-    this.setState({filters: filters});
+  onFiltersChange(filters: FiltersValueDiff){
+    let newFilters = {...this.state.filters, ...filters};
+    this.setState({filters: newFilters});
   }
 
-  onSortChange(sort){
-    sort = {...this.state.sort, ...sort};
-    this.setState({sort: sort});
+  onSortChange(sort: SortValueDiff){
+    let newSort = {...this.state.sort, ...sort};
+    this.setState({sort: newSort});
   }
 
-  filter(items){
+  filter(items: Item[]){
     return items.filter(i => {
       // text
       var text = this.state.filters.text;
@@ -177,7 +194,7 @@ export default class App extends React.Component {
       var matchByText = useTextFilter ? StringUtils.isContains(i.text, text) || StringUtils.isContains(i.title, text) : true;
       // tags
       var tags = this.state.filters.tags;
-      var filterTagIDs = tags ? tags.map(t => t.value) : [];
+      var filterTagIDs = tags ?   tags.map(t => t.value) : [];
       var itemTagIDs = i.tags ? i.tags.map(t => t.value) : [];
       var useTagsFilter = tags && !!tags.length;
       var matchByTags = useTagsFilter ? itemTagIDs.some(itemTagID => filterTagIDs.includes(itemTagID)) : true;
@@ -192,7 +209,7 @@ export default class App extends React.Component {
     });
   }
 
-  sort(items){
+  sort(items: Item[]){
     var field = this.state.sort.field;
     var sign = this.state.sort.direction === 'asc' ? 1 : -1;
     return items.sort((i1, i2) => {
@@ -208,18 +225,22 @@ export default class App extends React.Component {
 
   // TODO: load from DB
   buildTagList(){
-    return this.state.items.reduce((tags, item) => tags.concat(item.tags || []), []);
+    return this.state.items.reduce((tags: Tag[], item) => tags.concat(item.tags || []), []);
   }
 
-  onCreateTag(tagName) {
+  onCreateTag(tagName: string) {
     var maxID = Math.max.apply(Math, this.tags.map(t => t.value));
     var newID = maxID < 0 ? 1 : maxID + 1;
     var tag = { value: newID, label: tagName };
     this.tags.push(tag);
-    var item = {};
+    var item: ItemDiff = {};
     item.tags = this.state.item ? this.state.item.tags.slice() : [];
     item.tags.push(tag);
-    this.onItemChange(item);
+    this.onItemChangePartially(item);
+  }
+
+  onItemChangePartially(item: ItemDiff) {
+    this.onItemChange(item as Item);
   }
 
   render(){
@@ -237,7 +258,7 @@ export default class App extends React.Component {
     );
   }
 
-  filterAndSortItems(items){
+  filterAndSortItems(items: Item[]){
     var filteredItems = this.filter(items);
     var sortedItems = this.sort(filteredItems);
     return sortedItems;
@@ -250,8 +271,8 @@ export default class App extends React.Component {
     var form = null;
     var item = this.state.item;
     if (item){
-      form = <Form item={item} onSubmit={this.onSubmit} tags={this.tags} accessLevels={this.accessLevels}
-        onCreateTag={this.onCreateTag} onItemChange={this.onItemChange} 
+      form = <Form item={item} /* onSubmit={this.onSubmit} */ tags={this.tags} /* accessLevels={this.accessLevels} */
+        onCreateTag={this.onCreateTag} onItemChange={this.onItemChangePartially} 
         sending={this.state.sendingForm} changed={this.state.formChanged}></Form>;
     }
 
