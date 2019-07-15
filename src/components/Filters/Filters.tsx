@@ -1,7 +1,6 @@
 import React from 'react';
 import Select from 'react-select'
-import { ValueType } from "react-select/src/types";
-import { FiltersProps, Tag } from '../../types/index';
+import { FiltersProps } from '../../types/index';
 import './Filters.css';
 
 export default class Filters extends React.Component<FiltersProps, {}> {
@@ -16,7 +15,7 @@ export default class Filters extends React.Component<FiltersProps, {}> {
         </span>
         <span className="fieldInline">
           <label>by tags</label>{' '}
-          <Select id="tagsFilter" value={filters.tags} isMulti options={this.props.tags} onChange={(v: ValueType<Tag>) => this.props.onFiltersChange({tags: v})}></Select>
+          <Select id="tagsFilter" value={filters.tags} isMulti options={this.props.tags} onChange={(v: any) => this.props.onFiltersChange({tags: v})}></Select>
         </span>
       </form>
     );
