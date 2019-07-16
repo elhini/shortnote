@@ -58,7 +58,7 @@ class AuthState extends React.Component {
 
     logout(e){
         e.preventDefault();
-        (new UsersApiClient()).logout(() => {
+        (new UsersApiClient(this)).logout(() => {
             AuthUtils.setSession(null);
             this.props.history.push("/login");
         });
