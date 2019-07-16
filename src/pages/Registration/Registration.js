@@ -9,11 +9,10 @@ export default class Registration extends React.Component {
   
     register = (e) => {
       e.preventDefault();
-      this.setState({ sumbitting: true });
       (new UsersApiClient(this)).register(this.state.login, this.state.password, (session) => {
-          session.loggedAs = this.state.login;
-          AuthUtils.setSession(session);
-          this.setState({ sumbitting: false, redirectToReferrer: true });
+        session.loggedAs = this.state.login;
+        AuthUtils.setSession(session);
+        this.setState({ redirectToReferrer: true });
       });
     };
 
@@ -40,7 +39,7 @@ export default class Registration extends React.Component {
           </div>
           <button id="submitRegisterForm" onClick={e => this.register(e)} disabled={this.state.sumbitting}>
             {this.state.sumbitting ? 'Registering...' : 'Register'}
-          </button>
+          </button><br />
           {this.state.error && <div className="alert error" id="registerError">{this.state.error}</div>}
         </form>
       );

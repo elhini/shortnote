@@ -58,10 +58,8 @@ class AuthState extends React.Component {
 
     logout(e){
         e.preventDefault();
-        this.setState({ sumbitting: true });
         (new UsersApiClient()).logout(() => {
             AuthUtils.setSession(null);
-            this.setState({ sumbitting: false });
             this.props.history.push("/login");
         });
     }

@@ -1,5 +1,4 @@
 import BaseApiClient from './base';
-import AsyncUtils from '../utils/AsyncUtils';
 
 export default class UsersApiClient extends BaseApiClient {
     constructor(component) {
@@ -8,21 +7,15 @@ export default class UsersApiClient extends BaseApiClient {
 
     register(login, password, cb) {
         var ticket = {login, password};
-        AsyncUtils.sendJSON(this.url + '/register', 'POST', ticket, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('POST', '/register', ticket, cb);
     }
 
     login(login, password, cb) {
         var ticket = {login, password};
-        AsyncUtils.sendJSON(this.url + '/login', 'POST', ticket, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('POST', '/login', ticket, cb);
     }
 
     logout(cb) {
-        AsyncUtils.sendJSON(this.url + '/logout', 'POST', null, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('POST', '/logout', null, cb);
     }
 } 

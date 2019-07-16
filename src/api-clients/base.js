@@ -7,40 +7,41 @@ export default class BaseApiClient {
         this.component = component;
     }
 
+    handleReq(method, urlPostfix, item, cb){
+        if (this.component){ 
+            this.component.setState({ error: '', sumbitting: true });
+        }
+        AsyncUtils.sendJSON(this.url + urlPostfix, method, item, (res) => {
+            this.handleRes(cb, res);
+        });
+    }
+
     handleRes(cb, res){
+        if (this.component){ 
+            this.component.setState({ error: res.error || '', sumbitting: false });
+        }
+        else if (res.error) {
+            alert(JSON.stringify(res.error));
+        }
         if (res.error){
-            this.component ? 
-                this.component.setState({ error: res.error }) : 
-                alert(JSON.stringify(res.error));
             return;
         }
-        this.component && this.component.setState({ error: '' });
         cb(res);
     }
     
     create(item, cb) {
-        AsyncUtils.sendJSON(this.url, 'POST', item, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('POST', '', item, cb);
     }
     getAll(cb) {
-        AsyncUtils.sendJSON(this.url, 'GET', null, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('GET', '', null, cb);
     }
     get(id, cb) {
-        AsyncUtils.sendJSON(this.url + '/'+id, 'GET', null, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('GET', '/'+id, null, cb);
     }
     update(item, cb) {
-        AsyncUtils.sendJSON(this.url + '/'+item._id, 'PUT', item, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('PUT', '/'+item._id, item, cb);
     }
     remove(item, cb) {
-        AsyncUtils.sendJSON(this.url + '/'+item._id, 'DELETE', null, (res) => {
-            this.handleRes(cb, res);
-        });
+        this.handleReq('DELETE', '/'+item._id, null, cb);
     }
 } 
