@@ -52,6 +52,7 @@
 #List li .delete {
   margin-left: 5px;
   vertical-align: top;
+  padding: 10px;
 }
 
 #List li .dateOfCreate,

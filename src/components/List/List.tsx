@@ -36,7 +36,9 @@ export default class List extends React.Component<ListProps, {}> {
           <span className="dateOfUpdate" title="Date of update">{DateUtils.toStr(item.dateOfUpdate)}</span>
           <div className="tags">{tags}</div>
         </div>
-        <IconButton className="delete" onClick={(e) => window.confirm('Delete this item?') && this.onDelete(e, item)}><DeleteIcon /></IconButton>
+        <IconButton className="delete" title="Delete note" onClick={(e) => window.confirm('Delete this item?') && this.onDelete(e, item)}>
+          <DeleteIcon />
+        </IconButton>
       </div>);
       return (
         <li key={item._id} className={opened}>
