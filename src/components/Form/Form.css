@@ -20,10 +20,9 @@
   margin-left: 5px;
 }
 
-#Form #title,
-#Form label[for="publicAccess"],
-#Form #publicAccess,
-#Form #accessLevel {
+#Form #titleAndPublicAccess input,
+#Form #titleAndPublicAccess label,
+#Form #titleAndPublicAccess select {
   vertical-align: middle;
   display: inline-block;
 }

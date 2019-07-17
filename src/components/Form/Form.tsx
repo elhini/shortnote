@@ -44,7 +44,7 @@ export default class Form extends React.Component<FormProps, {}> {
     return (
       <form id="Form" /* onSubmit={this.props.onSubmit} */ key={item._id}>
         <input type="hidden" id="id" value={item._id} readOnly />
-        <div className="fieldBlock">
+        <div className="fieldBlock" id="titleAndPublicAccess">
           <input type="text" id="title" value={item.title} onChange={e => this.props.onItemChange({title: e.target.value})} autoFocus
             ref={i => this.titleInput = i} />
           <label htmlFor="publicAccess">
