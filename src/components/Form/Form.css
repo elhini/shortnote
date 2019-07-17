@@ -10,6 +10,16 @@
   margin: -2px 5px 0 0;
 }
 
+#Form #publicLink {
+  width: 250px;
+  margin-left: 5px;
+}
+
+#Form #copyPublicLink {
+  padding: 7px;
+  margin-left: 5px;
+}
+
 #Form #title,
 #Form label[for="publicAccess"],
 #Form #publicAccess,

@@ -1,4 +1,6 @@
 import React from 'react';
+import IconButton from '@material-ui/core/IconButton';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
 import { FormProps } from '../../types/index';
@@ -6,9 +8,24 @@ import './Form.css';
 
 export default class Form extends React.Component<FormProps, {}> {
   titleInput!: HTMLInputElement | null;
+  publicLinkInput!: HTMLInputElement | null;
 
   componentDidMount(){
     this.titleInput && this.titleInput.focus();
+  }
+
+  copyPublicLink() {
+    if (this.publicLinkInput){
+      this.publicLinkInput.focus();
+      this.publicLinkInput.select();
+    }
+  
+    try {
+      document.execCommand('copy');
+      // TODO: show success snackbar: https://material-ui.com/ru/components/snackbars/
+    } catch (err) {
+      console.error('unable to copy', err);
+    }
   }
 
   render(){
@@ -19,6 +36,11 @@ export default class Form extends React.Component<FormProps, {}> {
       {accessLevelOptions}
     </select> 
     */
+    var publicLink = window.location.origin + '/note/public/' + item._id;
+    var publicLinkCont = <>
+      <input type="text" id="publicLink" value={publicLink} readOnly ref={i => this.publicLinkInput = i} />
+      <IconButton id="copyPublicLink" title="Copy public link" onClick={e => this.copyPublicLink()}><FileCopyIcon /></IconButton>
+    </>;
     return (
       <form id="Form" /* onSubmit={this.props.onSubmit} */ key={item._id}>
         <input type="hidden" id="id" value={item._id} readOnly />
@@ -30,6 +52,7 @@ export default class Form extends React.Component<FormProps, {}> {
             Public access 
             {/* item.publicAccess ? 'for ' : '' */}
           </label>{' '}
+          {item.publicAccess && publicLinkCont}
           {/* item.publicAccess ? accessLevelSelect : null */}
         </div>
         <div className="fieldBlock">
