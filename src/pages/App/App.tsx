@@ -49,6 +49,7 @@ export default class App extends React.Component<AppProps, AppState> {
     this.onSortChange = this.onSortChange.bind(this);
     this.onCreateTag = this.onCreateTag.bind(this);
     this.onItemChange = this.onItemChange.bind(this);
+    this.onItemChangePartially = this.onItemChangePartially.bind(this);
   }
   
   getItemIDFromLocation(){
