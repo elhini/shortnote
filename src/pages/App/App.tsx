@@ -176,7 +176,7 @@ export default class App extends React.Component<AppProps, AppState> {
     this.notesAPIClient.remove(item, () => {
       var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
       this.setState({items: items, item: openedItem});
-      this.history.push('/');
+      this.history.push('/note');
     });
   }
 
