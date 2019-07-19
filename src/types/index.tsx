@@ -33,6 +33,7 @@ export interface FormProps {
     changed: boolean;
     onItemChange: (item: ItemDiff) => void;
     onCreateTag: (tagName: string) => void;
+    onPublicLinkCopy: () => void;
 }
 
 export interface FiltersValue {
@@ -110,4 +111,5 @@ export interface AppState {
     formChanged: boolean;
     sendingForm: boolean;
     error: string;
+    publicLinkCopied: boolean;
 }

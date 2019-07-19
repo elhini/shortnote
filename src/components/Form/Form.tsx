@@ -22,7 +22,7 @@ export default class Form extends React.Component<FormProps, {}> {
   
     try {
       document.execCommand('copy');
-      // TODO: show success snackbar: https://material-ui.com/ru/components/snackbars/
+      this.props.onPublicLinkCopy();
     } catch (err) {
       console.error('unable to copy', err);
     }

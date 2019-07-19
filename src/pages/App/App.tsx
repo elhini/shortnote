@@ -7,6 +7,7 @@ import Filters from '../../components/Filters/Filters';
 import Sort from '../../components/Sort/Sort';
 import Form from '../../components/Form/Form';
 import List from '../../components/List/List';
+import Alert from '../../components/Alert/Alert';
 import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
 import { AppProps, AppState, Item, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
@@ -32,7 +33,8 @@ export default class App extends React.Component<AppProps, AppState> {
       loadingList: false,
       formChanged: false,
       sendingForm: false,
-      error: ''
+      error: '',
+      publicLinkCopied: false
     };
     this.tags = [];
     this.accessLevels = [{id: 1, name: 'viewing'}, {id: 2, name: 'editing'}];
@@ -50,6 +52,7 @@ export default class App extends React.Component<AppProps, AppState> {
     this.onCreateTag = this.onCreateTag.bind(this);
     this.onItemChange = this.onItemChange.bind(this);
     this.onItemChangePartially = this.onItemChangePartially.bind(this);
+    this.onPublicLinkCopy = this.onPublicLinkCopy.bind(this);
   }
   
   getItemIDFromLocation(){
@@ -244,6 +247,10 @@ export default class App extends React.Component<AppProps, AppState> {
     this.onItemChange(item as Item);
   }
 
+  onPublicLinkCopy(){
+    this.setState({publicLinkCopied: true});
+  }
+
   render(){
     if (this.state.item && this.isPublicItemLocation()){
       return <ReadonlyNote item={this.state.item} />;
@@ -253,6 +260,7 @@ export default class App extends React.Component<AppProps, AppState> {
         <div>
           <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
           {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}
+          {this.state.publicLinkCopied && <Alert variant="success" message="Copied!" onClose={() => this.setState({publicLinkCopied: false})} />}
         </div>
         {this.renderBody()}
       </div>
@@ -273,7 +281,7 @@ export default class App extends React.Component<AppProps, AppState> {
     var item = this.state.item;
     if (item){
       form = <Form item={item} /* onSubmit={this.onSubmit} */ tags={this.tags} /* accessLevels={this.accessLevels} */
-        onCreateTag={this.onCreateTag} onItemChange={this.onItemChangePartially} 
+        onCreateTag={this.onCreateTag} onItemChange={this.onItemChangePartially} onPublicLinkCopy={this.onPublicLinkCopy} 
         sending={this.state.sendingForm} changed={this.state.formChanged}></Form>;
     }
 
