@@ -113,3 +113,11 @@ export interface AppState {
     error: string;
     publicLinkCopied: boolean;
 }
+
+export interface Session {
+    _id: string;
+    userID: string; 
+    active: boolean; 
+    expireDate: string;
+    loggedAs: string;
+}
