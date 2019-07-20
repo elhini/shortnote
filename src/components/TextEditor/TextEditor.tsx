@@ -1,7 +1,15 @@
 import React from 'react';
 import RichTextEditor from 'react-rte';
-import { TextEditorProps, TextEditorState } from '../../types/index';
 import { EditorValue } from "react-rte";
+
+interface TextEditorProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+
+interface TextEditorState {
+    value: EditorValue;
+}
 
 export default class TextEditor extends React.Component<TextEditorProps, TextEditorState> {
   state = {

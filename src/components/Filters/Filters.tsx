@@ -1,7 +1,13 @@
 import React from 'react';
 import Select from 'react-select'
-import { FiltersProps } from '../../types/index';
+import { FiltersValue, Tag, FiltersValueDiff } from '../../types/index';
 import './Filters.css';
+
+interface FiltersProps {
+    filters: FiltersValue;
+    tags: Tag[];
+    onFiltersChange: (filters: FiltersValueDiff) => void;
+}
 
 export default class Filters extends React.Component<FiltersProps, {}> {
   render(){

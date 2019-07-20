@@ -1,10 +1,17 @@
 import React from 'react';
-import './List.css';
 import DateUtils from '../../utils/DateUtils';
 import { Link } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { ListProps, Item } from '../../types/index';
+import { Item } from '../../types/index';
+import './List.css';
+
+interface ListProps {
+    items: Item[];
+    item: Item | null | undefined;
+    loading: boolean;
+    onDeleteItem: (item: Item) => void;
+}
 
 export default class List extends React.Component<ListProps, {}> {
   constructor(props: ListProps) {

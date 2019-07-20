@@ -1,6 +1,10 @@
 import React from 'react';
-import { ReadonlyNoteProps } from '../../types/index';
+import { Item } from '../../types/index';
 import './ReadonlyNote.css';
+
+interface ReadonlyNoteProps {
+    item: Item;
+}
 
 export default class ReadonlyNote extends React.Component<ReadonlyNoteProps, {}> {
     render(){

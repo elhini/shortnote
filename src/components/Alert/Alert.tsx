@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface AlertProps {
+interface AlertProps {
   className?: string;
   message?: string;
   onClose?: () => void;

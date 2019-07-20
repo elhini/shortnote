@@ -1,6 +1,11 @@
 import React from 'react';
-import { SortProps, SortField, SortDirection } from '../../types/index';
+import { SortValue, SortValueDiff, SortField, SortDirection } from '../../types/index';
 import './Sort.css';
+
+interface SortProps {
+    sort: SortValue;
+    onSortChange: (sort: SortValueDiff) => void;
+}
 
 export default class Sort extends React.Component<SortProps, {}> {
   render(){

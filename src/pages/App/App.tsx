@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import './App.css';
 import NotesApiClient from '../../api-clients/notes';
 import StringUtils from '../../utils/StringUtils';
 import Filters from '../../components/Filters/Filters';
@@ -10,8 +9,32 @@ import List from '../../components/List/List';
 import Alert from '../../components/Alert/Alert';
 import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
-import { AppProps, AppState, Item, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
+import { Item, FiltersValue, SortValue, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
+import './App.css';
+
+interface AppProps extends RouteComponentProps {
+    match: {
+        params: {
+            id: string
+        }; 
+        isExact: boolean; 
+        path: string; 
+        url: string;
+    };
+}
+
+interface AppState {
+    item: Item | null | undefined;
+    items: Item[];
+    filters: FiltersValue;
+    sort: SortValue;
+    loadingList: boolean;
+    formChanged: boolean;
+    sendingForm: boolean;
+    error: string;
+    publicLinkCopied: boolean;
+}
 
 export default class App extends React.Component<AppProps, AppState> {
   tags: Tag[];

@@ -3,8 +3,18 @@ import IconButton from '@material-ui/core/IconButton';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
-import { FormProps } from '../../types/index';
+import { Item, Tag, ItemDiff } from '../../types/index';
 import './Form.css';
+
+interface FormProps {
+    item: Item;
+    tags: Tag[];
+    sending: boolean;
+    changed: boolean;
+    onItemChange: (item: ItemDiff) => void;
+    onCreateTag: (tagName: string) => void;
+    onPublicLinkCopy: () => void;
+}
 
 export default class Form extends React.Component<FormProps, {}> {
   titleInput!: HTMLInputElement | null;
