@@ -3,20 +3,22 @@ import { Redirect } from "react-router-dom";
 import './Login.css';
 import AuthUtils from '../../utils/AuthUtils';
 import UsersApiClient from '../../api-clients/users';
+import { Session } from '../../types/index';
+import { RouteComponentProps } from "react-router-dom";
 
-export default class Login extends React.Component {
+export default class Login extends React.Component<RouteComponentProps, {}> {
     state = { redirectToReferrer: false, login: '', password: '', sumbitting: false, error: '' };
   
-    login = (e) => {
+    login = (e: React.MouseEvent) => {
       e.preventDefault();
-      (new UsersApiClient(this)).login(this.state.login, this.state.password, (session) => {
+      (new UsersApiClient(this)).login(this.state.login, this.state.password, (session: Session) => {
         session.loggedAs = this.state.login;
         AuthUtils.setSession(session);
         this.setState({ redirectToReferrer: true });
       });
     };
 
-    onInputChange(field, e) {
+    onInputChange(field: string, e: React.ChangeEvent<HTMLInputElement>) {
       this.setState({[field]: e.target.value});
     }
   
