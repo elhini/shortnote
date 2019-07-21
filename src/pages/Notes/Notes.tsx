@@ -12,7 +12,7 @@ import DateUtils from '../../utils/DateUtils';
 import AddIcon from '@material-ui/icons/AddCircle';
 import { Item, FiltersValue, SortValue, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
-import './App.css';
+import './Notes.css';
 
 interface AppProps extends RouteComponentProps {
     match: {
@@ -37,7 +37,7 @@ interface AppState {
     publicLinkCopied: boolean;
 }
 
-export default class App extends React.Component<AppProps, AppState> {
+export default class Notes extends React.Component<AppProps, AppState> {
   tags: Tag[];
   accessLevels: {id: number, name: string}[];
   history: RouteComponentProps['history'];
@@ -280,7 +280,7 @@ export default class App extends React.Component<AppProps, AppState> {
       return <ReadonlyNote item={this.state.item} />;
     }
     return (
-      <div id="App">
+      <div id="Notes">
         <div>
           <Link to={'/notes/new'} id="openNew" onClick={this.onOpenNew}><AddIcon /> Open new</Link>
           {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}

@@ -1,8 +1,8 @@
-#App a span {
+#Notes a span {
   color: inherit;
 }
 
-#App #openNew {
+#Notes #openNew {
   display: inline-block;
   margin-bottom: 10px;
   margin-right: 10px;
@@ -14,29 +14,29 @@
   color: #333;
   vertical-align: middle;
 }
-#App #openNew:hover {
+#Notes #openNew:hover {
   background: #eee;
 }
-#App #openNew svg {
+#Notes #openNew svg {
   margin: -7px 0;
   color: rgba(0, 0, 0, 0.54);
 }
 
-#App #wrap {
+#Notes #wrap {
   display: flex;
   flex-direction: row;
 }
 
-#App #listCont,
-#App #formCont {
+#Notes #listCont,
+#Notes #formCont {
   box-sizing: border-box;
 }
 
-#App #aside {
+#Notes #aside {
   flex: 1;
 }
 
-#App #formCont {
+#Notes #formCont {
   flex: 2;
   margin-left: 1%;
 }

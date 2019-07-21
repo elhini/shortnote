@@ -5,7 +5,7 @@ import AuthUtils from './utils/AuthUtils';
 import Landing from './pages/Landing/Landing';
 import Registration from './pages/Registration/Registration';
 import Login from './pages/Login/Login';
-import App from './pages/App/App';
+import Notes from './pages/Notes/Notes';
 
 function PrivateRoute({ component: Component, ...rest }) {
     return (
@@ -41,8 +41,8 @@ export default class AppRouter extends React.Component {
                   <Route path="/" exact component={Landing} />
                   <Route path="/register" component={Registration} />
                   <Route path="/login" component={Login} />
-                  <Route path="/notes/public/:id" exact component={App} />
-                  <PrivateRoute path={["/notes", "/notes/:id"]} exact component={App} />
+                  <Route path="/notes/public/:id" exact component={Notes} />
+                  <PrivateRoute path={["/notes", "/notes/:id"]} exact component={Notes} />
                 </div>
             </Router>
         );
@@ -50,7 +50,7 @@ export default class AppRouter extends React.Component {
 }
 
 const AppLink = () => {
-    return AuthUtils.isLoggedIn() && <li><NavLink to="/notes">App</NavLink></li>;
+    return AuthUtils.isLoggedIn() && <li><NavLink to="/notes">Notes</NavLink></li>;
 }
 
 class AuthState extends React.Component {
