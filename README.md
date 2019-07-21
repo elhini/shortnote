@@ -14,13 +14,14 @@ Lite and simple app for short notes
 #### Functions:
 - filtering (by title, text or tags)
 - sorting (by date of create or update)
-- link to note (private)
+- direct link to note (private)
 - autosave (after 1 second)
 - registration & auth (by login & password)
+- public sharing (read access)
 
 ## Planned features:
 
-- design (bootstrap / material-UI)
+- design (material-UI)
 
 #### Fields:
 - group/category (with hierarchy)
@@ -28,6 +29,5 @@ Lite and simple app for short notes
 #### Functions:
 - admin panel (users list)
 - invitations (by link)
-- public sharing (read access)
 - collaboration (write access)
 - TODO-lists (with checkboxes)
