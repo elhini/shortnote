@@ -9,6 +9,7 @@ import List from '../../components/List/List';
 import Alert from '../../components/Alert/Alert';
 import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
+import AddIcon from '@material-ui/icons/AddCircle';
 import { Item, FiltersValue, SortValue, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 import './App.css';
@@ -281,7 +282,7 @@ export default class App extends React.Component<AppProps, AppState> {
     return (
       <div id="App">
         <div>
-          <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}>Open new</Link>
+          <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}><AddIcon /> Open new</Link>
           {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}
           {this.state.publicLinkCopied && <Alert variant="success" message="Copied!" onClose={() => this.setState({publicLinkCopied: false})} />}
         </div>

@@ -17,6 +17,10 @@
 #App #openNew:hover {
   background: #eee;
 }
+#App #openNew svg {
+  margin: -7px 0;
+  color: rgba(0, 0, 0, 0.54);
+}
 
 #App #wrap {
   display: flex;
