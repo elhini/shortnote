@@ -6,6 +6,7 @@ import Landing from './pages/Landing/Landing';
 import Registration from './pages/Registration/Registration';
 import Login from './pages/Login/Login';
 import Notes from './pages/Notes/Notes';
+import Admin from './pages/Admin/Admin';
 
 function PrivateRoute({ component: Component, ...rest }) {
     return (
@@ -21,21 +22,18 @@ function PrivateRoute({ component: Component, ...rest }) {
 
 export default class AppRouter extends React.Component {
     render(){
-        var AppLinkWithRouter = withRouter(AppLink);
+        var PrivateLinksWithRouter = withRouter(PrivateLinks);
         var AuthStateWithRouter = withRouter(AuthState);
         return (
             <Router>
                 <div id="head">
-                    <div id="head-inner-left">
-                        <h1>ShortNote</h1>
-                        <ul id="nav">
-                            <li><NavLink to="/" exact>Home</NavLink></li>
-                            <li><NavLink to="/register">Register</NavLink></li>
-                            <AppLinkWithRouter />
-                        </ul>
-                        <AuthStateWithRouter />
-                    </div>
-                    <div id="head-inner-right"></div>
+                    <h1>ShortNote</h1>
+                    <ul id="nav">
+                        <li><NavLink to="/" exact>Home</NavLink></li>
+                        <li><NavLink to="/register">Register</NavLink></li>
+                        <PrivateLinksWithRouter />
+                    </ul>
+                    <AuthStateWithRouter />
                 </div>
                 <div id="body">
                   <Route path="/" exact component={Landing} />
@@ -43,14 +41,18 @@ export default class AppRouter extends React.Component {
                   <Route path="/login" component={Login} />
                   <Route path="/notes/public/:id" exact component={Notes} />
                   <PrivateRoute path={["/notes", "/notes/:id"]} exact component={Notes} />
+                  <PrivateRoute path={["/admin"]} exact component={Admin} />
                 </div>
             </Router>
         );
     }
 }
 
-const AppLink = () => {
-    return AuthUtils.isLoggedIn() && <li><NavLink to="/notes">Notes</NavLink></li>;
+const PrivateLinks = () => {
+    return AuthUtils.isLoggedIn() && <>
+        <li><NavLink to="/notes">Notes</NavLink></li>
+        <li><NavLink to="/admin">Admin</NavLink></li>
+    </>;
 }
 
 class AuthState extends React.Component {
