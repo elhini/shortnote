@@ -6,6 +6,7 @@ class BaseApi {
         this.collection = collection;
         this.url = '/api/' + collection;
         this._sessionsApi = new _SessionsApi();
+        this.userDependent = true;
     }
     
     createObjectID(id){
@@ -16,7 +17,7 @@ class BaseApi {
         this.methods = {
             'post': (req, res, userID) => {
                 const item = req.body;
-                item.userID = userID;
+                userID && (item.userID = userID);
                 delete item._id;
                 db.collection(this.collection).insertOne(item, (err, result) => {
                     if (err) { 
@@ -27,7 +28,8 @@ class BaseApi {
                 });
             },
             'get': (req, res, userID) => {
-                const query = { userID }; // all by user
+                const query = {}; // all
+                userID && (query.userID = userID);
                 db.collection(this.collection).find(query).toArray((err, result) => {
                     if (err) {
                         res.send({ 'error': err });
@@ -48,7 +50,8 @@ class BaseApi {
                 });
             },
             'put /:id': (req, res, userID) => {
-                const query = { '_id': this.createObjectID(req.params.id), userID };
+                const query = { '_id': this.createObjectID(req.params.id) };
+                userID && (query.userID = userID);
                 const item = req.body;
                 let _item = {...item};
                 delete _item._id;
@@ -61,7 +64,8 @@ class BaseApi {
                 });
             },
             'delete /:id': (req, res, userID) => {
-                const query = { '_id': this.createObjectID(req.params.id), userID };
+                const query = { '_id': this.createObjectID(req.params.id) };
+                userID && (query.userID = userID);
                 db.collection(this.collection).deleteOne(query, (err, result) => {
                     if (err) {
                         res.send({ 'error': err });
@@ -99,7 +103,8 @@ class BaseApi {
                             res.send({ 'error': 'session is expired' });
                             this._sessionsApi.updateSession(db, req, null, {active: false});
                         } else {
-                            handler(req, res, session.userID.toString());
+                            var userID = this.userDependent && session.userID.toString();
+                            handler(req, res, userID);
                             this._sessionsApi.updateSession(db, req, null, {expireDate: this._sessionsApi.getNewExpireDate()});
                         }
                     });
