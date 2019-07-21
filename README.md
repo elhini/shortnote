@@ -31,3 +31,11 @@ Lite and simple app for short notes
 - invitations (by link)
 - collaboration (write access)
 - TODO-lists (with checkboxes)
+
+## Used technologies:
+
+- languages: JavaScript + TypeScript
+- client: React + Material UI
+- server: Node.js + Express
+- database: MongoDB
+- testing: Jest
