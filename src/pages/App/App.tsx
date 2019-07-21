@@ -80,7 +80,7 @@ export default class App extends React.Component<AppProps, AppState> {
   }
   
   getItemIDFromLocation(){
-    return window.location.pathname.split('note/')[1];
+    return window.location.pathname.split('notes/')[1];
   }
   
   getPublicItemIDFromLocation(){
@@ -185,7 +185,7 @@ export default class App extends React.Component<AppProps, AppState> {
     }
     items.push(item);
     this.setState({items: items, item: item, sendingForm: false, formChanged: isChanged});
-    isNew && this.history.push('/note/' + item._id);
+    isNew && this.history.push('/notes/' + item._id);
     if (isChanged && !this.state.sendingForm){
       window.clearTimeout(this.autosaveTimeoutID);
       this.autosaveTimeoutID = window.setTimeout(() => {
@@ -200,7 +200,7 @@ export default class App extends React.Component<AppProps, AppState> {
     this.notesAPIClient.remove(item, () => {
       var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
       this.setState({items: items, item: openedItem});
-      this.history.push('/note');
+      this.history.push('/notes');
     });
   }
 
@@ -282,7 +282,7 @@ export default class App extends React.Component<AppProps, AppState> {
     return (
       <div id="App">
         <div>
-          <Link to={'/note/new'} id="openNew" onClick={this.onOpenNew}><AddIcon /> Open new</Link>
+          <Link to={'/notes/new'} id="openNew" onClick={this.onOpenNew}><AddIcon /> Open new</Link>
           {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}
           {this.state.publicLinkCopied && <Alert variant="success" message="Copied!" onClose={() => this.setState({publicLinkCopied: false})} />}
         </div>

@@ -41,8 +41,8 @@ export default class AppRouter extends React.Component {
                   <Route path="/" exact component={Landing} />
                   <Route path="/register" component={Registration} />
                   <Route path="/login" component={Login} />
-                  <Route path="/note/public/:id" exact component={App} />
-                  <PrivateRoute path={["/note", "/note/:id"]} exact component={App} />
+                  <Route path="/notes/public/:id" exact component={App} />
+                  <PrivateRoute path={["/notes", "/notes/:id"]} exact component={App} />
                 </div>
             </Router>
         );
@@ -50,7 +50,7 @@ export default class AppRouter extends React.Component {
 }
 
 const AppLink = () => {
-    return AuthUtils.isLoggedIn() && <li><NavLink to="/note">App</NavLink></li>;
+    return AuthUtils.isLoggedIn() && <li><NavLink to="/notes">App</NavLink></li>;
 }
 
 class AuthState extends React.Component {

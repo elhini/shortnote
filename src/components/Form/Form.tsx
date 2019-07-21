@@ -46,7 +46,7 @@ export default class Form extends React.Component<FormProps, {}> {
       {accessLevelOptions}
     </select> 
     */
-    var publicLink = window.location.origin + '/note/public/' + item._id;
+    var publicLink = window.location.origin + '/notes/public/' + item._id;
     var publicLinkCont = <>
       <input type="text" id="publicLink" value={publicLink} readOnly ref={i => this.publicLinkInput = i} />
       <IconButton id="copyPublicLink" title="Copy public link" onClick={e => this.copyPublicLink()}><FileCopyIcon /></IconButton>

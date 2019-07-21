@@ -23,7 +23,7 @@ export default class Registration extends React.Component<RouteComponentProps, {
     }
   
     render() {
-      let { from } = this.props.location.state || { from: { pathname: "/note" } };
+      let { from } = this.props.location.state || { from: { pathname: "/notes" } };
       let { redirectToReferrer } = this.state;
   
       if (redirectToReferrer) return <Redirect to={from} />;

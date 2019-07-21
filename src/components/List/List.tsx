@@ -49,7 +49,7 @@ export default class List extends React.Component<ListProps, {}> {
       </div>);
       return (
         <li key={item._id} className={opened}>
-          <Link to={'/note/' + item._id}>
+          <Link to={'/notes/' + item._id}>
             {aside}
             <div className="title">{item.title}</div>
             <div className="text">{this.strip(item.text)}</div>
