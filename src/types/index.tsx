@@ -57,3 +57,10 @@ export interface Session {
     expireDate: string;
     loggedAs: string;
 }
+
+export interface User {
+    _id: string;
+    login: string;
+    password: string;
+    registrationDate: string;
+}
