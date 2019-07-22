@@ -1,0 +1,7 @@
+#Users .actionBtn {
+    padding: 10px;
+    margin: -10px;
+}
+#Users .actionBtn +  .actionBtn {
+    margin-left: 10px;
+}

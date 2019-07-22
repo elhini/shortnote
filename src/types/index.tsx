@@ -63,4 +63,5 @@ export interface User {
     login: string;
     password: string;
     registrationDate: string;
+    blocked: boolean;
 }
