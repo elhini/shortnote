@@ -53,7 +53,12 @@ class UsersApi extends BaseApi {
                                 if (err) { 
                                     res.send({ 'error': err }); 
                                 } else if (isPasswordMatch) {
-                                    this._sessionsApi.createSession(db, res, user);
+                                    if (user.blocked){
+                                        res.send({ 'error': 'user blocked' }); 
+                                    }
+                                    else {
+                                        this._sessionsApi.createSession(db, res, user);
+                                    }
                                 } else {
                                     res.send({ 'error': wrongCredentialsMsg });
                                 }
