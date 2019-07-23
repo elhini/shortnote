@@ -7,7 +7,6 @@ import TableCell from '@material-ui/core/TableCell';
 import IconButton from '@material-ui/core/IconButton';
 import CheckIcon from '@material-ui/icons/Check';
 import BlockIcon from '@material-ui/icons/Block';
-import UndoIcon from '@material-ui/icons/Undo';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UsersApiClient from '../../api-clients/users';
 import DateUtils from '../../utils/DateUtils';
@@ -83,7 +82,7 @@ export default class Users extends React.Component<UsersProps, UsersState> {
     
     renderActionBtns(user: User, disabled: boolean){
         var blockBtn = this.renderActionBtn(user, 'block', 'Block', disabled, <BlockIcon />);
-        var unblockBtn = this.renderActionBtn(user, 'unblock', 'Unlock', disabled, <UndoIcon />);
+        var unblockBtn = this.renderActionBtn(user, 'unblock', 'Unblock', disabled, <BlockIcon color="error" />);
         var deleteBtn = this.renderActionBtn(user, 'delete', 'Delete', disabled, <DeleteIcon />);
         return (<>
             {user.blocked ? unblockBtn : blockBtn}
