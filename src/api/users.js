@@ -5,6 +5,7 @@ class UsersApi extends BaseApi {
     constructor() {
         super('users');
         this.userDependent = false;
+        this.adminAccess = true;
     }
     init(db) {
         super.init(db);
@@ -38,7 +39,8 @@ class UsersApi extends BaseApi {
                         }
                     });
                 },
-                dontCheckSession: true
+                dontCheckSession: true,
+                adminAccess: false
             },
             'post /login': {
                 handler: (req, res) => {
@@ -68,14 +70,16 @@ class UsersApi extends BaseApi {
                         }
                     });
                 },
-                dontCheckSession: true
+                dontCheckSession: true,
+                adminAccess: false
             },
             'post /logout': {
                 handler: (req, res) => {
                     res.cookie('sessionID', null, {expires: new Date()});
                     this._sessionsApi.updateSession(db, req, res, {active: false});
                 },
-                dontCheckSession: true
+                dontCheckSession: true,
+                adminAccess: false
             }
         };
     }

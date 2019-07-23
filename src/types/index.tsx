@@ -56,6 +56,7 @@ export interface Session {
     active: boolean; 
     expireDate: string;
     loggedAs: string;
+    isAdmin: boolean;
 }
 
 export interface User {
@@ -64,4 +65,5 @@ export interface User {
     password: string;
     registrationDate: string;
     blocked: boolean;
+    isAdmin: boolean;
 }

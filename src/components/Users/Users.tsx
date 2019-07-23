@@ -101,6 +101,7 @@ export default class Users extends React.Component<UsersProps, UsersState> {
                 <TableCell>{DateUtils.toStr(user.registrationDate)}</TableCell>
                 <TableCell>{userSessions.length}</TableCell>
                 <TableCell>{activeSessions.length ? <CheckIcon /> : null}</TableCell>
+                <TableCell>{user.isAdmin ? <CheckIcon /> : null}</TableCell>
                 <TableCell>{this.renderActionBtns(user, disabled)}</TableCell>
             </TableRow>
         );
@@ -116,6 +117,7 @@ export default class Users extends React.Component<UsersProps, UsersState> {
                         <TableCell>Registration date</TableCell>
                         <TableCell>Sessions count</TableCell>
                         <TableCell>Has active sessions</TableCell>
+                        <TableCell>Is admin</TableCell>
                         <TableCell>Actions</TableCell>
                     </TableRow>
                 </TableHead>

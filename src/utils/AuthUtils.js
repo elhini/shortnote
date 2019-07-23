@@ -14,4 +14,9 @@ export default class AuthUtils {
         LocalStorage.set('session', JSON.stringify(session));
         this.session = session;
     }
+
+    static isAdmin() {
+        var session = this.getSession();
+        return session && session.isAdmin;
+    }
 };

@@ -4,6 +4,7 @@ class SessionsApi extends BaseApi {
     constructor() {
         super('sessions');
         this.userDependent = false;
+        this.adminAccess = true;
     }
 }
 

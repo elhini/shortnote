@@ -4,6 +4,7 @@ import Tab from '@material-ui/core/Tab';
 import UsersApiClient from '../../api-clients/users';
 import SessionsApiClient from '../../api-clients/sessions';
 import Users from '../../components/Users/Users';
+import AuthUtils from '../../utils/AuthUtils';
 import { User, Session } from '../../types/index';
 
 interface TabPanelProps {
@@ -31,6 +32,10 @@ function getSessionsPromise() {
 
 export default function Admin() {
     const [currTabID, setCurrTabID] = React.useState('Users');
+
+    if (!AuthUtils.isAdmin()){
+        return 'This page needs admin session';
+    }
 
     function handleChange(event: React.ChangeEvent<{}>, newTabID: string) {
         setCurrTabID(newTabID);

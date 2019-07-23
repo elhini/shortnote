@@ -30,6 +30,9 @@ class _SessionsApi {
     createSession(db, res, user){
         let expireDate = this.getNewExpireDate();
         let session = {userID: user._id, active: true, expireDate: expireDate };
+        if (user.isAdmin){
+            session.isAdmin = true;
+        }
         db.collection(this.collection).insertOne(session, (err, result) => {
             if (err) { 
                 res.send({ 'error': err });
