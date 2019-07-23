@@ -121,7 +121,10 @@ export default class Users extends React.Component<UsersProps, UsersState> {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {users.map(u => this.renderTableRow(u))}
+                    {this.state.loadingList ? 
+                        <TableRow><TableCell>Loading...</TableCell></TableRow> : 
+                        users.map(u => this.renderTableRow(u))
+                    }
                 </TableBody>
             </Table>
         );
