@@ -1,7 +1,10 @@
 import React from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import UsersApiClient from '../../api-clients/users';
+import SessionsApiClient from '../../api-clients/sessions';
 import Users from '../../components/Users/Users';
+import { User, Session } from '../../types/index';
 
 interface TabPanelProps {
   children: React.ReactNode;
@@ -14,6 +17,18 @@ function TabPanel(props: TabPanelProps) {
     return activeTabID === tabID ? <>{children}</> : <></>;
 }
 
+function getUsersPromise() {
+    return new Promise<User[]>((resolve, reject) => {
+        new UsersApiClient().getAll((users: User[]) => resolve(users));
+    });
+}
+
+function getSessionsPromise() {
+    return new Promise<Session[]>((resolve, reject) => {
+        new SessionsApiClient().getAll((sessions: Session[]) => resolve(sessions));
+    });
+}
+
 export default function Admin() {
     const [currTabID, setCurrTabID] = React.useState('Users');
 
@@ -22,7 +37,7 @@ export default function Admin() {
     }
     
     var tabComponents: {[key: string]: React.ReactNode} = {
-        'Users': <Users />, 
+        'Users': <Users promises={[getUsersPromise(), getSessionsPromise()]} />, 
         'Sessions': <>TODO: render sessions</>
     };
     var tabIDs = Object.keys(tabComponents);
