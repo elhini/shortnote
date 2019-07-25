@@ -20,7 +20,7 @@ interface UsersProps {
 
 interface UsersState {
     users: User[],
-    sessions: Session[],
+    sessionsByUser: {[userID: string]: Session[]},
     loadingList: boolean,
     updatingUserID: string | null
 }
@@ -34,7 +34,7 @@ export default class Users extends React.Component<UsersProps, UsersState> {
         super(props);
         this.state = {
             users: [],
-            sessions: [],
+            sessionsByUser: {},
             loadingList: false,
             updatingUserID: null
         }
@@ -45,8 +45,8 @@ export default class Users extends React.Component<UsersProps, UsersState> {
         this.setState({loadingList: true});
         Promise.all(this.props.promises).then((result) => {
             var users = result[0];
-            var sessions = result[1];
-            this.setState({loadingList: false, users, sessions});
+            var sessionsByUser = _.groupBy(result[1], s => s.userID);
+            this.setState({loadingList: false, users, sessionsByUser});
         });
     }
 
@@ -91,7 +91,7 @@ export default class Users extends React.Component<UsersProps, UsersState> {
     }
 
     renderTableRow(user: User){
-        var userSessions = this.state.sessions.filter(s => s.userID === user._id);
+        var userSessions = this.state.sessionsByUser[user._id];
         var activeSessions = userSessions.filter(s => s.active && s.expireDate > new Date().toISOString());
         var disabled = user._id === this.state.updatingUserID;
         return (
