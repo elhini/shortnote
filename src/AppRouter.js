@@ -8,6 +8,18 @@ import Login from './pages/Login/Login';
 import Notes from './pages/Notes/Notes';
 import Admin from './pages/Admin/Admin';
 
+function AdminRoute({ component: Component, ...rest }) {
+    return (
+        <Route {...rest} render={props =>
+            AuthUtils.isAdmin() ? (
+                <Component {...props} />
+            ) : (
+                <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+            )
+        }/>
+    );
+}
+
 function PrivateRoute({ component: Component, ...rest }) {
     return (
         <Route {...rest} render={props =>
@@ -23,6 +35,7 @@ function PrivateRoute({ component: Component, ...rest }) {
 export default class AppRouter extends React.Component {
     render(){
         var PrivateLinksWithRouter = withRouter(PrivateLinks);
+        var AdminLinksWithRouter = withRouter(AdminLinks);
         var AuthStateWithRouter = withRouter(AuthState);
         return (
             <Router>
@@ -32,6 +45,7 @@ export default class AppRouter extends React.Component {
                         <li><NavLink to="/" exact>Home</NavLink></li>
                         <li><NavLink to="/register">Register</NavLink></li>
                         <PrivateLinksWithRouter />
+                        <AdminLinksWithRouter />
                     </ul>
                     <AuthStateWithRouter />
                 </div>
@@ -41,7 +55,7 @@ export default class AppRouter extends React.Component {
                   <Route path="/login" component={Login} />
                   <Route path="/notes/public/:id" exact component={Notes} />
                   <PrivateRoute path={["/notes", "/notes/:id"]} exact component={Notes} />
-                  <PrivateRoute path={["/admin"]} exact component={Admin} />
+                  <AdminRoute path={["/admin"]} exact component={Admin} />
                 </div>
             </Router>
         );
@@ -49,10 +63,15 @@ export default class AppRouter extends React.Component {
 }
 
 const PrivateLinks = () => {
-    return AuthUtils.isLoggedIn() && <>
+    return AuthUtils.isLoggedIn() ? <>
         <li><NavLink to="/notes">Notes</NavLink></li>
+    </> : null;
+}
+
+const AdminLinks = () => {
+    return AuthUtils.isAdmin() ? <>
         <li><NavLink to="/admin">Admin</NavLink></li>
-    </>;
+    </> : null;
 }
 
 class AuthState extends React.Component {

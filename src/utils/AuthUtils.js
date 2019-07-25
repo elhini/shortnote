@@ -17,6 +17,6 @@ export default class AuthUtils {
 
     static isAdmin() {
         var session = this.getSession();
-        return session && session.isAdmin;
+        return this.isLoggedIn() && session.isAdmin;
     }
 };
