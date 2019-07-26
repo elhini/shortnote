@@ -32,49 +32,7 @@ function PrivateRoute({ component: Component, ...rest }) {
     );
 }
 
-export default class AppRouter extends React.Component {
-    render(){
-        var PrivateLinksWithRouter = withRouter(PrivateLinks);
-        var AdminLinksWithRouter = withRouter(AdminLinks);
-        var AuthStateWithRouter = withRouter(AuthState);
-        return (
-            <Router>
-                <div id="head">
-                    <h1>ShortNote</h1>
-                    <ul id="nav">
-                        <li><NavLink to="/" exact>Home</NavLink></li>
-                        <li><NavLink to="/register">Register</NavLink></li>
-                        <PrivateLinksWithRouter />
-                        <AdminLinksWithRouter />
-                    </ul>
-                    <AuthStateWithRouter />
-                </div>
-                <div id="body">
-                  <Route path="/" exact component={Landing} />
-                  <Route path="/register" component={Registration} />
-                  <Route path="/login" component={Login} />
-                  <Route path="/notes/public/:id" exact component={Notes} />
-                  <PrivateRoute path={["/notes", "/notes/:id"]} exact component={Notes} />
-                  <AdminRoute path={["/admin"]} exact component={Admin} />
-                </div>
-            </Router>
-        );
-    }
-}
-
-const PrivateLinks = () => {
-    return AuthUtils.isLoggedIn() ? <>
-        <li><NavLink to="/notes">Notes</NavLink></li>
-    </> : null;
-}
-
-const AdminLinks = () => {
-    return AuthUtils.isAdmin() ? <>
-        <li><NavLink to="/admin">Admin</NavLink></li>
-    </> : null;
-}
-
-class AuthState extends React.Component {
+class Head extends React.Component {
     state = { sumbitting: false };
 
     logout(e){
@@ -85,17 +43,63 @@ class AuthState extends React.Component {
         });
     }
 
-    render() {
+    getNavLink(props){
+        var isNotLoggedIn = props.private && !AuthUtils.isLoggedIn();
+        var isNotAdmin = props.admin && !AuthUtils.isAdmin();
+        if (isNotLoggedIn || isNotAdmin){
+            return null;
+        }
+        return (
+            <NavLink to={props.to} exact={props.exact} onClick={props.onClick} key={props.to}>{props.label}</NavLink>
+        );
+    }
+    
+    getAuthState(){
         var isLoggedIn = AuthUtils.isLoggedIn();
-        var loggedAs = <>
+        var loggedAs = <span id="loggedAsCont" key="loggedAsCont">
             Logged in as <span id="loggedAs">{isLoggedIn && AuthUtils.getSession().loggedAs}</span>
-        </>;
-        var logoutLink = <a href="/logout" id="logout" onClick={e => this.logout(e)}>
-            {this.state.sumbitting ? 'Logging out...' : 'Log out'}
-        </a>;
-        var loginLink = <NavLink to="/login">Log in</NavLink>;
-        return <div id="authState">
-            {isLoggedIn ? <>{loggedAs}{logoutLink}</> : loginLink}
-        </div>;
+        </span>;
+        var logoutLabel = this.state.sumbitting ? 'Logging out...' : 'Log out';
+        var logoutLink = this.getNavLink({label: logoutLabel, to: "/logout", onClick: e => this.logout(e)});
+        var loginLabel = 'Log in';
+        var loginLink = this.getNavLink({label: loginLabel, to: "/login"});
+        return isLoggedIn ? [loggedAs, logoutLink] : loginLink;
+    }
+
+    render(){
+        var navItems = [
+            {label: "Home", to: "/", exact: true},
+            {label: "Register", to: "/register"},
+            {label: "Notes", to: "/notes", private: true},
+            {label: "Admin", to: "/admin", admin: true},
+        ];
+        return (
+            <div id="head">
+                <h1>ShortNote</h1>
+                <div id="nav">
+                    {navItems.map(this.getNavLink)}
+                    {this.getAuthState()}
+                </div>
+            </div>
+        );
+    }
+}
+
+export default class AppRouter extends React.Component {
+    render(){
+        var HeadWithRouter = withRouter(Head);
+        return (
+            <Router>
+                <HeadWithRouter />
+                <div id="body">
+                  <Route path="/" exact component={Landing} />
+                  <Route path="/register" component={Registration} />
+                  <Route path="/login" component={Login} />
+                  <Route path="/notes/public/:id" exact component={Notes} />
+                  <PrivateRoute path={["/notes", "/notes/:id"]} exact component={Notes} />
+                  <AdminRoute path={["/admin"]} exact component={Admin} />
+                </div>
+            </Router>
+        );
     }
 }

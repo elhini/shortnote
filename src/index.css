@@ -39,48 +39,46 @@ select {
 #head {
   margin-bottom: 5px;
   background: #eee;
-  overflow: hidden;
+  display: flex;
 }
 #head h1 {
   margin: 0;
   padding: 5px;
 }
-#head>* {
-  display: inline-block;
-  vertical-align: middle;
+#head h1,
+#nav,
+#nav a,
+#loggedAsCont {
   line-height: 32px;
+  min-height: 0;
 }
 
 #nav {
   margin: 0 0 0 20px;
   padding: 0;
-}
-#nav li {
-  display: inline-block;
+  width: 100%;
+  display: flex;
 }
 
 #nav a,
-#authState a {
-  display: inline-block;
+#loggedAsCont {
   padding: 5px 15px;
+  min-width: 0;
 }
-#nav a:hover,
-#authState a:hover {
+
+#nav a:hover {
   background: #ddd;
 }
-#nav a.active,
-#authState a.active {
+#nav a.active {
   background: #ccc;
 }
 
-#authState {
-  float: right;
+#nav a[href="/login"],
+#loggedAsCont {
+  margin-left: auto;
 }
 #loggedAs {
   font-weight: bold;
-}
-#logout {
-  margin-left: 5px;
 }
 
 #body {
