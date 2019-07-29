@@ -1,11 +1,13 @@
 import React from 'react';
-import Checkbox from '@material-ui/core/Checkbox';
+import { CircularProgress, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import SettingsApiClient from '../../api-clients/settings';
 import { Setting } from '../../types/index';
+import './Settings.css';
 
 interface SettingsState {
     setting: Setting,
-    loading: boolean
+    loading: boolean,
+    submitting: boolean
 }
 
 export default class Settings extends React.Component<{}, SettingsState> {
@@ -13,13 +15,14 @@ export default class Settings extends React.Component<{}, SettingsState> {
         super(props);
         this.state = {
             setting: {},
-            loading: false
+            loading: false,
+            submitting: false
         };
     }
 
     componentDidMount() {
         this.setState({loading: true});
-        new SettingsApiClient().getAll((settings: Setting[]) => {
+        new SettingsApiClient(this).getAll((settings: Setting[]) => {
             var setting = settings[0] || {};
             this.setState({loading: false, setting});
         });
@@ -28,22 +31,28 @@ export default class Settings extends React.Component<{}, SettingsState> {
     handleCheck(e: React.ChangeEvent<HTMLInputElement>) {
         var setting = this.state.setting;
         setting.notesFormManualSubmitEnabled = e.target.checked;
-        new SettingsApiClient().update(setting, (setting: Setting) => {
+        new SettingsApiClient(this).update(setting, (setting: Setting) => {
             this.setState({setting});
         });
     }
 
     render(){
-        return this.state.loading ? 'loading...' : (
-            <form>
-                <label>
-                    Notes form manual submit: 
-                    <Checkbox
-                        onChange={e => this.handleCheck(e)}
-                        checked={this.state.setting.notesFormManualSubmitEnabled}
+        return this.state.loading ? <CircularProgress /> : (
+            <FormControl component="fieldset" id="notesSettingsForm">
+                <FormLabel component="legend">Notes</FormLabel>
+                <FormGroup>
+                    <FormControlLabel
+                        label='Manual form submit' 
+                        control={
+                            <Checkbox
+                                onChange={e => this.handleCheck(e)}
+                                checked={this.state.setting.notesFormManualSubmitEnabled}
+                                disabled={this.state.submitting}
+                            />
+                        }
                     />
-                </label>
-            </form>
+                </FormGroup>
+            </FormControl>
         );
     }
 }
