@@ -9,8 +9,8 @@ export default class BaseApiClient {
         this.url = '/api/' + collection;
     }
 
-    getWaitingStateField(method: string): string{
-        return ['GET'].includes(method) ? 'loading' : 'submitting';
+    getWaitingStateField(method: string): string {
+        return method === 'GET' ? 'loading' : 'submitting';
     }
 
     handleReq(method: string, urlPostfix: string, item: any, cb: Callback){
