@@ -33,7 +33,7 @@ function PrivateRoute({ component: Component, ...rest }) {
 }
 
 class Head extends React.Component {
-    state = { sumbitting: false };
+    state = { submitting: false };
 
     logout(e){
         e.preventDefault();
@@ -59,7 +59,7 @@ class Head extends React.Component {
         var loggedAs = <span id="loggedAsCont" key="loggedAsCont">
             Logged in as <span id="loggedAs">{isLoggedIn && AuthUtils.getSession().loggedAs}</span>
         </span>;
-        var logoutLabel = this.state.sumbitting ? 'Logging out...' : 'Log out';
+        var logoutLabel = this.state.submitting ? 'Logging out...' : 'Log out';
         var logoutLink = this.getNavLink({label: logoutLabel, to: "/logout", onClick: e => this.logout(e)});
         var loginLabel = 'Log in';
         var loginLink = this.getNavLink({label: loginLabel, to: "/login"});

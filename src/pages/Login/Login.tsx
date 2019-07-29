@@ -7,7 +7,7 @@ import { Session } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 
 export default class Login extends React.Component<RouteComponentProps, {}> {
-    state = { redirectToReferrer: false, login: '', password: '', sumbitting: false, error: '' };
+    state = { redirectToReferrer: false, login: '', password: '', submitting: false, error: '' };
   
     login = (e: React.MouseEvent) => {
       e.preventDefault();
@@ -47,8 +47,8 @@ export default class Login extends React.Component<RouteComponentProps, {}> {
                 <label>Password:</label>
                 <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
               </div>
-              <button id="submitLoginForm" onClick={e => this.login(e)} disabled={this.state.sumbitting}>
-                {this.state.sumbitting ? 'Logging in...' : 'Log in'}
+              <button id="submitLoginForm" onClick={e => this.login(e)} disabled={this.state.submitting}>
+                {this.state.submitting ? 'Logging in...' : 'Log in'}
               </button><br />
               {this.state.error && <div className="alert error" id="loginError">{this.state.error}</div>}
             </form>

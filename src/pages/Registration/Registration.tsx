@@ -7,7 +7,7 @@ import { Session } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 
 export default class Registration extends React.Component<RouteComponentProps, {}> {
-    state = { redirectToReferrer: false, login: '', password: '', sumbitting: false, error: '' };
+    state = { redirectToReferrer: false, login: '', password: '', submitting: false, error: '' };
   
     register = (e: React.MouseEvent) => {
       e.preventDefault();
@@ -39,8 +39,8 @@ export default class Registration extends React.Component<RouteComponentProps, {
             <label>Password:</label>
             <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
           </div>
-          <button id="submitRegisterForm" onClick={e => this.register(e)} disabled={this.state.sumbitting}>
-            {this.state.sumbitting ? 'Registering...' : 'Register'}
+          <button id="submitRegisterForm" onClick={e => this.register(e)} disabled={this.state.submitting}>
+            {this.state.submitting ? 'Registering...' : 'Register'}
           </button><br />
           {this.state.error && <div className="alert error" id="registerError">{this.state.error}</div>}
         </form>

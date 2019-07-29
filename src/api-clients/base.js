@@ -9,7 +9,7 @@ export default class BaseApiClient {
 
     handleReq(method, urlPostfix, item, cb){
         if (this.component){ 
-            this.component.setState({ error: '', sumbitting: true });
+            this.component.setState({ error: '', submitting: true });
         }
         AsyncUtils.sendJSON(this.url + urlPostfix, method, item, (res) => {
             this.handleRes(cb, res);
@@ -18,7 +18,7 @@ export default class BaseApiClient {
 
     handleRes(cb, res){
         if (this.component){ 
-            this.component.setState({ error: res.error || '', sumbitting: false });
+            this.component.setState({ error: res.error || '', submitting: false });
         }
         else if (res.error) {
             alert(JSON.stringify(res.error));
