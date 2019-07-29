@@ -21,10 +21,9 @@ export default class Settings extends React.Component<{}, SettingsState> {
     }
 
     componentDidMount() {
-        this.setState({loading: true});
         new SettingsApiClient(this).getAll((settings: Setting[]) => {
             var setting = settings[0] || {};
-            this.setState({loading: false, setting});
+            this.setState({setting});
         });
     }
 

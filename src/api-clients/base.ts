@@ -9,9 +9,14 @@ export default class BaseApiClient {
         this.url = '/api/' + collection;
     }
 
+    getWaitingStateField(method: string): string{
+        return ['GET'].includes(method) ? 'loading' : 'submitting';
+    }
+
     handleReq(method: string, urlPostfix: string, item: any, cb: Callback){
         if (this.component){ 
-            this.component.setState({ error: '', submitting: true });
+            var field = this.getWaitingStateField(method);
+            this.component.setState({ error: '', [field]: true });
         }
         AsyncUtils.sendJSON(this.url + urlPostfix, method, item, (res) => {
             this.handleRes(cb, res, method);
@@ -20,7 +25,8 @@ export default class BaseApiClient {
 
     handleRes(cb: Callback, res: any, method: string){
         if (this.component){ 
-            this.component.setState({ error: res.error || '', submitting: false });
+            var field = this.getWaitingStateField(method);
+            this.component.setState({ error: res.error || '', [field]: false });
         }
         else if (res.error) {
             alert(JSON.stringify(res.error));
