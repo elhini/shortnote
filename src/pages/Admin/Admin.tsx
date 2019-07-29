@@ -2,6 +2,7 @@ import React from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Users from '../../components/Users/Users';
+import Settings from '../../components/Settings/Settings';
 import AuthUtils from '../../utils/AuthUtils';
 
 interface TabPanelProps {
@@ -28,7 +29,7 @@ export default function Admin() {
     
     var tabComponents: {[key: string]: React.ReactNode} = {
         'Users': <Users />, 
-        'Settings': <p>TODO: render Settings</p>
+        'Settings': <Settings />
     };
     var tabIDs = Object.keys(tabComponents);
     var tabs = tabIDs.map(tabID => <Tab label={tabID} value={tabID} key={tabID} />);
