@@ -9,14 +9,13 @@ import CheckIcon from '@material-ui/icons/Check';
 import BlockIcon from '@material-ui/icons/Block';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UsersApiClient from '../../api-clients/users';
+import SessionsApiClient from '../../api-clients/sessions';
 import DateUtils from '../../utils/DateUtils';
 import _ from 'lodash';
 import { User, Session } from '../../types/index';
 import './Users.css';
 
-interface UsersProps {
-    promises: [Promise<User[]>, Promise<Session[]>];
-}
+type UsersPromises = [Promise<User[]>, Promise<Session[]>];
 
 interface UsersState {
     users: User[],
@@ -27,7 +26,19 @@ interface UsersState {
 
 type UserAction = 'block' | 'unblock' | 'delete';
 
-export default class Users extends React.Component<UsersProps, UsersState> {
+function getUsersPromise() {
+    return new Promise<User[]>((resolve, reject) => {
+        new UsersApiClient().getAll((users: User[]) => resolve(users));
+    });
+}
+
+function getSessionsPromise() {
+    return new Promise<Session[]>((resolve, reject) => {
+        new SessionsApiClient().getAll((sessions: Session[]) => resolve(sessions));
+    });
+}
+
+export default class Users extends React.Component<{}, UsersState> {
     usersAPIClient: UsersApiClient;
 
     constructor(props: any) {
@@ -43,7 +54,8 @@ export default class Users extends React.Component<UsersProps, UsersState> {
 
     componentDidMount() {
         this.setState({loadingList: true});
-        Promise.all(this.props.promises).then((result) => {
+        var promises: UsersPromises = [getUsersPromise(), getSessionsPromise()];
+        Promise.all(promises).then((result) => {
             var users = result[0];
             var sessionsByUser = _.groupBy(result[1], s => s.userID);
             this.setState({loadingList: false, users, sessionsByUser});
