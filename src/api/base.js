@@ -34,6 +34,9 @@ class BaseApi {
                     if (err) {
                         res.send({ 'error': err });
                     } else {
+                        if (this.collection === 'users'){
+                            result.forEach(u => delete u.password);
+                        }
                         res.send(result);
                     }
                 });
