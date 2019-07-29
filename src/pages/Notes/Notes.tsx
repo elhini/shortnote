@@ -36,7 +36,7 @@ interface AppState {
     sendingForm: boolean;
     error: string;
     publicLinkCopied: boolean;
-    formManualSubmitEnabled: boolean;
+    formManualSubmitEnabled: Setting['notesFormManualSubmitEnabled'];
 }
 
 export default class Notes extends React.Component<AppProps, AppState> {
@@ -123,8 +123,8 @@ export default class Notes extends React.Component<AppProps, AppState> {
       this.getItemByLocation(items);
     });
     new SettingsApiClient().getAll((settings: Setting[]) => {
-      var setting = settings[0];
-      setting && this.setState({formManualSubmitEnabled: setting.notesFormManualSubmitEnabled});
+      var setting = settings[0] || {};
+      this.setState({formManualSubmitEnabled: setting.notesFormManualSubmitEnabled});
     })
   }
 

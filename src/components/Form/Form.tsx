@@ -3,7 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
-import { Item, Tag, ItemDiff } from '../../types/index';
+import { Item, Tag, ItemDiff, Setting } from '../../types/index';
 import './Form.css';
 
 interface FormProps {
@@ -15,7 +15,7 @@ interface FormProps {
     onCreateTag: (tagName: string) => void;
     onPublicLinkCopy: () => void;
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    submitEnabled: boolean;
+    submitEnabled: Setting['notesFormManualSubmitEnabled'];
 }
 
 export default class Form extends React.Component<FormProps, {}> {

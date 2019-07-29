@@ -66,5 +66,5 @@ export interface User {
 }
 
 export interface Setting {
-    notesFormManualSubmitEnabled: boolean;
+    notesFormManualSubmitEnabled?: boolean;
 }
