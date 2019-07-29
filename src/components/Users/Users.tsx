@@ -1,10 +1,5 @@
 import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import IconButton from '@material-ui/core/IconButton';
+import { CircularProgress, Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import BlockIcon from '@material-ui/icons/Block';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -20,21 +15,21 @@ type UsersPromises = [Promise<User[]>, Promise<Session[]>];
 interface UsersState {
     users: User[],
     sessionsByUser: {[userID: string]: Session[]},
-    loadingList: boolean,
+    loading: boolean,
     updatingUserID: string | null
 }
 
 type UserAction = 'block' | 'unblock' | 'delete';
 
-function getUsersPromise() {
+function getUsersPromise(cmp: React.Component) {
     return new Promise<User[]>((resolve, reject) => {
-        new UsersApiClient().getAll((users: User[]) => resolve(users));
+        new UsersApiClient(cmp).getAll((users: User[]) => resolve(users));
     });
 }
 
-function getSessionsPromise() {
+function getSessionsPromise(cmp: React.Component) {
     return new Promise<Session[]>((resolve, reject) => {
-        new SessionsApiClient().getAll((sessions: Session[]) => resolve(sessions));
+        new SessionsApiClient(cmp).getAll((sessions: Session[]) => resolve(sessions));
     });
 }
 
@@ -46,19 +41,18 @@ export default class Users extends React.Component<{}, UsersState> {
         this.state = {
             users: [],
             sessionsByUser: {},
-            loadingList: false,
+            loading: false,
             updatingUserID: null
         }
         this.usersAPIClient = new UsersApiClient(this);
     }
 
     componentDidMount() {
-        this.setState({loadingList: true});
-        var promises: UsersPromises = [getUsersPromise(), getSessionsPromise()];
+        var promises: UsersPromises = [getUsersPromise(this), getSessionsPromise(this)];
         Promise.all(promises).then((result) => {
             var users = result[0];
             var sessionsByUser = _.groupBy(result[1], s => s.userID);
-            this.setState({loadingList: false, users, sessionsByUser});
+            this.setState({users, sessionsByUser});
         });
     }
 
@@ -120,7 +114,7 @@ export default class Users extends React.Component<{}, UsersState> {
 
     render(){
         var users = _.sortBy(this.state.users, u => u._id);
-        return (
+        return this.state.loading ? <CircularProgress /> : (
             <Table id="Users">
                 <TableHead>
                     <TableRow>
@@ -133,10 +127,7 @@ export default class Users extends React.Component<{}, UsersState> {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.loadingList ? 
-                        <TableRow><TableCell>Loading...</TableCell></TableRow> : 
-                        users.map(u => this.renderTableRow(u))
-                    }
+                    {users.map(u => this.renderTableRow(u))}
                 </TableBody>
             </Table>
         );
