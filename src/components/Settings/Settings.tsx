@@ -28,8 +28,7 @@ export default class Settings extends React.Component<{}, SettingsState> {
     }
 
     handleCheck(e: React.ChangeEvent<HTMLInputElement>) {
-        var setting = this.state.setting;
-        setting.notesFormManualSubmitEnabled = e.target.checked;
+        var setting = Object.assign(this.state.setting, {notesFormManualSubmitEnabled: e.target.checked});
         new SettingsApiClient(this).update(setting, (setting: Setting) => {
             this.setState({setting});
         });
@@ -45,7 +44,7 @@ export default class Settings extends React.Component<{}, SettingsState> {
                         control={
                             <Checkbox
                                 onChange={e => this.handleCheck(e)}
-                                checked={this.state.setting.notesFormManualSubmitEnabled}
+                                checked={this.state.setting.notesFormManualSubmitEnabled || false}
                                 disabled={this.state.submitting}
                             />
                         }
