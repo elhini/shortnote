@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import NotesApiClient from '../../api-clients/notes';
+import SettingsApiClient from '../../api-clients/settings';
 import StringUtils from '../../utils/StringUtils';
 import Filters from '../../components/Filters/Filters';
 import Sort from '../../components/Sort/Sort';
@@ -10,7 +11,7 @@ import Alert from '../../components/Alert/Alert';
 import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
 import AddIcon from '@material-ui/icons/AddCircle';
-import { Item, FiltersValue, SortValue, ItemDiff, Tag, FiltersValueDiff, SortValueDiff } from '../../types/index';
+import { Item, FiltersValue, SortValue, ItemDiff, Tag, FiltersValueDiff, SortValueDiff, Setting } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 import './Notes.css';
 
@@ -35,14 +36,15 @@ interface AppState {
     sendingForm: boolean;
     error: string;
     publicLinkCopied: boolean;
+    formManualSubmitEnabled: boolean;
 }
 
 export default class Notes extends React.Component<AppProps, AppState> {
-  tags: Tag[];
+  tags: Tag[]; // TODO: move to state
   accessLevels: {id: number, name: string}[];
   history: RouteComponentProps['history'];
   stopListeningHistory: () => void;
-  notesAPIClient: NotesApiClient;
+  notesApiClient: NotesApiClient;
   autosaveTimeoutID: number;
 
   constructor(props: AppProps) {
@@ -58,7 +60,8 @@ export default class Notes extends React.Component<AppProps, AppState> {
       formChanged: false,
       sendingForm: false,
       error: '',
-      publicLinkCopied: false
+      publicLinkCopied: false,
+      formManualSubmitEnabled: false
     };
     this.tags = [];
     this.accessLevels = [{id: 1, name: 'viewing'}, {id: 2, name: 'editing'}];
@@ -66,7 +69,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     this.stopListeningHistory = this.history.listen(location => {
       this.getItemByLocation(this.state.items);
     });
-    this.notesAPIClient = new NotesApiClient(this);
+    this.notesApiClient = new NotesApiClient(this);
     this.autosaveTimeoutID = 0;
     this.onOpenNew = this.onOpenNew.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -99,7 +102,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     if (id && id !== 'new' && !item){
       var publicID = this.getPublicItemIDFromLocation();
       if (publicID){
-        this.notesAPIClient.getPublic(publicID, (item: Item) => {
+        this.notesApiClient.getPublic(publicID, (item: Item) => {
           cb(item);
         });
       }
@@ -116,9 +119,13 @@ export default class Notes extends React.Component<AppProps, AppState> {
       return;
     }
     this.setState({loadingList: true});
-    this.notesAPIClient.getAll((items: Item[]) => {
+    this.notesApiClient.getAll((items: Item[]) => {
       this.getItemByLocation(items);
     });
+    new SettingsApiClient().getAll((settings: Setting[]) => {
+      var setting = settings[0];
+      setting && this.setState({formManualSubmitEnabled: setting.notesFormManualSubmitEnabled});
+    })
   }
 
   componentWillUnmount() {
@@ -134,7 +141,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     this.setState({item: emptyItem});
   }
 
-  onSubmit(e: Event | null, item = this.state.item){
+  onSubmit(e: React.FormEvent<HTMLFormElement> | null, item = this.state.item){
     e && e.preventDefault();
     if (!item || (!item.title && !item.text)){
       return;
@@ -153,11 +160,11 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   createItem(item: Item, cb: (i: Item) => void){
-    this.notesAPIClient.create(item, cb);
+    this.notesApiClient.create(item, cb);
   }
 
   updateItem(item: Item, cb: (i: Item) => void){
-    this.notesAPIClient.update(item, cb);
+    this.notesApiClient.update(item, cb);
   }
 
   // TODO: move to Utils
@@ -186,7 +193,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     items.push(item);
     this.setState({items: items, item: item, sendingForm: false, formChanged: isChanged});
     isNew && this.history.push('/notes/' + item._id);
-    if (isChanged && !this.state.sendingForm){
+    if (isChanged && !this.state.sendingForm && !this.state.formManualSubmitEnabled){
       window.clearTimeout(this.autosaveTimeoutID);
       this.autosaveTimeoutID = window.setTimeout(() => {
         this.onSubmit(null, item);
@@ -197,7 +204,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
   onDeleteItem(item: Item){
     var items = this.state.items;
     items = items.filter(i => i._id !== item._id);
-    this.notesAPIClient.remove(item, () => {
+    this.notesApiClient.remove(item, () => {
       var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
       this.setState({items: items, item: openedItem});
       this.history.push('/notes');
@@ -304,7 +311,8 @@ export default class Notes extends React.Component<AppProps, AppState> {
     var form = null;
     var item = this.state.item;
     if (item){
-      form = <Form item={item} /* onSubmit={this.onSubmit} */ tags={this.tags} /* accessLevels={this.accessLevels} */
+      form = <Form item={item} onSubmit={this.onSubmit} submitEnabled={this.state.formManualSubmitEnabled} tags={this.tags} 
+        /* accessLevels={this.accessLevels} */
         onCreateTag={this.onCreateTag} onItemChange={this.onItemChangePartially} onPublicLinkCopy={this.onPublicLinkCopy} 
         sending={this.state.sendingForm} changed={this.state.formChanged}></Form>;
     }

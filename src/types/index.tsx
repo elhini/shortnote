@@ -1,6 +1,3 @@
-import { EditorValue } from "react-rte";
-import { RouteComponentProps } from "react-router-dom";
-
 export interface Item {
     _id: string;
     title: string;
@@ -66,4 +63,8 @@ export interface User {
     registrationDate: string;
     blocked: boolean;
     isAdmin: boolean;
+}
+
+export interface Setting {
+    notesFormManualSubmitEnabled: boolean;
 }

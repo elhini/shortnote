@@ -14,6 +14,8 @@ interface FormProps {
     onItemChange: (item: ItemDiff) => void;
     onCreateTag: (tagName: string) => void;
     onPublicLinkCopy: () => void;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    submitEnabled: boolean;
 }
 
 export default class Form extends React.Component<FormProps, {}> {
@@ -52,7 +54,7 @@ export default class Form extends React.Component<FormProps, {}> {
       <IconButton id="copyPublicLink" title="Copy public link" onClick={e => this.copyPublicLink()}><FileCopyIcon /></IconButton>
     </>;
     return (
-      <form id="Form" /* onSubmit={this.props.onSubmit} */ key={item._id}>
+      <form id="Form" onSubmit={this.props.onSubmit} key={item._id}>
         <input type="hidden" id="id" value={item._id} readOnly />
         <div className="fieldBlock" id="titleAndPublicAccess">
           <input type="text" id="title" value={item.title} onChange={e => this.props.onItemChange({title: e.target.value})} autoFocus
@@ -72,9 +74,9 @@ export default class Form extends React.Component<FormProps, {}> {
           <Creatable id="tags" isMulti options={this.props.tags} value={item.tags} onChange={(value: any) => this.props.onItemChange({tags: value})}
             onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
-        { /* <div className="fieldBlock">
+        {this.props.submitEnabled ? <div className="fieldBlock">
           <button id="submit" disabled={this.props.sending}>{this.props.sending ? 'Sending...' : 'Submit'}</button>
-        </div> */ }
+        </div> : null}
         <span id="formState">{this.props.sending ? 'Saving...' : (this.props.changed ? 'Changed' : (item._id ? 'Saved' : ''))}</span>
       </form>
     );

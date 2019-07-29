@@ -43,7 +43,7 @@ export default function Admin() {
     
     var tabComponents: {[key: string]: React.ReactNode} = {
         'Users': <Users promises={[getUsersPromise(), getSessionsPromise()]} />, 
-        'Sessions': <>TODO: render sessions</>
+        'Settings': <p>TODO: render Settings</p>
     };
     var tabIDs = Object.keys(tabComponents);
     var tabs = tabIDs.map(tabID => <Tab label={tabID} value={tabID} key={tabID} />);
