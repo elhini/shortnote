@@ -1,22 +1,24 @@
 import AsyncUtils from '../utils/AsyncUtils';
 
+type Callback = (res: any) => void;
+
 export default class BaseApiClient {
-    constructor(collection, component) {
-        this.collection = collection;
+    private url: string;
+
+    constructor(public collection: string, public component: React.Component) {
         this.url = '/api/' + collection;
-        this.component = component;
     }
 
-    handleReq(method, urlPostfix, item, cb){
+    handleReq(method: string, urlPostfix: string, item: any, cb: Callback){
         if (this.component){ 
             this.component.setState({ error: '', submitting: true });
         }
         AsyncUtils.sendJSON(this.url + urlPostfix, method, item, (res) => {
-            this.handleRes(cb, res);
+            this.handleRes(cb, res, method);
         });
     }
 
-    handleRes(cb, res){
+    handleRes(cb: Callback, res: any, method: string){
         if (this.component){ 
             this.component.setState({ error: res.error || '', submitting: false });
         }
@@ -29,19 +31,19 @@ export default class BaseApiClient {
         cb(res);
     }
     
-    create(item, cb) {
+    create(item: any, cb: Callback) {
         this.handleReq('POST', '', item, cb);
     }
-    getAll(cb) {
+    getAll(cb: Callback) {
         this.handleReq('GET', '', null, cb);
     }
-    get(id, cb) {
+    get(id: string, cb: Callback) {
         this.handleReq('GET', '/'+id, null, cb);
     }
-    update(item, cb) {
+    update(item: any, cb: Callback) {
         this.handleReq('PUT', '/'+item._id, item, cb);
     }
-    remove(item, cb) {
+    remove(item: any, cb: Callback) {
         this.handleReq('DELETE', '/'+item._id, null, cb);
     }
 } 
