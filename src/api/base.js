@@ -80,6 +80,10 @@ class BaseApi {
         };
     }
 
+    getOptionValue(options, key){
+        return typeof options[key] !== 'undefined' ? options[key] : this[key];
+    }
+
     connect(app, db){
         this.init(db);
         Object.keys(this.methods).forEach((methodAndPostfix) => {
@@ -93,11 +97,12 @@ class BaseApi {
             var method = mpArray[0];
             var postfix = mpArray[1] || '';
             app[method](this.url + postfix, (req, res) => {
-                if (this.dontCheckSession || options.dontCheckSession){
+                if (this.getOptionValue(options, 'dontCheckSession')){
                     handler(req, res);
                 }
                 else {
                     this._sessionsApi.findSession(db, req, res, (session) => {
+                        var adminAccess = this.getOptionValue(options, 'adminAccess');
                         if (!session) {
                             res.send({ 'error': 'session not found' });
                         } else if (!session.active) {
@@ -105,7 +110,7 @@ class BaseApi {
                         } else if (session.expireDate < new Date()) {
                             res.send({ 'error': 'session is expired' });
                             this._sessionsApi.updateSession(db, req, null, {active: false});
-                        } else if ((this.adminAccess || options.adminAccess) && !session.isAdmin) {
+                        } else if (adminAccess && !session.isAdmin) {
                             res.send({ 'error': 'method needs admin session' });
                         } else {
                             var userID = this.userDependent && session.userID.toString();
