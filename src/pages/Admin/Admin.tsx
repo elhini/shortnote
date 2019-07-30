@@ -4,6 +4,7 @@ import Tab from '@material-ui/core/Tab';
 import Users from '../../components/Users/Users';
 import Settings from '../../components/Settings/Settings';
 import AuthUtils from '../../utils/AuthUtils';
+import './Admin.css';
 
 interface TabPanelProps {
   children: React.ReactNode;

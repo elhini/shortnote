@@ -36,21 +36,23 @@ export default class Settings extends React.Component<{}, SettingsState> {
 
     render(){
         return this.state.loading ? <CircularProgress /> : (
-            <FormControl component="fieldset" id="notesSettingsForm">
-                <FormLabel component="legend">Notes</FormLabel>
-                <FormGroup>
-                    <FormControlLabel
-                        label='Manual form submit' 
-                        control={
-                            <Checkbox
-                                onChange={e => this.handleCheck(e)}
-                                checked={this.state.setting.notesFormManualSubmitEnabled || false}
-                                disabled={this.state.submitting}
-                            />
-                        }
-                    />
-                </FormGroup>
-            </FormControl>
+            <div id="Settings">
+                <FormControl component="fieldset">
+                    <FormLabel component="legend">Notes</FormLabel>
+                    <FormGroup>
+                        <FormControlLabel
+                            label='Manual form submit' 
+                            control={
+                                <Checkbox
+                                    onChange={e => this.handleCheck(e)}
+                                    checked={this.state.setting.notesFormManualSubmitEnabled || false}
+                                    disabled={this.state.submitting}
+                                />
+                            }
+                        />
+                    </FormGroup>
+                </FormControl>
+            </div>
         );
     }
 }
