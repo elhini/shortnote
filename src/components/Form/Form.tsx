@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import TextEditor from '../TextEditor/TextEditor';
 import Creatable from 'react-select/creatable';
+import Button from '@material-ui/core/Button';
 import { Item, Tag, ItemDiff, Setting } from '../../types/index';
 import './Form.css';
 
@@ -75,7 +76,7 @@ export default class Form extends React.Component<FormProps, {}> {
             onCreateOption={this.props.onCreateTag}></Creatable>
         </div>
         {this.props.submitEnabled ? <div className="fieldBlock">
-          <button id="submit" disabled={this.props.sending}>{this.props.sending ? 'Sending...' : 'Submit'}</button>
+          <Button variant="outlined" type="submit" id="submit" disabled={this.props.sending}>{this.props.sending ? 'Sending...' : 'Submit'}</Button>
         </div> : null}
         <span id="formState">{this.props.sending ? 'Saving...' : (this.props.changed ? 'Changed' : (item._id ? 'Saved' : ''))}</span>
       </form>
