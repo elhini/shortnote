@@ -111,7 +111,7 @@ class BaseApi {
                             res.send({ 'error': 'session is expired' });
                             this._sessionsApi.updateSession(db, req, null, {active: false});
                         } else if (adminAccess && !session.isAdmin) {
-                            res.send({ 'error': 'method needs admin session' });
+                            res.send({ 'error': '"' + method + ' ' + this.collection + '" action needs admin session' });
                         } else {
                             var userID = this.userDependent && session.userID.toString();
                             handler(req, res, userID);
