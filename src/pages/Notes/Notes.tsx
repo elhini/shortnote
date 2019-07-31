@@ -31,9 +31,9 @@ interface AppState {
     items: Item[];
     filters: FiltersValue;
     sort: SortValue;
-    loadingList: boolean;
+    loading: boolean;
     formChanged: boolean;
-    sendingForm: boolean;
+    submitting: boolean;
     error: string;
     publicLinkCopied: boolean;
     formManualSubmitEnabled: Setting['notesFormManualSubmitEnabled'];
@@ -56,9 +56,9 @@ export default class Notes extends React.Component<AppProps, AppState> {
       items: [],
       filters: {text: '', tags: []},
       sort: {field: 'dateOfUpdate', direction: 'desc'},
-      loadingList: false,
+      loading: false,
       formChanged: false,
-      sendingForm: false,
+      submitting: false,
       error: '',
       publicLinkCopied: false,
       formManualSubmitEnabled: false
@@ -96,7 +96,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   getItemByLocation(items: Item[]){
-    var cb = (item: Item | undefined) => this.setState({items: items, loadingList: false, item: item});
+    var cb = (item: Item | undefined) => this.setState({items: items, item: item});
     var id = this.getItemIDFromLocation();
     var item = id === 'new' ? this.buildEmptyItem() : items.find(i => i._id === id);
     if (id && id !== 'new' && !item){
@@ -113,19 +113,31 @@ export default class Notes extends React.Component<AppProps, AppState> {
     cb(item);
   }
 
+  loadSettings(){
+    return new Promise((resolve, reject) => {
+      new SettingsApiClient().getAll((settings: Setting[]) => {
+        var setting = settings[0] || {};
+        this.setState({formManualSubmitEnabled: setting.notesFormManualSubmitEnabled});
+        resolve();
+      });
+    });
+  }
+
+  loadItems(){
+    return new Promise((resolve, reject) => {
+      this.notesApiClient.getAll((items: Item[]) => {
+        this.getItemByLocation(items);
+        resolve();
+      });
+    });
+  }
+
   componentDidMount() {
     if (this.isPublicItemLocation()){
       this.getItemByLocation([]);
       return;
     }
-    this.setState({loadingList: true});
-    this.notesApiClient.getAll((items: Item[]) => {
-      this.getItemByLocation(items);
-    });
-    new SettingsApiClient().getAll((settings: Setting[]) => {
-      var setting = settings[0] || {};
-      this.setState({formManualSubmitEnabled: setting.notesFormManualSubmitEnabled});
-    })
+    Promise.all([this.loadSettings(), this.loadItems()]);
   }
 
   componentWillUnmount() {
@@ -150,7 +162,6 @@ export default class Notes extends React.Component<AppProps, AppState> {
       item.dateOfCreate = new Date();
     }
     item.dateOfUpdate = new Date();
-    this.setState({sendingForm: true});
     if (item._id){
       this.updateItem(item, i => this.onItemChange(i, false));
     }
@@ -191,9 +202,9 @@ export default class Notes extends React.Component<AppProps, AppState> {
       items = items.filter(i => i._id !== item._id); // remove old version
     }
     items.push(item);
-    this.setState({items: items, item: item, sendingForm: false, formChanged: isChanged});
+    this.setState({items: items, item: item, formChanged: isChanged});
     isNew && this.history.push('/notes/' + item._id);
-    if (isChanged && !this.state.sendingForm && !this.state.formManualSubmitEnabled){
+    if (isChanged && !this.state.submitting && !this.state.formManualSubmitEnabled){
       window.clearTimeout(this.autosaveTimeoutID);
       this.autosaveTimeoutID = window.setTimeout(() => {
         this.onSubmit(null, item);
@@ -314,7 +325,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
       form = <Form item={item} onSubmit={this.onSubmit} submitEnabled={this.state.formManualSubmitEnabled} tags={this.tags} 
         /* accessLevels={this.accessLevels} */
         onCreateTag={this.onCreateTag} onItemChange={this.onItemChangePartially} onPublicLinkCopy={this.onPublicLinkCopy} 
-        sending={this.state.sendingForm} changed={this.state.formChanged}></Form>;
+        sending={this.state.submitting} changed={this.state.formChanged}></Form>;
     }
 
     return (
@@ -329,7 +340,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
             </div>
           </div>
           <div id="listCont">
-            <List items={items} item={item} onDeleteItem={this.onDeleteItem} loading={this.state.loadingList}></List>
+            <List items={items} item={item} onDeleteItem={this.onDeleteItem} loading={this.state.loading}></List>
           </div>
         </div>
         <div id="formCont">
