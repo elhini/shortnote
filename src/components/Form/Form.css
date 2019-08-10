@@ -27,10 +27,6 @@
   display: inline-block;
 }
 
-#Form #submit {
-  text-transform: none;
-}
-
 #Form #formState {
   color: #999;
 }

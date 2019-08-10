@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import './Login.css';
 import AuthUtils from '../../utils/AuthUtils';
 import UsersApiClient from '../../api-clients/users';
+import Button from '@material-ui/core/Button';
 import { Session } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 
@@ -47,9 +48,9 @@ export default class Login extends React.Component<RouteComponentProps, {}> {
                 <label>Password:</label>
                 <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
               </div>
-              <button id="submitLoginForm" onClick={e => this.login(e)} disabled={this.state.submitting}>
+              <Button variant="outlined" type="submit" id="submitLoginForm" onClick={e => this.login(e)} disabled={this.state.submitting}>
                 {this.state.submitting ? 'Logging in...' : 'Log in'}
-              </button><br />
+              </Button><br />
               {this.state.error && <div className="alert error" id="loginError">{this.state.error}</div>}
             </form>
           </div>

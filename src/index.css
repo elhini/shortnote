@@ -36,6 +36,10 @@ select {
   height: 38px;
 }
 
+button.MuiButton-root {
+  text-transform: none;
+}
+
 #head {
   margin-bottom: 5px;
   background: #eee;

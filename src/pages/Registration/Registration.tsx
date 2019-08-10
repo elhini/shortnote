@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import './Registration.css';
 import AuthUtils from '../../utils/AuthUtils';
 import UsersApiClient from '../../api-clients/users';
+import Button from '@material-ui/core/Button';
 import { Session } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 
@@ -39,9 +40,9 @@ export default class Registration extends React.Component<RouteComponentProps, {
             <label>Password:</label>
             <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
           </div>
-          <button id="submitRegisterForm" onClick={e => this.register(e)} disabled={this.state.submitting}>
+          <Button variant="outlined" type="submit" id="submitRegisterForm" onClick={e => this.register(e)} disabled={this.state.submitting}>
             {this.state.submitting ? 'Registering...' : 'Register'}
-          </button><br />
+          </Button><br />
           {this.state.error && <div className="alert error" id="registerError">{this.state.error}</div>}
         </form>
       );
