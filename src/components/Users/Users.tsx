@@ -58,7 +58,7 @@ export default class Users extends React.Component<{}, UsersState> {
 
     onControlClick(user: User, action: UserAction){
         if (['block', 'unblock'].includes(action)){
-            this.setState({updatingUserID: user._id});
+            this.setState({updatingUserID: user._id || ''});
             user.blocked = action === 'block';
             this.usersAPIClient.update(user, (user: User) => {
                 var users = this.state.users.filter(u => u._id !== user._id);
@@ -70,7 +70,7 @@ export default class Users extends React.Component<{}, UsersState> {
             if (!window.confirm('Delete this user?')){
                 return;
             }
-            this.setState({updatingUserID: user._id});
+            this.setState({updatingUserID: user._id || ''});
             this.usersAPIClient.remove(user, () => {
                 var users = this.state.users.filter(u => u._id !== user._id);
                 this.setState({updatingUserID: null, users: users});
@@ -97,7 +97,7 @@ export default class Users extends React.Component<{}, UsersState> {
     }
 
     renderTableRow(user: User){
-        var userSessions = this.state.sessionsByUser[user._id];
+        var userSessions = this.state.sessionsByUser[user._id || ''];
         var activeSessions = userSessions.filter(s => s.active && s.expireDate > new Date().toISOString());
         var disabled = user._id === this.state.updatingUserID;
         return (
