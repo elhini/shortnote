@@ -48,21 +48,21 @@ export interface SortValueDiff {
 }
 
 export interface Session {
-    _id: string;
+    _id?: string;
     userID: string; 
     active: boolean; 
     expireDate: string;
-    loggedAs: string;
-    isAdmin: boolean;
+    loggedAs?: string;
+    isAdmin?: boolean;
 }
 
 export interface User {
-    _id: string;
+    _id?: string;
     login: string;
     password: string;
     registrationDate: string;
-    blocked: boolean;
-    isAdmin: boolean;
+    blocked?: boolean;
+    isAdmin?: boolean;
 }
 
 export interface Setting {

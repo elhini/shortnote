@@ -1,16 +1,18 @@
-var BaseApi = require('./base');
+import { BaseApi, MethodHandler } from './base';
+import { Db } from "mongodb";
 
-class NotesApi extends BaseApi {
+export default class NotesApi extends BaseApi {
     constructor() {
         super('notes');
     }
-    init(db) {
+    init(db: Db) {
         super.init(db);
         this.methods = {
             ...this.methods,
             'get /public/:id': {
                 handler: (req, res, userID) => {
-                    this.methods['get /:id'](req, res, userID, note => {
+                    var handler = this.methods['get /:id'] as MethodHandler;
+                    handler(req, res, userID, (note: any) => {
                         res.send(note && note.publicAccess ? note : { 'error': 'note is private' });
                     });
                 },
@@ -19,5 +21,3 @@ class NotesApi extends BaseApi {
         };
     }
 }
-
-module.exports = NotesApi;

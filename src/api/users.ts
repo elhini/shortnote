@@ -1,13 +1,14 @@
-var BaseApi = require('./base');
-var CryptUtils = require('../utils/CryptUtils');
+import { Db } from "mongodb";
+import { BaseApi } from './base';
+import CryptUtils from '../utils/CryptUtils';
 
-class UsersApi extends BaseApi {
+export default class UsersApi extends BaseApi {
     constructor() {
         super('users');
         this.userDependent = false;
         this.adminAccess = true;
     }
-    init(db) {
+    init(db: Db) {
         super.init(db);
         this.methods = {
             ...this.methods,
@@ -21,11 +22,11 @@ class UsersApi extends BaseApi {
                         } else if (user) {
                             res.send({ 'error': 'login already in use' });
                         } else {
-                            CryptUtils.cryptPassword(ticket.password, (err, hash) => {
+                            CryptUtils.cryptPassword(ticket.password, (err: Error, hash?: string) => {
                                 if (err) { 
                                     res.send({ 'error': err });
                                 } else {
-                                    let user = {login: ticket.login, password: hash, registrationDate: new Date()};
+                                    let user = {login: ticket.login, password: hash || '', registrationDate: new Date().toISOString()};
                                     db.collection(this.collection).insertOne(user, (err, result) => {
                                         if (err) { 
                                             res.send({ 'error': err }); 
@@ -51,7 +52,7 @@ class UsersApi extends BaseApi {
                         if (err) { 
                             res.send({ 'error': err });
                         } else if (user) {
-                            CryptUtils.comparePassword(ticket.password, user.password, (err, isPasswordMatch) => {
+                            CryptUtils.comparePassword(ticket.password, user.password, (err: Error, isPasswordMatch: boolean) => {
                                 if (err) { 
                                     res.send({ 'error': err }); 
                                 } else if (isPasswordMatch) {
@@ -84,5 +85,3 @@ class UsersApi extends BaseApi {
         };
     }
 }
-
-module.exports = UsersApi;

@@ -1,21 +1,32 @@
-var ObjectID = require('mongodb').ObjectID;
-var _SessionsApi = require('./_sessions');
+import { Request, Response, Application } from "express";
+import { Db, ObjectID } from "mongodb";
+import { Session } from '../types/index';
+import _SessionsApi from './_sessions';
 
-class BaseApi {
-    constructor(collection) {
+export class BaseApi {
+    collection: string;
+    url: string;
+    _sessionsApi: _SessionsApi;
+    userDependent: boolean;
+    adminAccess: boolean;
+    methods: {[method: string]: MethodHandler | MethodOptions};
+
+    constructor(collection: string) {
         this.collection = collection;
         this.url = '/api/' + collection;
         this._sessionsApi = new _SessionsApi();
         this.userDependent = true;
+        this.adminAccess = false;
+        this.methods = {};
     }
     
-    createObjectID(id){
+    createObjectID(id: string){
         return new ObjectID(id);
     }
 
-    init(db) {
+    init(db: Db) {
         this.methods = {
-            'post': (req, res, userID) => {
+            'post': (req: Request, res: Response, userID?: string) => {
                 const item = req.body;
                 userID && (item.userID = userID);
                 delete item._id;
@@ -27,8 +38,8 @@ class BaseApi {
                     }
                 });
             },
-            'get': (req, res, userID) => {
-                const query = {}; // all
+            'get': (req: Request, res: Response, userID?: string) => {
+                const query: DBQuery = {}; // all
                 userID && (query.userID = userID);
                 db.collection(this.collection).find(query).toArray((err, result) => {
                     if (err) {
@@ -41,8 +52,8 @@ class BaseApi {
                     }
                 });
             },
-            'get /:id': (req, res, userID, cb) => {
-                const query = { '_id': this.createObjectID(req.params.id) };
+            'get /:id': (req: Request, res: Response, userID?: string, cb?: (r: any) => void) => {
+                const query: DBQuery = { '_id': this.createObjectID(req.params.id) };
                 userID && (query.userID = userID);
                 db.collection(this.collection).findOne(query, (err, result) => {
                     if (err) {
@@ -52,8 +63,8 @@ class BaseApi {
                     }
                 });
             },
-            'put /:id': (req, res, userID) => {
-                const query = { '_id': this.createObjectID(req.params.id) };
+            'put /:id': (req: Request, res: Response, userID?: string) => {
+                const query: DBQuery = { '_id': this.createObjectID(req.params.id) };
                 userID && (query.userID = userID);
                 const item = req.body;
                 let _item = {...item};
@@ -66,8 +77,8 @@ class BaseApi {
                     }
                 });
             },
-            'delete /:id': (req, res, userID) => {
-                const query = { '_id': this.createObjectID(req.params.id) };
+            'delete /:id': (req: Request, res: Response, userID?: string) => {
+                const query: DBQuery = { '_id': this.createObjectID(req.params.id) };
                 userID && (query.userID = userID);
                 db.collection(this.collection).deleteOne(query, (err, result) => {
                     if (err) {
@@ -80,40 +91,39 @@ class BaseApi {
         };
     }
 
-    getOptionValue(options, key){
-        return typeof options[key] !== 'undefined' ? options[key] : this[key];
+    getOptionValue(options: MethodOptions | undefined, key: 'dontCheckSession' | 'adminAccess'){
+        return options && typeof options[key] !== 'undefined' ? options[key] : (this as any)[key];
     }
 
-    connect(app, db){
+    connect(app: Application, db: Db){
         this.init(db);
         Object.keys(this.methods).forEach((methodAndPostfix) => {
-            var handler = this.methods[methodAndPostfix];
-            var options = {};
-            if (typeof handler === 'object'){
-                options = {...handler};
+            var handler = this.methods[methodAndPostfix] as MethodHandler;
+            var options = this.methods[methodAndPostfix] as MethodOptions;
+            if (typeof options === 'object'){
                 handler = options.handler;
             }
             var mpArray = methodAndPostfix.split(' ');
-            var method = mpArray[0];
+            var method = mpArray[0] as MethodName;
             var postfix = mpArray[1] || '';
-            app[method](this.url + postfix, (req, res) => {
+            app[method](this.url + postfix, (req: Request, res: Response) => {
                 if (this.getOptionValue(options, 'dontCheckSession')){
                     handler(req, res);
                 }
                 else {
-                    this._sessionsApi.findSession(db, req, res, (session) => {
+                    this._sessionsApi.findSession(db, req, res, (session: Session) => {
                         var adminAccess = this.getOptionValue(options, 'adminAccess');
                         if (!session) {
                             res.send({ 'error': 'session not found' });
                         } else if (!session.active) {
                             res.send({ 'error': 'session is not active' });
-                        } else if (session.expireDate < new Date()) {
+                        } else if (session.expireDate < new Date().toISOString()) {
                             res.send({ 'error': 'session is expired' });
                             this._sessionsApi.updateSession(db, req, null, {active: false});
                         } else if (adminAccess && !session.isAdmin) {
                             res.send({ 'error': '"' + method + ' ' + this.collection + '" action needs admin session' });
                         } else {
-                            var userID = this.userDependent && session.userID.toString();
+                            var userID = this.userDependent ? session.userID.toString() : '';
                             handler(req, res, userID);
                             this._sessionsApi.updateSession(db, req, null, {expireDate: this._sessionsApi.getNewExpireDate()});
                         }
@@ -124,4 +134,19 @@ class BaseApi {
     }
 }
 
-module.exports = BaseApi;
+interface DBQuery {
+    _id?: ObjectID;
+    userID?: string;
+}
+
+export type MethodHandler = (req: Request, res: Response, userID?: string, cb?: HandlerCallback) => void;
+
+type HandlerCallback = (result: any) => void;
+
+interface MethodOptions {
+    handler: MethodHandler;
+    dontCheckSession?: boolean;
+    adminAccess?: boolean;
+}
+
+type MethodName = 'post' | 'get' | 'put' | 'delete';

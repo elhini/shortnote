@@ -1,11 +1,9 @@
-var BaseApi = require('./base');
+import { BaseApi } from './base';
 
-class SessionsApi extends BaseApi {
+export default class SessionsApi extends BaseApi {
     constructor() {
         super('sessions');
         this.userDependent = false;
         this.adminAccess = true;
     }
 }
-
-module.exports = SessionsApi;
