@@ -107,6 +107,9 @@ export class BaseApi {
             var method = mpArray[0] as MethodName;
             var postfix = mpArray[1] || '';
             app[method](this.url + postfix, (req: Request, res: Response) => {
+                if (!db){
+                    return res.send({ 'error': 'no database connection' });
+                }
                 if (this.getOptionValue(options, 'dontCheckSession')){
                     handler(req, res);
                 }

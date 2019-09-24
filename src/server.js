@@ -8,8 +8,10 @@ const port           = 8000;
 app.use(bodyParser.json());
 app.use(cookieParser());
 MongoClient.connect(dbConfig.url, { useNewUrlParser: true }, (err, client) => {
-    if (err) return console.log(err);
-    var db = client.db('shortnote');
+    if (err) {
+        console.log(err);
+    }
+    var db = client && client.db('shortnote');
     require('./api')(app, db);
     app.listen(port, () => {
         console.log('listening on ' + port);
