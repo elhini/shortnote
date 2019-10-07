@@ -18,6 +18,7 @@ Lite and simple app for short notes
 - autosave (after 1 second)
 - registration & auth (by login & password)
 - public sharing (read access)
+- admin panel (users list)
 
 ## Planned features:
 
@@ -27,7 +28,6 @@ Lite and simple app for short notes
 - group/category (with hierarchy)
 
 #### Functions:
-- admin panel (users list)
 - invitations (by link)
 - collaboration (write access)
 - TODO-lists (with checkboxes)
