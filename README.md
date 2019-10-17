@@ -41,7 +41,7 @@ Lite and simple app for short notes
 - testing: Jest
 
 ## Start local demo
-0. create your own mongodb instance with following collections: `users`, `sessions`, `notes`, `settings`
+0. create your own mongodb instance with `shortnote` database and following collections: `users`, `sessions`, `notes`, `settings`
 1. execute `git clone git://github.com/elhini/shortnote.git` to clone this project repository
 2. execute `cd shortnote` to enter the project directory
 3. execute `npm install` to install the project dependencies
