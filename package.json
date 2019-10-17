@@ -27,16 +27,19 @@
     "react-rte": "^0.16.1",
     "react-scripts": "3.0.0",
     "react-select": "^3.0.4",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "ts-node": "^8.3.0"
   },
   "main": "src/server.js",
   "scripts": {
-    "client": "HOST=localhost react-scripts start",
-    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "ts-node --project tsconfig-server.json src/server.js"
+    "server": "ts-node --project tsconfig-server.json src/server.js",
+    "server-local": "HOST=localhost npm run server",
+    "client": "react-scripts start",
+    "client-local": "HOST=localhost npm run client",
+    "start": "npm run server && npm run client"
   },
   "proxy": "http://localhost:8000",
   "eslintConfig": {
@@ -57,7 +60,6 @@
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "@types/node": "^12.6.6",
-    "nodemon": "^1.19.0",
-    "ts-node": "^8.3.0"
+    "nodemon": "^1.19.0"
   }
 }
