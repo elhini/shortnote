@@ -12,6 +12,12 @@ export default class Registration extends React.Component<RouteComponentProps, {
   
     register = (e: React.MouseEvent) => {
       e.preventDefault();
+      if (!this.state.login){
+        return this.setState({ error: 'login is empty' });
+      }
+      if (!this.state.password){
+        return this.setState({ error: 'password is empty' });
+      }
       (new UsersApiClient(this)).register(this.state.login, this.state.password, (session: Session) => {
         session.loggedAs = this.state.login;
         AuthUtils.setSession(session);
