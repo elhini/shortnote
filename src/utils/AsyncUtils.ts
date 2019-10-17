@@ -7,7 +7,7 @@ export default class AsyncUtils {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            credentials: "same-origin", // to enable cookies: stackoverflow.com/questions/34558264
+            credentials: "include", // to enable cookies: stackoverflow.com/questions/34558264
             body: body
         })
         .then(res => {
