@@ -7,14 +7,10 @@ const MongoClient    = require('mongodb').MongoClient;
 const bodyParser     = require('body-parser');
 const cookieParser   = require("cookie-parser");
 const app            = express();
-const port           = 8000;
+const port           = process.env.PORT || 8000;
 app.use(bodyParser.json());
 app.use(cookieParser());
 const dbURL = process.env.HOST === 'localhost' ? require('./config/db').url : process.env.MONGODB_URI;
-console.log('dbURL', dbURL);
-if (!dbURL){
-    return;
-}
 MongoClient.connect(dbURL, { useNewUrlParser: true }, (err, client) => {
     if (err) {
         console.log(err);
