@@ -6,7 +6,9 @@ export default class BaseApiClient {
     private url: string;
 
     constructor(public collection: string, public component: React.Component) {
-        this.url = '/api/' + collection;
+        var isPublicHost = window.location.hostname.split('.')[0] === 'shortnote';
+        var apiHost = isPublicHost ? 'https://elhini.herokuapp.com' : '';
+        this.url = apiHost + '/api/' + collection;
     }
 
     getWaitingStateField(method: string): string {
