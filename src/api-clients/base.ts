@@ -7,7 +7,7 @@ export default class BaseApiClient {
 
     constructor(public collection: string, public component: React.Component) {
         var isPublicHost = window.location.hostname.split('.')[0] === 'shortnote';
-        var apiHost = isPublicHost ? 'https://elhini.herokuapp.com' : ''; // TODO: move to config / env. variable
+        var apiHost = isPublicHost ? 'https://shortnote.herokuapp.com' : ''; // TODO: move to config / env. variable
         this.url = apiHost + '/api/' + collection;
     }
 
