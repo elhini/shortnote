@@ -37,9 +37,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "ts-node --project tsconfig-server.json src/server.js",
-    "server-local": "HOST=localhost npm run server",
     "client": "react-scripts start",
-    "client-local": "HOST=localhost npm run client",
     "start": "npm run server && npm run client"
   },
   "proxy": "http://localhost:8000",

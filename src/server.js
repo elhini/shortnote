@@ -1,5 +1,6 @@
-console.log('process.env.HOST', process.env.HOST);
-if (!process.env.HOST){
+let config;
+try { config = require('./config/server') } catch (e) { config = process.env }
+if (!config.MONGODB_URI){
     return;
 }
 const express        = require('express');
@@ -8,17 +9,17 @@ const bodyParser     = require('body-parser');
 const cookieParser   = require("cookie-parser");
 const cors           = require('cors');
 const app            = express();
-const port           = process.env.PORT || 8000;
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({ origin: "https://shortnote.elhini.now.sh", credentials: true }));
-const dbURL = process.env.HOST === 'localhost' ? require('./config/db').url : process.env.MONGODB_URI;
-MongoClient.connect(dbURL, { useNewUrlParser: true }, (err, client) => {
+app.use(cors({ origin: config.ALLOWED_ORIGIN, credentials: true }));
+MongoClient.connect(config.MONGODB_URI, { useNewUrlParser: true }, (err, client) => {
     if (err) {
         console.log(err);
     }
-    var db = client && client.db('shortnote');
+    var dbName = config.MONGODB_URI.split('/').pop();
+    var db = client && client.db(dbName);
     require('./api')(app, db);
+    var port = process.env.PORT || config.PORT; // Heroku dynamically assigns a port
     app.listen(port, () => {
         console.log('listening on ' + port);
     });
