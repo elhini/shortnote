@@ -1,4 +1,5 @@
 import AsyncUtils from '../utils/AsyncUtils';
+import config from '../config/client';
 
 type Callback = (res: any) => void;
 
@@ -7,7 +8,7 @@ export default class BaseApiClient {
 
     constructor(public collection: string, public component: React.Component) {
         var isPublicHost = window.location.hostname.split('.')[0] === 'shortnote';
-        var apiHost = isPublicHost ? 'https://shortnote.herokuapp.com' : ''; // TODO: move to config / env. variable
+        var apiHost = isPublicHost ? config.apiHost : '';
         this.url = apiHost + '/api/' + collection;
     }
 
