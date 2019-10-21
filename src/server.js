@@ -11,7 +11,7 @@ const cors           = require('cors');
 const app            = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({ origin: config.ALLOWED_ORIGIN, credentials: true }));
+app.use(cors({ origin: config.ALLOWED_ORIGIN.split(' '), credentials: true }));
 MongoClient.connect(config.MONGODB_URI, { useNewUrlParser: true }, (err, client) => {
     if (err) {
         console.log(err);

@@ -7,7 +7,9 @@ export default class BaseApiClient {
     private url: string;
 
     constructor(public collection: string, public component: React.Component) {
-        var isPublicHost = window.location.hostname.split('.')[0] === 'shortnote';
+        var host = window.location.hostname;
+        var allowedHosts = ['now.sh', 'github.io'];
+        var isPublicHost = allowedHosts.some(h => host.includes(h) && host.includes('elhini'));
         var apiHost = isPublicHost ? config.apiHost : '';
         this.url = apiHost + '/api/' + collection;
     }
