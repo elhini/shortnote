@@ -124,3 +124,9 @@ button.MuiButton-root {
   background-color: #f8d7da;
   border-color: #f5c6cb;  
 }
+
+.alert.info {
+  color: #3a87ad;
+  background-color: #d9edf7;
+  border-color: #bce8f1;  
+}

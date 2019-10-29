@@ -21,11 +21,13 @@ interface BaseFormProps {
 interface BaseFormState {
   fieldValues: BaseFormFieldValues, 
   submitting: boolean, 
-  error: string
+  error: string, 
+  tooLong: boolean,
+  isMounted: boolean
 }
 
 export class BaseForm extends React.Component<BaseFormProps, BaseFormState> {
-    state: BaseFormState = { fieldValues: {}, submitting: false, error: '' };
+    state: BaseFormState = { fieldValues: {}, submitting: false, error: '', tooLong: false, isMounted: false };
   
     onSubmit(e: React.MouseEvent) {
       e.preventDefault();
@@ -36,8 +38,19 @@ export class BaseForm extends React.Component<BaseFormProps, BaseFormState> {
           return this.setState({ error: f.name + ' is empty' });
         }
       }
+      setTimeout(() => {
+        this.state.isMounted && this.setState({ tooLong: true });
+      }, 2000);
       this.props.onSubmit(this, this.state.fieldValues);
-    };
+    }
+
+    componentDidMount() {
+      this.setState({isMounted: true})
+    }
+
+    componentWillUnmount() {
+      this.setState({isMounted: false});
+    }
 
     onChange(field: BaseFormField, e: React.ChangeEvent<HTMLInputElement>) {
       var values = this.state.fieldValues;
@@ -62,6 +75,7 @@ export class BaseForm extends React.Component<BaseFormProps, BaseFormState> {
             {this.state.submitting ? this.props.submittingText : this.props.submitText}
           </Button><br />
           {this.state.error && <div className="alert error">{this.state.error}</div>}
+          {this.state.tooLong && <div className="alert info">The request takes longer than usual. Please wait...</div>}
         </form>
       );
     }
