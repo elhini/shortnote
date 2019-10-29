@@ -1,32 +1,20 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
-import './Registration.css';
+import { BaseForm, BaseFormFieldValues } from '../../components/BaseForm/BaseForm';
 import AuthUtils from '../../utils/AuthUtils';
 import UsersApiClient from '../../api-clients/users';
-import Button from '@material-ui/core/Button';
 import { Session } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 
 export default class Registration extends React.Component<RouteComponentProps, {}> {
-    state = { redirectToReferrer: false, login: '', password: '', submitting: false, error: '' };
+    state = { redirectToReferrer: false };
   
-    register = (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (!this.state.login){
-        return this.setState({ error: 'login is empty' });
-      }
-      if (!this.state.password){
-        return this.setState({ error: 'password is empty' });
-      }
-      (new UsersApiClient(this)).register(this.state.login, this.state.password, (session: Session) => {
-        session.loggedAs = this.state.login;
+    onSubmit(form: BaseForm, values: BaseFormFieldValues) {
+      (new UsersApiClient(form)).register(values.login, values.password, (session: Session) => {
+        session.loggedAs = values.login;
         AuthUtils.setSession(session);
         this.setState({ redirectToReferrer: true });
       });
-    };
-
-    onInputChange(field: string, e: React.ChangeEvent<HTMLInputElement>) {
-      this.setState({[field]: e.target.value});
     }
   
     render() {
@@ -35,22 +23,25 @@ export default class Registration extends React.Component<RouteComponentProps, {
   
       if (redirectToReferrer) return <Redirect to={from} />;
 
-      return (
-        <form id="registerForm">
-          <h2>Register a new account</h2>
-          <div className="fieldBlock">
-            <label>Login:</label>
-            <input type="text" name="login" value={this.state.login} onChange={e => this.onInputChange('login', e)} />
-          </div>
-          <div className="fieldBlock">
-            <label>Password:</label>
-            <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
-          </div>
-          <Button variant="outlined" type="submit" id="submitRegisterForm" onClick={e => this.register(e)} disabled={this.state.submitting}>
-            {this.state.submitting ? 'Registering...' : 'Register'}
-          </Button><br />
-          {this.state.error && <div className="alert error" id="registerError">{this.state.error}</div>}
-        </form>
-      );
+      var fields = [{
+        label: 'Login',
+        name: 'login',
+        required: true
+      }, {
+        label: 'Password',
+        type: 'password',
+        name: 'password',
+        required: true
+      }];
+
+      var form = <BaseForm
+        title='Register a new account'
+        fields={fields}
+        submittingText='Registering...'
+        submitText='Register' 
+        onSubmit={(f, v) => this.onSubmit(f, v)}
+      />;
+
+      return form;
     }
 }

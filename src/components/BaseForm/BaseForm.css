@@ -1,7 +1,7 @@
-#loginForm {
+.baseForm {
     width: 210px;
 }
 
-#loginError {
+.baseForm .alert {
     margin-top: 10px;
 }

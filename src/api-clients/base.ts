@@ -6,7 +6,7 @@ type Callback = (res: any) => void;
 export default class BaseApiClient {
     private url: string;
 
-    constructor(public collection: string, public component: React.Component) {
+    constructor(public collection: string, public component?: React.Component) {
         var host = window.location.hostname;
         var allowedHosts = ['now.sh', 'github.io'];
         var isPublicHost = allowedHosts.some(h => host.includes(h) && host.includes('elhini'));

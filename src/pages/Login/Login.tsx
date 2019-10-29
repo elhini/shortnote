@@ -1,33 +1,21 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
-import './Login.css';
+import { BaseForm, BaseFormFieldValues } from '../../components/BaseForm/BaseForm';
 import AuthUtils from '../../utils/AuthUtils';
 import UsersApiClient from '../../api-clients/users';
-import Button from '@material-ui/core/Button';
 import { Session } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 
 export default class Login extends React.Component<RouteComponentProps, {}> {
-    state = { redirectToReferrer: false, login: '', password: '', submitting: false, error: '' };
-  
-    login = (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (!this.state.login){
-        return this.setState({ error: 'login is empty' });
-      }
-      if (!this.state.password){
-        return this.setState({ error: 'password is empty' });
-      }
-      (new UsersApiClient(this)).login(this.state.login, this.state.password, (session: Session) => {
-        session.loggedAs = this.state.login;
+    state = { redirectToReferrer: false };
+
+    onSubmit(form: BaseForm, values: BaseFormFieldValues) {
+      (new UsersApiClient(form)).login(values.login, values.password, (session: Session) => {
+        session.loggedAs = values.login;
         AuthUtils.setSession(session);
         this.setState({ redirectToReferrer: true });
       });
     };
-
-    onInputChange(field: string, e: React.ChangeEvent<HTMLInputElement>) {
-      this.setState({[field]: e.target.value});
-    }
   
     render() {
       let { from } = this.props.location.state || { from: { pathname: "/notes" } };
@@ -35,32 +23,25 @@ export default class Login extends React.Component<RouteComponentProps, {}> {
   
       if (redirectToReferrer) return <Redirect to={from} />;
 
-      var isLoginPage = this.props.location.pathname === '/login';
-      var isLoggedIn = AuthUtils.isLoggedIn();
+      var fields = [{
+        label: 'Login',
+        name: 'login',
+        required: true
+      }, {
+        label: 'Password',
+        type: 'password',
+        name: 'password',
+        required: true
+      }];
 
-      return (
-        isLoggedIn ? (
-          'You are already logged in'
-        ) : (
-          <div>
-            {isLoginPage ? '' : <p>You must log in to view the page at {from.pathname}</p>}
-            <form id="loginForm">
-              <h2>Log in to an existing account</h2>
-              <div className="fieldBlock">
-                <label>Login:</label>
-                <input type="text" name="login" value={this.state.login} onChange={e => this.onInputChange('login', e)} />
-              </div>
-              <div className="fieldBlock">
-                <label>Password:</label>
-                <input type="password" name="password" value={this.state.password} onChange={e => this.onInputChange('password', e)} />
-              </div>
-              <Button variant="outlined" type="submit" id="submitLoginForm" onClick={e => this.login(e)} disabled={this.state.submitting}>
-                {this.state.submitting ? 'Logging in...' : 'Log in'}
-              </Button><br />
-              {this.state.error && <div className="alert error" id="loginError">{this.state.error}</div>}
-            </form>
-          </div>
-        )
-      );
+      var form = <BaseForm
+        title='Log in to an existing account'
+        fields={fields}
+        submittingText='Logging in...'
+        submitText='Log in' 
+        onSubmit={(f, v) => this.onSubmit(f, v)}
+      />;
+
+      return AuthUtils.isLoggedIn() ? 'You are already logged in' : form;
     }
 }
