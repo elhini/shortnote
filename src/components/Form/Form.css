@@ -4,6 +4,7 @@
 
 #Form label[for="publicAccess"] {
   margin: 0 0 0 20px;
+  white-space: nowrap;
 }
 
 #Form #publicAccess {
@@ -29,4 +30,21 @@
 
 #Form #formState {
   color: #999;
+}
+
+@media (max-width: 500px) {
+  #Form #titleAndPublicAccess #title {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  #Form label[for="publicAccess"] {
+    margin: 0 0 10px 0;
+    width: auto;
+  }
+
+  #Form #publicLink {
+    margin-left: 0;
+  }
 }

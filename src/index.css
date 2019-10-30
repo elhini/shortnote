@@ -68,6 +68,7 @@ button.MuiButton-root {
 #loggedAsCont {
   padding: 5px 15px;
   min-width: 0;
+  white-space: nowrap;
 }
 
 #nav a:hover {
@@ -109,6 +110,16 @@ button.MuiButton-root {
   height: 250px;
 }
 
+.fieldInline {
+  margin-right: 10px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+
+form label {
+  margin-right: 3px;
+}
+
 .alert {
   padding: 10px 8px;
   background: #eee;
@@ -129,4 +140,33 @@ button.MuiButton-root {
   color: #3a87ad;
   background-color: #d9edf7;
   border-color: #bce8f1;  
+}
+
+@media (max-width: 500px) {
+  #head,
+  #nav {
+    flex-wrap: wrap;
+  }
+  #nav {
+    margin-left: 0;
+  }
+  #nav a, 
+  #loggedAsCont {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .fieldInline {
+    display: block;
+  }
+
+  form label {
+    width: 90px;
+    text-align: right;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+  select + label {
+    width: auto;
+  }
 }

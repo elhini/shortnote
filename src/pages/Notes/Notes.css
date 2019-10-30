@@ -40,3 +40,19 @@
   flex: 2;
   margin-left: 1%;
 }
+
+@media (max-width: 500px) {
+  #Notes #wrap {
+    flex-direction: column;
+  }
+
+  #Notes #listCont,
+  #Notes #formCont {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+  }
+
+  #Notes #formCont {
+    margin-left: 0;
+  }
+}

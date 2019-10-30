@@ -22,13 +22,15 @@ export default class Sort extends React.Component<SortProps, {}> {
     var directionOptions = directions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     return (
       <form id="Sort">
-        <label>Sort</label>:{' '}
+        <label>Sort:</label>
         <span className="fieldInline">
-          <label>by</label>{' '}
+          <label>by</label>
           <select id="sortField" value={sort.field} onChange={(e) => this.props.onSortChange({field: e.target.value as SortField})}>
             {fieldOptions}
-          </select>{' '}
-          <label>in</label>{' '}
+          </select>
+        </span>
+        <span className="fieldInline">
+          <label>in</label>
           <select id="sortDirection" value={sort.direction} onChange={(e) => this.props.onSortChange({direction: e.target.value as SortDirection})}>
             {directionOptions}
           </select>{' '}
