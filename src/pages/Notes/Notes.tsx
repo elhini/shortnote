@@ -11,6 +11,7 @@ import Alert from '../../components/Alert/Alert';
 import ReadonlyNote from '../../components/ReadonlyNote/ReadonlyNote';
 import DateUtils from '../../utils/DateUtils';
 import AddIcon from '@material-ui/icons/AddCircle';
+import CloseIcon from '@material-ui/icons/Close';
 import { Item, FiltersValue, SortValue, ItemDiff, Tag, FiltersValueDiff, SortValueDiff, Setting } from '../../types/index';
 import { RouteComponentProps } from "react-router-dom";
 import './Notes.css';
@@ -72,6 +73,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     this.notesApiClient = new NotesApiClient(this);
     this.autosaveTimeoutID = 0;
     this.onOpenNew = this.onOpenNew.bind(this);
+    this.onClose = this.onClose.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteItem = this.onDeleteItem.bind(this);
     this.onFiltersChange = this.onFiltersChange.bind(this);
@@ -151,6 +153,10 @@ export default class Notes extends React.Component<AppProps, AppState> {
   onOpenNew(){
     var emptyItem = this.buildEmptyItem();
     this.setState({item: emptyItem});
+  }
+
+  onClose(){
+    this.setState({item: null});
   }
 
   onSubmit(e: React.FormEvent<HTMLFormElement> | null, item = this.state.item){
@@ -298,9 +304,10 @@ export default class Notes extends React.Component<AppProps, AppState> {
       return <ReadonlyNote item={this.state.item} />;
     }
     return (
-      <div id="Notes">
+      <div id="Notes" className={this.state.item ? 'itemSelected' : ''}>
         <div>
-          <Link to={'/notes/new'} id="openNew" onClick={this.onOpenNew}><AddIcon /> Open new</Link>
+          <Link to={'/notes/new'} id="openNew" onClick={this.onOpenNew} className="btnLink"><AddIcon /> Open new</Link>
+          <Link to={'/notes'} id="close" onClick={this.onClose} className="btnLink"><CloseIcon /> Close</Link>
           {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}
           {this.state.publicLinkCopied && <Alert variant="success" message="Copied!" onClose={() => this.setState({publicLinkCopied: false})} />}
         </div>

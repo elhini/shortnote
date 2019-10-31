@@ -70,3 +70,17 @@
   background: #eee;
   margin-left: 5px;
 }
+
+@media (max-width: 500px) {
+  #List li + li {
+    border-top: 1px solid #ccc;
+  }
+
+  #List li .aside {
+    float: none;
+  }
+
+  #List li .delete {
+    float: right;
+  }
+}

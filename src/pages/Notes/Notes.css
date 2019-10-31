@@ -2,7 +2,7 @@
   color: inherit;
 }
 
-#Notes #openNew {
+#Notes .btnLink {
   display: inline-block;
   margin-bottom: 10px;
   margin-right: 10px;
@@ -14,10 +14,10 @@
   color: #333;
   vertical-align: middle;
 }
-#Notes #openNew:hover {
+#Notes .btnLink:hover {
   background: #eee;
 }
-#Notes #openNew svg {
+#Notes .btnLink svg {
   margin: -7px 0;
   color: rgba(0, 0, 0, 0.54);
 }
@@ -44,6 +44,22 @@
 @media (max-width: 500px) {
   #Notes #wrap {
     flex-direction: column;
+  }
+
+  #Notes.itemSelected #aside,
+  #Notes.itemSelected #openNew {
+    display: none;
+  }
+
+  #Notes #formCont,
+  #Notes #close {
+    display: none;
+  }
+  #Notes.itemSelected #formCont {
+    display: block;
+  }
+  #Notes.itemSelected #close {
+    display: inline-block;
   }
 
   #Notes #listCont,
