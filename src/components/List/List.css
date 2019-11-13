@@ -71,7 +71,7 @@
   margin-left: 5px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 700px) {
   #List li + li {
     border-top: 1px solid #ccc;
   }

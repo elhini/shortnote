@@ -43,7 +43,7 @@
   color: #999;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 700px) {
   #Form #titleAndPublicAccess #title {
     display: block;
     width: 100%;
