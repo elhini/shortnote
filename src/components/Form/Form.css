@@ -24,7 +24,7 @@
 #Form label[for="publicAccess"],
 #Form #publicLink,
 #Form #copyPublicLink {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 #Form #copyPublicLink {
@@ -51,12 +51,5 @@
 
   #Form label[for="publicAccess"] {
     width: auto;
-  }
-
-  #Form #titleAndPublicAccess #title,
-  #Form label[for="publicAccess"],
-  #Form #publicLink,
-  #Form #copyPublicLink {
-    margin-bottom: 10px;
   }
 }
