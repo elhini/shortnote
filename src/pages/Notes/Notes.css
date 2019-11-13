@@ -21,6 +21,9 @@
   margin: -7px 0;
   color: rgba(0, 0, 0, 0.54);
 }
+#Notes #close {
+  display: none;
+}
 
 #Notes #wrap {
   display: flex;
@@ -61,8 +64,7 @@
     display: none;
   }
 
-  #Notes #formCont,
-  #Notes #close {
+  #Notes #formCont {
     display: none;
   }
   #Notes.itemSelected #formCont {
