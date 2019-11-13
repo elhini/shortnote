@@ -114,6 +114,7 @@ button.MuiButton-root {
   margin-right: 10px;
   margin-bottom: 5px;
   white-space: nowrap;
+  display: inline-block;
 }
 
 form label {

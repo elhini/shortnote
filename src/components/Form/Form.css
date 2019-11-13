@@ -1,9 +1,14 @@
-#Form #title {
+#Form #titleAndPublicAccess {
+  margin-bottom: 0;
+}
+
+#Form #titleAndPublicAccess #title {
   width: 50%;
+  margin: 0 20px 0 0;
 }
 
 #Form label[for="publicAccess"] {
-  margin: 0 0 0 20px;
+  margin: 0 5px 0 0;
   white-space: nowrap;
 }
 
@@ -13,7 +18,13 @@
 
 #Form #publicLink {
   width: 250px;
-  margin-left: 5px;
+}
+
+#Form #titleAndPublicAccess #title,
+#Form label[for="publicAccess"],
+#Form #publicLink,
+#Form #copyPublicLink {
+  margin-bottom: 5px;
 }
 
 #Form #copyPublicLink {
@@ -35,16 +46,17 @@
 @media (max-width: 500px) {
   #Form #titleAndPublicAccess #title {
     display: block;
-    margin-bottom: 10px;
     width: 100%;
   }
 
   #Form label[for="publicAccess"] {
-    margin: 0 0 10px 0;
     width: auto;
   }
 
-  #Form #publicLink {
-    margin-left: 0;
+  #Form #titleAndPublicAccess #title,
+  #Form label[for="publicAccess"],
+  #Form #publicLink,
+  #Form #copyPublicLink {
+    margin-bottom: 10px;
   }
 }
