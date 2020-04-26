@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react"
 import NotesApiClient from '../../api-clients/notes';
 import SettingsApiClient from '../../api-clients/settings';
 import StringUtils from '../../utils/StringUtils';
@@ -25,9 +26,10 @@ interface AppProps extends RouteComponentProps {
         path: string; 
         url: string;
     };
+    store: AppStore
 }
 
-interface AppState {
+interface AppStore {
     item: Item | null | undefined;
     items: Item[];
     filters: FiltersValue;
@@ -38,9 +40,11 @@ interface AppState {
     error: string;
     publicLinkCopied: boolean;
     formManualSubmitEnabled: Setting['notesFormManualSubmitEnabled'];
+    buildEmptyItem: () => Item;
 }
 
-export default class Notes extends React.Component<AppProps, AppState> {
+@observer
+export default class Notes extends React.Component<AppProps> {
   tags: Tag[]; // TODO: move to state
   accessLevels: {id: number, name: string}[];
   history: RouteComponentProps['history'];
@@ -51,24 +55,12 @@ export default class Notes extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     var id = props.match.params.id;
-    var item = id === 'new' ? this.buildEmptyItem() : null;
-    this.state = {
-      item: item,
-      items: [],
-      filters: {text: '', tags: []},
-      sort: {field: 'dateOfUpdate', direction: 'desc'},
-      loading: false,
-      formChanged: false,
-      submitting: false,
-      error: '',
-      publicLinkCopied: false,
-      formManualSubmitEnabled: false
-    };
+    props.store.item = id === 'new' ? props.store.buildEmptyItem() : null;
     this.tags = [];
     this.accessLevels = [{id: 1, name: 'viewing'}, {id: 2, name: 'editing'}];
     this.history = props.history;
     this.stopListeningHistory = this.history.listen(location => {
-      this.getItemByLocation(this.state.items);
+      this.getItemByLocation(props.store.items);
     });
     this.notesApiClient = new NotesApiClient(this);
     this.autosaveTimeoutID = 0;
@@ -98,9 +90,12 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   getItemByLocation(items: Item[]){
-    var cb = (item: Item | undefined) => this.setState({items: items, item: item});
+    var cb = (item: Item | undefined) => {
+      this.props.store.items = items;
+      this.props.store.item = item;
+    };
     var id = this.getItemIDFromLocation();
-    var item = id === 'new' ? this.buildEmptyItem() : items.find(i => i._id === id);
+    var item = id === 'new' ? this.props.store.buildEmptyItem() : items.find(i => i._id === id);
     if (id && id !== 'new' && !item){
       var publicID = this.getPublicItemIDFromLocation();
       if (publicID){
@@ -109,7 +104,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
         });
       }
       else {
-        this.setState({error: 'note with specified id not found'});
+        this.props.store.error = 'note with specified id not found';
       }
     }
     cb(item);
@@ -119,7 +114,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     return new Promise((resolve, reject) => {
       new SettingsApiClient().getAll((settings: Setting[]) => {
         var setting = settings[0] || {};
-        this.setState({formManualSubmitEnabled: setting.notesFormManualSubmitEnabled});
+        this.props.store.formManualSubmitEnabled = setting.notesFormManualSubmitEnabled;
         resolve();
       });
     });
@@ -146,20 +141,16 @@ export default class Notes extends React.Component<AppProps, AppState> {
     this.stopListeningHistory();
   }
 
-  buildEmptyItem(): Item {
-    return {_id: '', title: '', text: '', tags: [], dateOfCreate: new Date(), dateOfUpdate: new Date(), publicAccess: false};
-  }
-
   onOpenNew(){
-    var emptyItem = this.buildEmptyItem();
-    this.setState({item: emptyItem});
+    var emptyItem = this.props.store.buildEmptyItem();
+    this.props.store.item = emptyItem;
   }
 
   onClose(){
-    this.setState({item: null});
+    this.props.store.item = null;
   }
 
-  onSubmit(e: React.FormEvent<HTMLFormElement> | null, item = this.state.item){
+  onSubmit(e: React.FormEvent<HTMLFormElement> | null, item = this.props.store.item){
     e && e.preventDefault();
     if (!item || (!item.title && !item.text)){
       return;
@@ -189,7 +180,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 
-  isItemsDiffer(item1: Item, item2: AppState['item']){
+  isItemsDiffer(item1: Item, item2: AppStore['item']){
     if (!item2){
       return true;
     }
@@ -201,16 +192,18 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   onItemChange(item: Item, isNew?: boolean){
-    item = {...this.state.item, ...item};
-    var isChanged = this.isItemsDiffer(item, this.state.item);
-    var items = this.state.items;
+    item = {...this.props.store.item, ...item};
+    var isChanged = this.isItemsDiffer(item, this.props.store.item);
+    var items = this.props.store.items;
     if (!isNew){
       items = items.filter(i => i._id !== item._id); // remove old version
     }
     items.push(item);
-    this.setState({items: items, item: item, formChanged: isChanged});
+    this.props.store.items = items;
+    this.props.store.item = item;
+    this.props.store.formChanged = isChanged;
     isNew && this.history.push('/notes/' + item._id);
-    if (isChanged && !this.state.submitting && !this.state.formManualSubmitEnabled){
+    if (isChanged && !this.props.store.submitting && !this.props.store.formManualSubmitEnabled){
       window.clearTimeout(this.autosaveTimeoutID);
       this.autosaveTimeoutID = window.setTimeout(() => {
         this.onSubmit(null, item);
@@ -219,33 +212,34 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   onDeleteItem(item: Item){
-    var items = this.state.items;
+    var items = this.props.store.items;
     items = items.filter(i => i._id !== item._id);
     this.notesApiClient.remove(item, () => {
-      var openedItem = this.state.item && this.state.item._id === item._id ? null : this.state.item;
-      this.setState({items: items, item: openedItem});
+      var openedItem = this.props.store.item && this.props.store.item._id === item._id ? null : this.props.store.item;
+      this.props.store.items = items;
+      this.props.store.item = openedItem;
       this.history.push('/notes');
     });
   }
 
   onFiltersChange(filters: FiltersValueDiff){
-    let newFilters = {...this.state.filters, ...filters};
-    this.setState({filters: newFilters});
+    let newFilters = {...this.props.store.filters, ...filters};
+    this.props.store.filters = newFilters;
   }
 
   onSortChange(sort: SortValueDiff){
-    let newSort = {...this.state.sort, ...sort};
-    this.setState({sort: newSort});
+    let newSort = {...this.props.store.sort, ...sort};
+    this.props.store.sort = newSort;
   }
 
   filter(items: Item[]){
     return items.filter(i => {
       // text
-      var text = this.state.filters.text;
+      var text = this.props.store.filters.text;
       var useTextFilter = !!text;
       var matchByText = useTextFilter ? StringUtils.isContains(i.text, text) || StringUtils.isContains(i.title, text) : true;
       // tags
-      var tags = this.state.filters.tags;
+      var tags = this.props.store.filters.tags;
       var filterTagIDs = tags ?   tags.map(t => t.value) : [];
       var itemTagIDs = i.tags ? i.tags.map(t => t.value) : [];
       var useTagsFilter = tags && !!tags.length;
@@ -262,8 +256,8 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   sort(items: Item[]){
-    var field = this.state.sort.field;
-    var sign = this.state.sort.direction === 'asc' ? 1 : -1;
+    var field = this.props.store.sort.field;
+    var sign = this.props.store.sort.direction === 'asc' ? 1 : -1;
     return items.sort((i1, i2) => {
       var v1 = i1[field];
       var v2 = i2[field];
@@ -277,7 +271,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
 
   // TODO: load from DB
   buildTagList(){
-    return this.state.items.reduce((tags: Tag[], item) => tags.concat(item.tags || []), []);
+    return this.props.store.items.reduce((tags: Tag[], item) => tags.concat(item.tags || []), []);
   }
 
   onCreateTag(tagName: string) {
@@ -286,7 +280,7 @@ export default class Notes extends React.Component<AppProps, AppState> {
     var tag = { value: newID, label: tagName };
     this.tags.push(tag);
     var item: ItemDiff = {};
-    item.tags = this.state.item ? this.state.item.tags.slice() : [];
+    item.tags = this.props.store.item ? this.props.store.item.tags.slice() : [];
     item.tags.push(tag);
     this.onItemChangePartially(item);
   }
@@ -296,20 +290,20 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   onPublicLinkCopy(){
-    this.setState({publicLinkCopied: true});
+    this.props.store.publicLinkCopied = true;
   }
 
   render(){
-    if (this.state.item && this.isPublicItemLocation()){
-      return <ReadonlyNote item={this.state.item} />;
+    if (this.props.store.item && this.isPublicItemLocation()){
+      return <ReadonlyNote item={this.props.store.item} />;
     }
     return (
-      <div id="Notes" className={this.state.item ? 'itemSelected' : ''}>
+      <div id="Notes" className={this.props.store.item ? 'itemSelected' : ''}>
         <div>
           <Link to={'/notes/new'} id="openNew" onClick={this.onOpenNew} className="btnLink"><AddIcon /> Open new</Link>
           <Link to={'/notes'} id="close" onClick={this.onClose} className="btnLink"><CloseIcon /> Close</Link>
-          {this.state.error && <div className="alert error" id="notesError">{this.state.error}</div>}
-          {this.state.publicLinkCopied && <Alert variant="success" message="Copied!" onClose={() => this.setState({publicLinkCopied: false})} />}
+          {this.props.store.error && <div className="alert error" id="notesError">{this.props.store.error}</div>}
+          {this.props.store.publicLinkCopied && <Alert variant="success" message="Copied!" onClose={() => this.props.store.publicLinkCopied = false} />}
         </div>
         {this.renderBody()}
       </div>
@@ -323,16 +317,16 @@ export default class Notes extends React.Component<AppProps, AppState> {
   }
 
   renderBody(){
-    var items = this.filterAndSortItems(this.state.items);
+    var items = this.filterAndSortItems(this.props.store.items);
     this.tags = this.buildTagList();
 
     var form = null;
-    var item = this.state.item;
+    var item = this.props.store.item;
     if (item){
-      form = <Form item={item} onSubmit={this.onSubmit} submitEnabled={this.state.formManualSubmitEnabled} tags={this.tags} 
+      form = <Form item={item} onSubmit={this.onSubmit} submitEnabled={this.props.store.formManualSubmitEnabled} tags={this.tags} 
         /* accessLevels={this.accessLevels} */
         onCreateTag={this.onCreateTag} onItemChange={this.onItemChangePartially} onPublicLinkCopy={this.onPublicLinkCopy} 
-        sending={this.state.submitting} changed={this.state.formChanged}></Form>;
+        sending={this.props.store.submitting} changed={this.props.store.formChanged}></Form>;
     }
 
     return (
@@ -340,14 +334,14 @@ export default class Notes extends React.Component<AppProps, AppState> {
         <div id="aside">
           <div id="filtersAndSortCont">
             <div id="filtersCont">
-              <Filters filters={this.state.filters} onFiltersChange={this.onFiltersChange} tags={this.tags}></Filters>
+              <Filters filters={this.props.store.filters} onFiltersChange={this.onFiltersChange} tags={this.tags}></Filters>
             </div>
             <div id="sortCont">
-              <Sort sort={this.state.sort} onSortChange={this.onSortChange}></Sort>
+              <Sort sort={this.props.store.sort} onSortChange={this.onSortChange}></Sort>
             </div>
           </div>
           <div id="listCont">
-            <List items={items} item={item} onDeleteItem={this.onDeleteItem} loading={this.state.loading}></List>
+            <List items={items} item={item} onDeleteItem={this.onDeleteItem} loading={this.props.store.loading}></List>
           </div>
         </div>
         <div id="formCont">

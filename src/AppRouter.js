@@ -7,6 +7,7 @@ import Registration from './pages/Registration/Registration';
 import Login from './pages/Login/Login';
 import Notes from './pages/Notes/Notes';
 import Admin from './pages/Admin/Admin';
+import NoteStore from './stores/Notes';
 
 function AdminRoute({ component: Component, ...rest }) {
     return (
@@ -21,10 +22,11 @@ function AdminRoute({ component: Component, ...rest }) {
 }
 
 function PrivateRoute({ component: Component, ...rest }) {
+    var noteStore = new NoteStore();
     return (
         <Route {...rest} render={props =>
             AuthUtils.isLoggedIn() ? (
-                <Component {...props} />
+                <Component {...props} store={noteStore} />
             ) : (
                 <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
             )
