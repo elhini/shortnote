@@ -51,7 +51,7 @@ export default class _SessionsApi {
     }
 
     prolongSessionCookie(res: Response, sessionID: ObjectID | null, expireDate: Date){
-        sessionID && res.cookie('sessionID', sessionID.toString(), { expires: expireDate, httpOnly: true });
+        sessionID && res.cookie('sessionID', sessionID.toString(), { expires: expireDate, httpOnly: true, secure: true, sameSite: 'none' });
     }
 
     findSession(db: Db, req: Request, res: Response, cb: (s: Session) => void){
