@@ -33,7 +33,7 @@ export default class _SessionsApi {
         return new Date(now.getTime() + this.getLifeTime());
     }
     
-    createSession(db: Db, res: Response, user: User){
+    createSession(db: Db, req: Request, res: Response, user: User){
         let expireDate = this.getNewExpireDate();
         let session: Session = {userID: user._id || '', active: true, expireDate: expireDate.toISOString() };
         if (user.isAdmin){
@@ -44,14 +44,17 @@ export default class _SessionsApi {
                 res.send({ 'error': err });
             } else {
                 var newSession: {_id: ObjectID} = result.ops[0];
-                this.prolongSessionCookie(res, newSession._id, expireDate);
+                this.prolongSessionCookie(req, res, newSession._id, expireDate);
                 res.send(session);
             }
         });
     }
 
-    prolongSessionCookie(res: Response, sessionID: ObjectID | null, expireDate: Date){
-        sessionID && res.cookie('sessionID', sessionID.toString(), { expires: expireDate, httpOnly: true, secure: true, sameSite: 'none' });
+    prolongSessionCookie(req: Request, res: Response, sessionID: ObjectID | null, expireDate: Date){
+        var isSecure = req.secure || req.get('x-forwarded-proto') === 'https'; // req.secure is false on heroku server
+        sessionID && res.cookie('sessionID', sessionID.toString(), {
+            expires: expireDate, path: '/', httpOnly: true, secure: isSecure, sameSite: isSecure ? 'none' : 'Lax'
+        });
     }
 
     findSession(db: Db, req: Request, res: Response, cb: (s: Session) => void){
@@ -78,7 +81,7 @@ export default class _SessionsApi {
                 res ? res.send({ 'error': err }) : console.error(res);
             } else {
                 if (res) {
-                    set.expireDate && this.prolongSessionCookie(res, query._id, set.expireDate);
+                    set.expireDate && this.prolongSessionCookie(req, res, query._id, set.expireDate);
                     res.send({ 'updated': true, set });
                 }
             }

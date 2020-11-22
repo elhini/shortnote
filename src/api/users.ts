@@ -32,7 +32,7 @@ export default class UsersApi extends BaseApi {
                                             res.send({ 'error': err }); 
                                         } else {
                                             user = result.ops[0];
-                                            this._sessionsApi.createSession(db, res, user);
+                                            this._sessionsApi.createSession(db, req, res, user);
                                         }
                                     });
                                 }
@@ -60,7 +60,7 @@ export default class UsersApi extends BaseApi {
                                         res.send({ 'error': 'user blocked' }); 
                                     }
                                     else {
-                                        this._sessionsApi.createSession(db, res, user);
+                                        this._sessionsApi.createSession(db, req, res, user);
                                     }
                                 } else {
                                     res.send({ 'error': wrongCredentialsMsg });
